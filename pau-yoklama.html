@@ -685,8 +685,8 @@ async function signInGoogle(){
   const p=new firebase.auth.GoogleAuthProvider();
   p.setCustomParameters({prompt:'select_account'});
   try{
-    document.getElementById('login-err').innerHTML='<div class="al alinfo">Giriş yapılıyor…</div>';
-    await auth.signInWithPopup(p);
+    document.getElementById('login-err').innerHTML='<div class="al alinfo">Yönlendiriliyor…</div>';
+    await auth.signInWithRedirect(p);
   }catch(e){
     document.getElementById('login-err').innerHTML=`<div class="al alerr">Giriş hatası: ${esc(e.message)}</div>`;
   }
@@ -1655,6 +1655,13 @@ async function main(){
 
   // Auth
   auth.onAuthStateChanged(onAuthChange);
+  // Handle redirect result
+  auth.getRedirectResult().catch(e=>{
+    if(e&&e.code&&e.code!=='auth/no-auth-event'){
+      const el=document.getElementById('login-err');
+      if(el)el.innerHTML=`<div class="al alerr">Giriş hatası: ${esc(e.message)}</div>`;
+    }
+  });
 
   // Load student courses for name lookup (no auth needed)
   db.ref('courses').on('value',snap=>{
