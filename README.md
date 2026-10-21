@@ -1,4 +1,4 @@
-[pau-yoklama.html](https://github.com/user-attachments/files/33782190/pau-yoklama.html)
+[pau-yoklama_1.html](https://github.com/user-attachments/files/33785773/pau-yoklama_1.html)
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -282,11 +282,13 @@ textarea{resize:vertical;min-height:80px}
   <div id="sess-login-prompt" style="display:none">
     <div class="card login-card" style="max-width:100%;margin:0">
       <div class="card-title" style="text-align:center;font-size:1.1rem">🎓 Hoca Girişi</div>
-      <p style="color:var(--fg2);font-size:.85rem;text-align:center;margin-bottom:20px;line-height:1.6">PAÜ e-posta hesabınızla giriş yapın.</p>
-      <button class="google-btn" onclick="signInGoogle()">
-        <svg viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.7 33.9 29.9 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-21.7 0-1.5-.1-2.5-.5-4.3z"/></svg>
-        Google ile Giriş Yap
-      </button>
+      <p style="color:var(--fg2);font-size:.85rem;text-align:center;margin-bottom:20px;line-height:1.6">E-posta ve şifrenizle giriş yapın.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input id="login-email" type="email" placeholder="E-posta (örn: hicengiz@pau.edu.tr)" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box">
+        <input id="login-pass" type="password" placeholder="Şifre" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box" onkeydown="if(event.key==='Enter')signInEmail()">
+        <button class="btn bp" onclick="signInEmail()" style="width:100%;padding:12px;font-size:.95rem">Giriş Yap</button>
+        <button class="btn bd" onclick="sendResetEmail()" style="width:100%;font-size:.8rem">Şifremi Unuttum</button>
+      </div>
       <div id="login-err" style="margin-top:12px"></div>
     </div>
   </div>
@@ -682,14 +684,32 @@ function nav(v){
 }
 
 /* ── AUTH ── */
-async function signInGoogle(){
-  const p=new firebase.auth.GoogleAuthProvider();
-  p.setCustomParameters({prompt:'select_account'});
+async function signInEmail(){
+  const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value||'';
+  const errEl=document.getElementById('login-err');
+  if(!email||!pass){errEl.innerHTML='<div class="al alerr">E-posta ve şifre giriniz.</div>';return;}
+  errEl.innerHTML='<div class="al alinfo">Giriş yapılıyor…</div>';
   try{
-    document.getElementById('login-err').innerHTML='<div class="al alinfo">Giriş yapılıyor…</div>';
-    await auth.signInWithPopup(p);
+    await auth.signInWithEmailAndPassword(email,pass);
+    errEl.innerHTML='';
   }catch(e){
-    document.getElementById('login-err').innerHTML=`<div class="al alerr">Giriş hatası: ${esc(e.message)}</div>`;
+    let msg='Giriş hatası.';
+    if(e.code==='auth/user-not-found'||e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')msg='E-posta veya şifre hatalı.';
+    else if(e.code==='auth/too-many-requests')msg='Çok fazla deneme. Lütfen bekleyin.';
+    else if(e.code==='auth/invalid-email')msg='Geçersiz e-posta adresi.';
+    errEl.innerHTML=`<div class="al alerr">${msg}</div>`;
+  }
+}
+async function sendResetEmail(){
+  const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
+  const errEl=document.getElementById('login-err');
+  if(!email){errEl.innerHTML='<div class="al alerr">Önce e-posta adresinizi girin.</div>';return;}
+  try{
+    await auth.sendPasswordResetEmail(email);
+    errEl.innerHTML='<div class="al alok">Şifre sıfırlama e-postası gönderildi. E-postanızı kontrol edin.</div>';
+  }catch(e){
+    errEl.innerHTML=`<div class="al alerr">Gönderilemedi: ${esc(e.message)}</div>`;
   }
 }
 function signOut(){auth.signOut();}
@@ -704,9 +724,13 @@ async function onAuthChange(user){
   if(user){
     const email=user.email||'';
     isAdmin=ADMIN_EMAILS.includes(email.toLowerCase());
-    // Check professors list
-    const snap=await db.ref('professors').orderByChild('email').equalTo(email.toLowerCase()).once('value');
-    isProfessor=isAdmin||(snap.val()!=null);
+    // Check professors list (avoid orderByChild when path may not exist)
+    try{
+      const snap=await db.ref('professors').once('value');
+      const profsData=snap.val()||{};
+      const inList=Object.values(profsData).some(p=>p.email===email.toLowerCase());
+      isProfessor=isAdmin||inList;
+    }catch(e){isProfessor=isAdmin;}
     applyRole();
     loadEmailSettings();
     listenMyActiveSessions();
@@ -767,11 +791,16 @@ async function addProf(){
   const name=document.getElementById('np-name').value.trim();
   const email=document.getElementById('np-email').value.trim().toLowerCase();
   if(!name||!email){setMsg('prof-err','alerr','Ad ve e-posta zorunlu.');return;}
-  // Use email as key (sanitize)
-  const uid='prof_'+email.replace(/[^a-z0-9]/g,'_');
-  await db.ref('professors/'+uid).set({name,email,addedAt:Date.now(),addedBy:curUser?.email||''});
-  document.getElementById('np-name').value='';document.getElementById('np-email').value='';
-  document.getElementById('new-prof-form').style.display='none';
+  setMsg('prof-err','alinfo','Ekleniyor…');
+  try{
+    const uid='prof_'+email.replace(/[^a-z0-9]/g,'_');
+    await db.ref('professors/'+uid).set({name,email,addedAt:Date.now(),addedBy:curUser?.email||''});
+    document.getElementById('np-name').value='';document.getElementById('np-email').value='';
+    document.getElementById('new-prof-form').style.display='none';
+    setMsg('prof-err','alok','Hoca eklendi.');
+  }catch(e){
+    setMsg('prof-err','alerr','Eklenemedi: '+e.message);
+  }
 }
 async function delProf(uid){
   if(!confirm('Bu hocayı silmek istiyor musunuz?'))return;
@@ -786,9 +815,9 @@ function populateSorumluSelects(){
 /* ── MY ACTIVE SESSIONS ── */
 function listenMyActiveSessions(){
   if(!curUser)return;
-  db.ref('sessions').orderByChild('active').equalTo(true).on('value',snap=>{
+  db.ref('sessions').on('value',snap=>{
     const all=snap.val()||{};
-    activeSessions=Object.values(all).filter(s=>isAdmin||s.profUid===curUser.uid||s.profEmail===curUser.email);
+    activeSessions=Object.values(all).filter(s=>s.active&&(isAdmin||s.profUid===curUser.uid||s.profEmail===curUser.email));
     renderMyActiveSessions();
     // If viewing active and session still active, update
     if(curActiveCode){
