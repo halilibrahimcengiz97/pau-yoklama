@@ -72,7 +72,7 @@ textarea{resize:vertical;min-height:80px}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .bp{background:var(--accent);color:#fff}
 .bp:hover:not(:disabled){background:var(--accent2)}
-.boxbackground:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.bo{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .bd{background:transparent;color:var(--err);border:1.5px solid var(--err)}
 .bg{background:transparent;color:var(--fg2);border:1.5px solid var(--border)}
 .bsm{padding:6px 10px;font-size:.75rem}
@@ -192,7 +192,7 @@ textarea{resize:vertical;min-height:80px}
 <div class="view" id="view-student">
   <div class="card" id="stnosess" style="display:none">
     <div class="card-title">📋 Yoklama</div>
-    <div class="al alinfo">şu anda aktif oturum bulunmuyor. Hocaya danışın.</div>
+    <div class="al alinfo">Şu anda aktif oturum bulunmuyor. Hocaya danışın.</div>
   </div>
 
   <!-- Tab 1: ID scan -->
@@ -465,7 +465,7 @@ textarea{resize:vertical;min-height:80px}
   <div class="card" id="new-course-card" style="display:none">
     <div class="card-title">Yeni Ders</div>
     <div class="form-row"><label>Ders Adı *</label><input id="nc-name" placeholder="örn. Dahiliye Stajı"></div>
-    <div class="form-row"><label>Ders Kodu</label><input id="nc-code" placeholder="Þrn. TIP301"></div>
+    <div class="form-row"><label>Ders Kodu</label><input id="nc-code" placeholder="örn. TIP301"></div>
     <div class="form-row">
       <label>Sorumlu Hoca</label>
       <select id="nc-sorumlu">
@@ -675,14 +675,13 @@ async function downloadQr(){
 /* ── NAV ── */
 function nav(v){
   curView=v;
-  ['student','session','active','report','courses','settings'].forEach(x=>{
+  ['student','session','active','report','courses','profs','settings'].forEach(x=>{
     const el=document.getElementById('view-'+x);
     if(el)el.classList.toggle('on',x===v);
     const nb=document.getElementById('nav-'+x);
     if(nb)nb.classList.toggle('on',x===v);
   });
-  if(v==='report'){
- renderHist();renderChart();buildMatrixCourseFilter();}
+  if(v==='report'){renderHist();renderChart();buildMatrixCourseFilter();}
   if(v==='courses')renderCourses();
   if(v==='profs')renderProfs();
   if(v==='settings'){loadEmailSettings();if(isAdmin)loadSystemPinDisplay();}
@@ -704,7 +703,7 @@ async function signInPin(){
     const storedPin=snap.val();
     // Admin emails bypass PIN if pin not set yet (first login)
     const isAdminEmail=ADMIN_EMAILS.includes(email);
-    if(!storedPin&&!isAdminEmail){errEl.innerHTML='<div class="al alerr">Sistem PIN\'i henøz ayarlanmamış. Admin ile iletişime geçin.</div>';return;}
+    if(!storedPin&&!isAdminEmail){errEl.innerHTML='<div class="al alerr">Sistem PIN\'i henüz ayarlanmamış. Admin ile iletişime geçin.</div>';return;}
     if(storedPin&&pin!==storedPin){errEl.innerHTML='<div class="al alerr">PIN kodu hatalı.</div>';return;}
     // Check if email is in professors list or admin
     const profsSnap=await db.ref('professors').once('value');
@@ -778,7 +777,7 @@ function applyRole(){
   if(pc)pc.style.display=isAdmin?'':'none';
 }
 
-/* ── PROFESSORFESSORS ── */
+/* ── PROFESSORS ── */
 function listenProfessors(){
   db.ref('professors').on('value',snap=>{
     professors=snap.val()||{};
@@ -961,7 +960,7 @@ async function createSession(){
 
   let locData={};
   if(useLoc){
-  2 btn.innerHTML='<span class="spin"></span> Konum alınıyor…';
+    btn.innerHTML='<span class="spin"></span> Konum alınıyor…';
     try{const pos=await getLocation(12000);locData={locLat:pos.lat,locLng:pos.lng,locAcc:pos.acc,locRadius:radius};}
     catch(e){errEl.textContent='Konum alınamadı: '+(e.message||'İzin reddedildi.');errEl.style.display='block';btn.innerHTML='Oturumu Başlat';btn.disabled=false;return;}
     btn.innerHTML='<span class="spin"></span> Oluşturuluyor…';
@@ -1133,7 +1132,7 @@ function listenAtt(code){
     const total=Object.keys(courseStudents).length;
     document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
     document.getElementById('att-cnt-badge').textContent=presentCnt;
-    if(total)document.getElementById('att-total-badge').textContent=total+' kazıtlı';
+    if(total)document.getElementById('att-total-badge').textContent=total+' kayıtlı';
     const idx=activeSessions.findIndex(s=>s.code===code);
     if(idx>=0){activeSessions[idx].attendance=attendees;}
   });
@@ -1643,7 +1642,7 @@ async function decodeIdCard(input){
       msgEl.innerHTML='<div class="al alok">✅ Kimlik doğrulandı! Yoklama kaydediliyor…</div>';
       scanBtn.style.display='none';setTimeout(()=>finalSubmitAtt(),700);
     }else{
-      msgEl.innerHTML<`<div class="al alerr">❌ Eşleşmedi. Girdiğiniz: <strong>${esc(enteredNo)}</strong> — Karttaki: <strong>${esc(scanned)}</strong></div>`;
+      msgEl.innerHTML=`<div class="al alerr">❌ Eşleşmedi. Girdiğiniz: <strong>${esc(enteredNo)}</strong> — Karttaki: <strong>${esc(scanned)}</strong></div>`;
       scanBtn.innerHTML='📷 Tekrar Dene';scanBtn.disabled=false;scanBtn.style.display='';
     }
   }catch{
@@ -1706,7 +1705,7 @@ async function submitAtt2(){
     document.getElementById('stform2').style.display='none';
     document.getElementById('st-tabs').style.display='none';
     document.getElementById('st-ok').style.display='block';
-    document.getElementById('st-ok').querySelector('p').innerHTML<`<strong>${esc(name)}</strong><br>${esc(no)}<br>${esc(sess.name||'')} · ${now.toTimeString().slice(0,5)}`;
+    document.getElementById('st-ok').querySelector('p').innerHTML=`<strong>${esc(name)}</strong><br>${esc(no)}<br>${esc(sess.name||'')} · ${now.toTimeString().slice(0,5)}`;
   }catch(e){setMsg(msgEl,'alerr','Hata: '+esc(e.message));}
   finally{btn.innerHTML='Yoklamayı Gönder';btn.disabled=false;}
 }
