@@ -72,7 +72,7 @@ textarea{resize:vertical;min-height:80px}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .bp{background:var(--accent);color:#fff}
 .bp:hover:not(:disabled){background:var(--accent2)}
-.bo{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.boxbackground:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .bd{background:transparent;color:var(--err);border:1.5px solid var(--err)}
 .bg{background:transparent;color:var(--fg2);border:1.5px solid var(--border)}
 .bsm{padding:6px 10px;font-size:.75rem}
@@ -162,7 +162,6 @@ textarea{resize:vertical;min-height:80px}
 <!-- Firebase v8 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-database.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-auth.min.js"></script>
 <!-- QR + ZXing + Chart + EmailJS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.3/umd/index.min.js"></script>
@@ -193,7 +192,7 @@ textarea{resize:vertical;min-height:80px}
 <div class="view" id="view-student">
   <div class="card" id="stnosess" style="display:none">
     <div class="card-title">📋 Yoklama</div>
-    <div class="al alinfo">Şu anda aktif oturum bulunmuyor. Hocaya danışın.</div>
+    <div class="al alinfo">şu anda aktif oturum bulunmuyor. Hocaya danışın.</div>
   </div>
 
   <!-- Tab 1: ID scan -->
@@ -281,12 +280,11 @@ textarea{resize:vertical;min-height:80px}
   <div id="sess-login-prompt" style="display:none">
     <div class="card login-card" style="max-width:100%;margin:0">
       <div class="card-title" style="text-align:center;font-size:1.1rem">🎓 Hoca Girişi</div>
-      <p style="color:var(--fg2);font-size:.85rem;text-align:center;margin-bottom:20px;line-height:1.6">E-posta ve şifrenizle giriş yapın.</p>
+      <p style="color:var(--fg2);font-size:.85rem;text-align:center;margin-bottom:20px;line-height:1.6">E-posta adresiniz ve sistem PIN kodunu girin.</p>
       <div style="display:flex;flex-direction:column;gap:10px">
         <input id="login-email" type="email" placeholder="E-posta (örn: hicengiz@pau.edu.tr)" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box">
-        <input id="login-pass" type="password" placeholder="Şifre" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box" onkeydown="if(event.key==='Enter')signInEmail()">
-        <button class="btn bp" onclick="signInEmail()" style="width:100%;padding:12px;font-size:.95rem">Giriş Yap</button>
-        <button class="btn bd" onclick="sendResetEmail()" style="width:100%;font-size:.8rem">Şifremi Unuttum</button>
+        <input id="login-pin" type="password" placeholder="PIN kodu" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box" onkeydown="if(event.key==='Enter')signInPin()">
+        <button class="btn bp" onclick="signInPin()" style="width:100%;padding:12px;font-size:.95rem">Giriş Yap</button>
       </div>
       <div id="login-err" style="margin-top:12px"></div>
     </div>
@@ -467,7 +465,7 @@ textarea{resize:vertical;min-height:80px}
   <div class="card" id="new-course-card" style="display:none">
     <div class="card-title">Yeni Ders</div>
     <div class="form-row"><label>Ders Adı *</label><input id="nc-name" placeholder="örn. Dahiliye Stajı"></div>
-    <div class="form-row"><label>Ders Kodu</label><input id="nc-code" placeholder="örn. TIP301"></div>
+    <div class="form-row"><label>Ders Kodu</label><input id="nc-code" placeholder="Þrn. TIP301"></div>
     <div class="form-row">
       <label>Sorumlu Hoca</label>
       <select id="nc-sorumlu">
@@ -567,6 +565,14 @@ textarea{resize:vertical;min-height:80px}
       <div><strong>{{sorumlu_name}}</strong> — Sorumlu hocanın adı</div>
     </div>
   </div>
+  <div class="card" id="pin-mgmt-card">
+    <div class="card-title">🔑 Sistem PIN Yönetimi</div>
+    <p class="hint" style="margin-bottom:14px">Hocaların sisteme giriş yapabilmesi için kullanacağı PIN kodunu buradan belirleyin. Tüm hocalar aynı PIN ile giriş yapar.</p>
+    <div class="form-row"><label>Mevcut PIN</label><span id="current-pin-display" style="font-family:monospace;font-size:1.1rem;font-weight:600;color:var(--accent)">Yükleniyor…</span></div>
+    <div class="form-row"><label>Yeni PIN</label><input id="new-system-pin" type="text" maxlength="20" placeholder="Yeni PIN girin" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box"></div>
+    <div id="pin-mgmt-msg" style="margin-bottom:10px"></div>
+    <button class="btn bp" onclick="saveSystemPin()">PIN Kaydet</button>
+  </div>
   <div class="card">
     <div class="card-title">🎨 Tema</div>
     <div style="display:flex;gap:8px">
@@ -592,7 +598,7 @@ const FB_CFG={
 };
 
 /* ── GLOBALS ── */
-let db,auth,curUser=null,isAdmin=false,isProfessor=false;
+let db,curUser=null,isAdmin=false,isProfessor=false;
 let courses={},professors={},sessions=[],studentMap={};
 let activeSessions=[];  // professor's active sessions
 let curActiveCode=null;  // which session is displayed in view-active
@@ -669,85 +675,91 @@ async function downloadQr(){
 /* ── NAV ── */
 function nav(v){
   curView=v;
-  ['student','session','active','report','courses','profs','settings'].forEach(x=>{
+  ['student','session','active','report','courses','settings'].forEach(x=>{
     const el=document.getElementById('view-'+x);
     if(el)el.classList.toggle('on',x===v);
     const nb=document.getElementById('nav-'+x);
     if(nb)nb.classList.toggle('on',x===v);
   });
-  if(v==='report'){renderHist();renderChart();buildMatrixCourseFilter();}
+  if(v==='report'){
+ renderHist();renderChart();buildMatrixCourseFilter();}
   if(v==='courses')renderCourses();
   if(v==='profs')renderProfs();
-  if(v==='settings')loadEmailSettings();
+  if(v==='settings'){loadEmailSettings();if(isAdmin)loadSystemPinDisplay();}
   if(v==='session'){renderMyActiveSessions();initNewForm();}
 }
 
-/* ── AUTH ── */
-async function signInEmail(){
+/* ── AUTH (PIN tabanlı — Firebase Auth yok) ── */
+const ADMIN_PIN_KEY='pau_pin_login';
+
+async function signInPin(){
   const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
-  const pass=document.getElementById('login-pass').value||'';
+  const pin=(document.getElementById('login-pin').value||'').trim();
   const errEl=document.getElementById('login-err');
-  if(!email||!pass){errEl.innerHTML='<div class="al alerr">E-posta ve şifre giriniz.</div>';return;}
+  if(!email||!pin){errEl.innerHTML='<div class="al alerr">E-posta ve PIN giriniz.</div>';return;}
   errEl.innerHTML='<div class="al alinfo">Giriş yapılıyor…</div>';
   try{
-    await auth.signInWithEmailAndPassword(email,pass);
+    // Fetch settings from Firebase (contains the PIN hash)
+    const snap=await db.ref('settings/pin').once('value');
+    const storedPin=snap.val();
+    // Admin emails bypass PIN if pin not set yet (first login)
+    const isAdminEmail=ADMIN_EMAILS.includes(email);
+    if(!storedPin&&!isAdminEmail){errEl.innerHTML='<div class="al alerr">Sistem PIN\'i henøz ayarlanmamış. Admin ile iletişime geçin.</div>';return;}
+    if(storedPin&&pin!==storedPin){errEl.innerHTML='<div class="al alerr">PIN kodu hatalı.</div>';return;}
+    // Check if email is in professors list or admin
+    const profsSnap=await db.ref('professors').once('value');
+    const profsData=profsSnap.val()||{};
+    const inList=Object.values(profsData).some(p=>p.email===email);
+    if(!isAdminEmail&&!inList){errEl.innerHTML='<div class="al alerr">Bu e-posta sisteme kayıtlı değil. Admin\'e başvurun.</div>';return;}
+    // "Sign in" — store in localStorage
+    try{localStorage.setItem(ADMIN_PIN_KEY,JSON.stringify({email,ts:Date.now()}));}catch{}
     errEl.innerHTML='';
+    applyPinLogin(email);
   }catch(e){
-    let msg='Giriş hatası.';
-    if(e.code==='auth/user-not-found'||e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')msg='E-posta veya şifre hatalı.';
-    else if(e.code==='auth/too-many-requests')msg='Çok fazla deneme. Lütfen bekleyin.';
-    else if(e.code==='auth/invalid-email')msg='Geçersiz e-posta adresi.';
-    errEl.innerHTML=`<div class="al alerr">${msg}</div>`;
+    errEl.innerHTML=`<div class="al alerr">Bağlantı hatası: ${esc(e.message)}</div>`;
   }
 }
-async function sendResetEmail(){
-  const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
-  const errEl=document.getElementById('login-err');
-  if(!email){errEl.innerHTML='<div class="al alerr">Önce e-posta adresinizi girin.</div>';return;}
-  try{
-    await auth.sendPasswordResetEmail(email);
-    errEl.innerHTML='<div class="al alok">Şifre sıfırlama e-postası gönderildi. E-postanızı kontrol edin.</div>';
-  }catch(e){
-    errEl.innerHTML=`<div class="al alerr">Gönderilemedi: ${esc(e.message)}</div>`;
-  }
+
+function applyPinLogin(email){
+  curUser={email,uid:'pin_'+email.replace(/[^a-z0-9]/g,'_')};
+  isAdmin=ADMIN_EMAILS.includes(email);
+  isProfessor=true;
+  applyRole();
+  loadEmailSettings();
+  listenMyActiveSessions();
+  listenSessions();
+  listenCourses();
+  listenProfessors();
+  document.getElementById('top-sub').textContent=email;
+  document.getElementById('login-btn').textContent='Çıkış';
+  nav('session');
 }
-function signOut(){auth.signOut();}
+
+function signOut(){
+  curUser=null;isAdmin=false;isProfessor=false;
+  try{localStorage.removeItem(ADMIN_PIN_KEY);}catch{}
+  applyRole();
+  document.getElementById('top-sub').textContent='';
+  document.getElementById('login-btn').textContent='Hoca Girişi';
+  nav('student');
+}
 
 function handleAuthBtn(){
   if(curUser)signOut();
   else{nav('session');}
 }
 
-async function onAuthChange(user){
-  curUser=user;
-  if(user){
-    const email=user.email||'';
-    isAdmin=ADMIN_EMAILS.includes(email.toLowerCase());
-    // Check professors list (avoid orderByChild when path may not exist)
-    try{
-      const snap=await db.ref('professors').once('value');
-      const profsData=snap.val()||{};
-      const inList=Object.values(profsData).some(p=>p.email===email.toLowerCase());
-      isProfessor=isAdmin||inList;
-    }catch(e){isProfessor=isAdmin;}
-    applyRole();
-    loadEmailSettings();
-    listenMyActiveSessions();
-    listenSessions();
-    listenCourses();
-    listenProfessors();
-    document.getElementById('top-sub').textContent=email;
-    document.getElementById('login-btn').textContent='Çıkış';
-    document.getElementById('login-btn').style.display='';
-  }else{
-    isAdmin=false;isProfessor=false;
-    curUser=null;
-    applyRole();
-    document.getElementById('top-sub').textContent='';
-    document.getElementById('login-btn').textContent='Hoca Girişi';
-    document.getElementById('login-btn').style.display='';
-    if(curView!=='student')nav('student');
-  }
+function onAuthChange(){
+  // PIN auth: check localStorage on load
+  try{
+    const saved=JSON.parse(localStorage.getItem(ADMIN_PIN_KEY)||'null');
+    if(saved&&saved.email&&(Date.now()-saved.ts)<86400000*7){
+      applyPinLogin(saved.email);return;
+    }
+  }catch{}
+  // No saved session — show logged-out state
+  applyRole();
+  nav('student');
 }
 
 function applyRole(){
@@ -761,9 +773,12 @@ function applyRole(){
   const pv=document.getElementById('sess-prof-view');
   if(pr)pr.style.display=(!curUser)?'block':'none';
   if(pv)pv.style.display=curUser?'block':'none';
+  // Show PIN management only to admins
+  const pc=document.getElementById('pin-mgmt-card');
+  if(pc)pc.style.display=isAdmin?'':'none';
 }
 
-/* ── PROFESSORS ── */
+/* ── PROFESSORFESSORS ── */
 function listenProfessors(){
   db.ref('professors').on('value',snap=>{
     professors=snap.val()||{};
@@ -793,8 +808,7 @@ async function addProf(){
   setMsg('prof-err','alinfo','Ekleniyor…');
   try{
     const uid='prof_'+email.replace(/[^a-z0-9]/g,'_');
-    const token=await curUser.getIdToken();
-    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json?auth='+token;
+    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,email,addedAt:Date.now(),addedBy:curUser.email||''})});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -947,7 +961,7 @@ async function createSession(){
 
   let locData={};
   if(useLoc){
-    btn.innerHTML='<span class="spin"></span> Konum alınıyor…';
+  2 btn.innerHTML='<span class="spin"></span> Konum alınıyor…';
     try{const pos=await getLocation(12000);locData={locLat:pos.lat,locLng:pos.lng,locAcc:pos.acc,locRadius:radius};}
     catch(e){errEl.textContent='Konum alınamadı: '+(e.message||'İzin reddedildi.');errEl.style.display='block';btn.innerHTML='Oturumu Başlat';btn.disabled=false;return;}
     btn.innerHTML='<span class="spin"></span> Oluşturuluyor…';
@@ -1002,6 +1016,32 @@ async function closeSession(){
     nav('session');
   }catch(e){alert('Hata: '+e.message);}
   finally{btn.innerHTML='⏹ Oturumu Kapat';btn.disabled=false;}
+}
+
+/* ── SYSTEM PIN MANAGEMENT ── */
+async function loadSystemPinDisplay(){
+  try{
+    const snap=await db.ref('settings/pin').once('value');
+    const pin=snap.val();
+    const el=document.getElementById('current-pin-display');
+    if(el)el.textContent=pin?pin:'(henüz ayarlanmamış)';
+  }catch(e){
+    const el=document.getElementById('current-pin-display');
+    if(el)el.textContent='Yüklenemedi';
+  }
+}
+async function saveSystemPin(){
+  const pin=(document.getElementById('new-system-pin').value||'').trim();
+  if(!pin){setMsg('pin-mgmt-msg','alerr','PIN boş olamaz.');return;}
+  setMsg('pin-mgmt-msg','alinfo','Kaydediliyor…');
+  try{
+    const dbUrl=FB_CFG.databaseURL+'/settings/pin.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(pin)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    document.getElementById('new-system-pin').value='';
+    document.getElementById('current-pin-display').textContent=pin;
+    setMsg('pin-mgmt-msg','alok','PIN kaydedildi. Hocalar bu PIN ile giriş yapabilir.');
+  }catch(e){setMsg('pin-mgmt-msg','alerr','Hata: '+e.message);}
 }
 
 /* ── EMAIL ── */
@@ -1093,7 +1133,7 @@ function listenAtt(code){
     const total=Object.keys(courseStudents).length;
     document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
     document.getElementById('att-cnt-badge').textContent=presentCnt;
-    if(total)document.getElementById('att-total-badge').textContent=total+' kayıtlı';
+    if(total)document.getElementById('att-total-badge').textContent=total+' kazıtlı';
     const idx=activeSessions.findIndex(s=>s.code===code);
     if(idx>=0){activeSessions[idx].attendance=attendees;}
   });
@@ -1603,7 +1643,7 @@ async function decodeIdCard(input){
       msgEl.innerHTML='<div class="al alok">✅ Kimlik doğrulandı! Yoklama kaydediliyor…</div>';
       scanBtn.style.display='none';setTimeout(()=>finalSubmitAtt(),700);
     }else{
-      msgEl.innerHTML=`<div class="al alerr">❌ Eşleşmedi. Girdiğiniz: <strong>${esc(enteredNo)}</strong> — Karttaki: <strong>${esc(scanned)}</strong></div>`;
+      msgEl.innerHTML<`<div class="al alerr">❌ Eşleşmedi. Girdiğiniz: <strong>${esc(enteredNo)}</strong> — Karttaki: <strong>${esc(scanned)}</strong></div>`;
       scanBtn.innerHTML='📷 Tekrar Dene';scanBtn.disabled=false;scanBtn.style.display='';
     }
   }catch{
@@ -1666,7 +1706,7 @@ async function submitAtt2(){
     document.getElementById('stform2').style.display='none';
     document.getElementById('st-tabs').style.display='none';
     document.getElementById('st-ok').style.display='block';
-    document.getElementById('st-ok').querySelector('p').innerHTML=`<strong>${esc(name)}</strong><br>${esc(no)}<br>${esc(sess.name||'')} · ${now.toTimeString().slice(0,5)}`;
+    document.getElementById('st-ok').querySelector('p').innerHTML<`<strong>${esc(name)}</strong><br>${esc(no)}<br>${esc(sess.name||'')} · ${now.toTimeString().slice(0,5)}`;
   }catch(e){setMsg(msgEl,'alerr','Hata: '+esc(e.message));}
   finally{btn.innerHTML='Yoklamayı Gönder';btn.disabled=false;}
 }
@@ -1676,18 +1716,17 @@ async function main(){
   // Theme
   try{const t=localStorage.getItem('pau_theme');if(t!==null)setTheme(t);}catch{}
 
-  // Firebase
+  // Firebase (database only — no Auth)
   firebase.initializeApp(FB_CFG);
   db=firebase.database();
-  auth=firebase.auth();
 
   // Student view always shown by default
   listenActiveSt();
   nav('student');
   document.getElementById('login-btn').style.display='';
 
-  // Auth
-  auth.onAuthStateChanged(onAuthChange);
+  // PIN auth: check localStorage session
+  onAuthChange();
 
   // Load student courses for name lookup (no auth needed)
   db.ref('courses').on('value',snap=>{
