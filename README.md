@@ -1,161 +1,328 @@
-[pau-yoklama_1.html](https://github.com/user-attachments/files/33785773/pau-yoklama_1.html)
+[pau-yoklama.html](https://github.com/user-attachments/files/33888576/pau-yoklama.html)
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>PAÜ Tıp — Yoklama Sistemi</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
+/* ══════════════════════════════════════════
+   PAÜ YOKLAMA — GRADYAN / GLASMORFİZM TEMA
+   ══════════════════════════════════════════ */
 :root{
-  --bg:#f8fafc;--bg2:#ffffff;--fg:#1a1d23;--fg2:#64748b;--fg3:#94a3b8;
-  --border:#e2e8f0;--accent:#2563eb;--accent2:#1d4ed8;--ok:#16a34a;--warn:#d97706;--err:#dc2626;
-  --rad:14px;--rad-sm:8px;--shadow:0 2px 12px rgba(0,0,0,.08);
-  --nav-h:64px;--top-h:54px;
+  /* Renk paleti — koyu gradyan temeli */
+  --c1:#0d0f1e;--c2:#13152a;--c3:#1b1e35;
+  --g1:#6366f1;--g2:#818cf8;--g3:#a78bfa;
+  --ok:#34d399;--ok2:#10b981;--warn:#fbbf24;--warn2:#f59e0b;--err:#f87171;--err2:#ef4444;
+  --fg:#e8eaf6;--fg2:#9ba3d8;--fg3:#5c6499;
+  --glass:rgba(255,255,255,0.06);--glass2:rgba(255,255,255,0.10);
+  --glass-border:rgba(255,255,255,0.12);--glass-border2:rgba(255,255,255,0.20);
+  --rad:16px;--rad-sm:10px;--rad-xs:7px;
+  --shadow:0 8px 32px rgba(0,0,0,.45);--shadow-sm:0 4px 16px rgba(0,0,0,.30);
+  --nav-h:66px;--top-h:56px;
+  --accent:var(--g1);--accent2:var(--g2);--bg:var(--c1);--bg2:var(--c3);--border:var(--glass-border);
+  color-scheme:dark;
 }
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1117;--bg2:#1a1d23;--fg:#f1f5f9;--fg2:#94a3b8;--fg3:#475569;
-  --border:#2d3748;--accent:#3b82f6;--accent2:#60a5fa;--ok:#22c55e;--warn:#fbbf24;--err:#f87171;
-  --shadow:0 2px 12px rgba(0,0,0,.35);color-scheme:dark
-}}
-:root[data-theme="dark"]{
-  --bg:#0f1117;--bg2:#1a1d23;--fg:#f1f5f9;--fg2:#94a3b8;--fg3:#475569;
-  --border:#2d3748;--accent:#3b82f6;--accent2:#60a5fa;--ok:#22c55e;--warn:#fbbf24;--err:#f87171;
-  --shadow:0 2px 12px rgba(0,0,0,.35);color-scheme:dark
+/* Açık tema override — kullanıcı isterse */
+:root[data-theme="light"]{
+  --c1:#f0f2ff;--c2:#e8ebff;--c3:#ffffff;
+  --g1:#4f52d1;--g2:#6366f1;--g3:#7c7fff;
+  --ok:#059669;--ok2:#047857;--warn:#d97706;--warn2:#b45309;--err:#dc2626;--err2:#b91c1c;
+  --fg:#1a1d3a;--fg2:#4a5080;--fg3:#8890c0;
+  --glass:rgba(79,82,209,0.07);--glass2:rgba(79,82,209,0.12);
+  --glass-border:rgba(79,82,209,0.15);--glass-border2:rgba(79,82,209,0.28);
+  --shadow:0 8px 32px rgba(79,82,209,.12);--shadow-sm:0 4px 16px rgba(79,82,209,.08);
+  --accent:var(--g1);--accent2:var(--g2);--bg:var(--c1);--bg2:var(--c3);--border:var(--glass-border);
+  color-scheme:light;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── ARKAPLAN GRADYANI ── */
 body{
-  font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg);
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--c1);color:var(--fg);
   min-height:100dvh;padding-bottom:var(--nav-h);
   padding-left:max(0px,env(safe-area-inset-left,0px));
   padding-right:max(0px,env(safe-area-inset-right,0px));
+  position:relative;overflow-x:hidden;
 }
-/* TOP BAR */
+/* Hareketli mesh gradyan arka plan */
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 15%,rgba(99,102,241,.28) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 20%,rgba(167,139,250,.20) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 70% at 50% 90%,rgba(99,102,241,.15) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 75% 65%,rgba(129,140,248,.12) 0%,transparent 50%);
+}
+body::before{
+  content:"";position:fixed;inset:0 0 auto;
+  height:env(safe-area-inset-top,0px);
+  background:rgba(13,15,30,.85);backdrop-filter:blur(20px);z-index:51;
+}
+/* İçerik z-index */
+.topbar,.bnav,.view{position:relative;z-index:1}
+
+/* ── ÜST BAR (GLASS) ── */
 .topbar{
   position:sticky;top:env(safe-area-inset-top,0px);z-index:50;
-  background:var(--bg2);border-bottom:1px solid var(--border);
+  background:rgba(13,15,30,.75);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--glass-border);
   height:var(--top-h);display:flex;align-items:center;
   padding:0 max(16px,env(safe-area-inset-left,0px)) 0 max(16px,env(safe-area-inset-right,0px));
   gap:10px;
 }
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg2);z-index:51}
+:root[data-theme="light"] .topbar{background:rgba(240,242,255,.80);}
 .topbar h1{font-size:1rem;font-weight:700;flex:1}
 .topbar .sub{font-size:.7rem;color:var(--fg2);font-weight:400;display:block;margin-top:1px}
-.tbtn{background:none;border:none;cursor:pointer;color:var(--accent);font-size:.8rem;font-weight:600;padding:6px 10px;border-radius:var(--rad-sm)}
-/* BOTTOM NAV */
+.tbtn{
+  background:var(--glass);border:1px solid var(--glass-border);
+  color:var(--fg2);font-size:.78rem;font-weight:600;
+  padding:6px 12px;border-radius:var(--rad-xs);cursor:pointer;
+  transition:all .2s;backdrop-filter:blur(8px);
+}
+.tbtn:hover{background:var(--glass2);color:var(--fg);border-color:var(--glass-border2)}
+
+/* ── ALT NAVİGASYON (GLASS) ── */
 .bnav{
   position:fixed;bottom:0;left:0;right:0;z-index:50;
-  background:var(--bg2);border-top:1px solid var(--border);
+  background:rgba(13,15,30,.80);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--glass-border);
   display:flex;height:var(--nav-h);
   padding-bottom:env(safe-area-inset-bottom,0px);
   padding-left:env(safe-area-inset-left,0px);
   padding-right:env(safe-area-inset-right,0px);
 }
-.bnav button{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.62rem;color:var(--fg2);font-weight:500;transition:color .15s}
-.bnav button.on{color:var(--accent)}
+:root[data-theme="light"] .bnav{background:rgba(240,242,255,.82);}
+.bnav button{
+  flex:1;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;font-size:.62rem;color:var(--fg3);font-weight:500;transition:color .18s;
+}
+.bnav button.on{color:var(--g2)}
 .bnav button svg,.bnav button .ni{font-size:1.3rem;line-height:1}
-/* VIEWS */
+
+/* ── VIEWS ── */
 .view{display:none;padding:20px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:640px;margin:0 auto}
 .view.on{display:block}
-/* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
-.card-title{font-size:.95rem;font-weight:700;margin-bottom:14px}
-/* FORMS */
+
+/* ── KARTLAR (GLASS) ── */
+.card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:var(--rad);padding:18px;
+  box-shadow:var(--shadow-sm);margin-bottom:16px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.card-title{font-size:.95rem;font-weight:700;margin-bottom:14px;color:var(--fg)}
+
+/* ── FORM ELEMANLARİ (GLASS) ── */
 label{display:block;font-size:.75rem;font-weight:600;color:var(--fg2);margin-bottom:5px}
-input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--rad-sm);background:var(--bg);color:var(--fg);font-size:.9rem;font-family:inherit;outline:none;transition:border-color .15s}
-input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+input,select,textarea{
+  width:100%;padding:10px 12px;
+  border:1.5px solid var(--glass-border2);
+  border-radius:var(--rad-xs);
+  background:rgba(255,255,255,0.05);
+  color:var(--fg);font-size:.9rem;font-family:inherit;outline:none;
+  transition:border-color .18s,background .18s;
+  backdrop-filter:blur(8px);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--g1);
+  background:rgba(99,102,241,0.08);
+  box-shadow:0 0 0 3px rgba(99,102,241,.18);
+}
+:root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{
+  background:rgba(255,255,255,.7);
+}
 textarea{resize:vertical;min-height:80px}
+select option{background:var(--c2);color:var(--fg)}
 .form-row{margin-bottom:12px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:400px){.form-grid{grid-template-columns:1fr}}
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:var(--rad-sm);border:none;cursor:pointer;font-size:.875rem;font-weight:600;transition:opacity .15s;font-family:inherit}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.bp{background:var(--accent);color:#fff}
-.bp:hover:not(:disabled){background:var(--accent2)}
-.bo{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
-.bd{background:transparent;color:var(--err);border:1.5px solid var(--err)}
-.bg{background:transparent;color:var(--fg2);border:1.5px solid var(--border)}
+
+/* ── BUTONLAR ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:11px 18px;border-radius:var(--rad-xs);border:none;cursor:pointer;
+  font-size:.875rem;font-weight:600;transition:all .2s;font-family:inherit;
+}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* Primary — gradyan */
+.bp{
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(99,102,241,.38);
+}
+.bp:hover:not(:disabled){
+  background:linear-gradient(135deg,var(--g2),#c4b5fd);
+  box-shadow:0 6px 24px rgba(99,102,241,.55);
+  transform:translateY(-1px);
+}
+/* Outline */
+.bo{background:var(--glass);color:var(--g2);border:1.5px solid var(--g1);backdrop-filter:blur(8px)}
+.bo:hover:not(:disabled){background:rgba(99,102,241,.15);border-color:var(--g2)}
+/* Danger */
+.bd{background:rgba(248,113,113,.08);color:var(--err);border:1.5px solid rgba(248,113,113,.35)}
+.bd:hover:not(:disabled){background:rgba(248,113,113,.18)}
+/* Ghost */
+.bg{background:var(--glass);color:var(--fg2);border:1.5px solid var(--glass-border2)}
+.bg:hover:not(:disabled){background:var(--glass2)}
 .bsm{padding:6px 10px;font-size:.75rem}
 .bfull{width:100%}
-/* ALERTS */
-.al{padding:10px 14px;border-radius:var(--rad-sm);font-size:.82rem;line-height:1.5}
-.alok{background:color-mix(in srgb,var(--ok) 12%,transparent);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 30%,transparent)}
-.alerr{background:color-mix(in srgb,var(--err) 10%,transparent);color:var(--err);border:1px solid color-mix(in srgb,var(--err) 25%,transparent)}
-.alwrn{background:color-mix(in srgb,var(--warn) 10%,transparent);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 25%,transparent)}
-.alinfo{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent)}
-/* PIN DISPLAY */
-.pin-box{background:color-mix(in srgb,var(--accent) 10%,transparent);border:2px solid var(--accent);border-radius:var(--rad);padding:14px 20px;text-align:center;margin-bottom:14px}
-.pin-label{font-size:.7rem;font-weight:600;color:var(--fg2);letter-spacing:.08em;text-transform:uppercase}
-.pin-val{font-size:2.8rem;font-weight:700;letter-spacing:.25em;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.1}
-.pin-sub{font-size:.68rem;color:var(--fg2);margin-top:4px}
-/* QR */
+
+/* ── ALERTS ── */
+.al{padding:10px 14px;border-radius:var(--rad-xs);font-size:.82rem;line-height:1.5;backdrop-filter:blur(8px)}
+.alok{background:rgba(52,211,153,.10);color:#6ee7b7;border:1px solid rgba(52,211,153,.25)}
+.alerr{background:rgba(248,113,113,.10);color:#fca5a5;border:1px solid rgba(248,113,113,.25)}
+.alwrn{background:rgba(251,191,36,.10);color:#fde68a;border:1px solid rgba(251,191,36,.25)}
+.alinfo{background:rgba(99,102,241,.12);color:#c7d2fe;border:1px solid rgba(99,102,241,.28)}
+
+/* ── PIN KUTUSU ── */
+.pin-box{
+  background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(167,139,250,.12));
+  border:2px solid rgba(99,102,241,.40);
+  border-radius:var(--rad);padding:16px 20px;text-align:center;margin-bottom:14px;
+  box-shadow:0 0 30px rgba(99,102,241,.20);
+  backdrop-filter:blur(12px);
+}
+.pin-label{font-size:.7rem;font-weight:700;color:var(--fg2);letter-spacing:.12em;text-transform:uppercase}
+.pin-val{
+  font-size:2.8rem;font-weight:700;letter-spacing:.28em;
+  background:linear-gradient(90deg,#a5b4fc,#c4b5fd,#818cf8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-variant-numeric:tabular-nums;line-height:1.15;
+  filter:drop-shadow(0 0 12px rgba(99,102,241,.6));
+}
+.pin-sub{font-size:.68rem;color:var(--fg2);margin-top:6px}
+
+/* ── QR ── */
 .qr-wrap{display:flex;justify-content:center;margin:12px 0}
-.qr-wrap>div canvas,.qr-wrap>div img{border-radius:10px;max-width:220px}
-/* COUNTDOWN */
-.cdown{font-size:.75rem;color:var(--warn);font-weight:600;text-align:center;margin-bottom:10px}
-/* BADGES */
+.qr-wrap>div canvas,.qr-wrap>div img{
+  border-radius:14px;max-width:300px;width:100%;
+  box-shadow:0 0 40px rgba(99,102,241,.35),0 8px 32px rgba(0,0,0,.4);
+  border:3px solid rgba(99,102,241,.30);
+}
+
+/* ── COUNTDOWN ── */
+.cdown{font-size:.75rem;color:#fde68a;font-weight:600;text-align:center;margin-bottom:10px}
+
+/* ── BADGES ── */
 .bdg{display:inline-flex;align-items:center;font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:99px;letter-spacing:.02em}
-.bacc{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
-.bwrn{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
-.berr{background:color-mix(in srgb,var(--err) 15%,transparent);color:var(--err)}
-.binfo{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
-/* LIST ROWS */
-.lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.bacc{background:rgba(52,211,153,.15);color:#6ee7b7}
+.bwrn{background:rgba(251,191,36,.15);color:#fde68a}
+.berr{background:rgba(248,113,113,.15);color:#fca5a5}
+.binfo{background:rgba(99,102,241,.18);color:#c7d2fe}
+
+/* ── LİSTE SATIRLARI ── */
+.lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--glass-border)}
 .lrow:last-child{border-bottom:none}
 .lno{font-size:.7rem;color:var(--fg3);min-width:20px;text-align:right}
 .lname{flex:1;min-width:0}
 .lname .n{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lname .m{font-size:.72rem;color:var(--fg2);margin-top:1px}
 .ltime{font-size:.72rem;color:var(--fg2)}
-.empty{color:var(--fg2);font-size:.82rem;padding:16px 0;text-align:center}
-/* SPINNER */
+.empty{color:var(--fg3);font-size:.82rem;padding:16px 0;text-align:center}
+
+/* ── SPİNNER ── */
 @keyframes spin{to{transform:rotate(360deg)}}
-.spin{display:inline-block;width:18px;height:18px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-/* SECTION HEADER */
+.spin{display:inline-block;width:18px;height:18px;border:2.5px solid var(--glass-border2);border-top-color:var(--g2);border-radius:50%;animation:spin .7s linear infinite}
+
+/* ── SEKSİYON BAŞLIĞI ── */
 .sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sec-hd h2{font-size:.9rem;font-weight:700}
-/* DIVIDER */
-.dvd{height:1px;background:var(--border);margin:14px 0}
-/* TABLE */
+
+/* ── AYRıCı ── */
+.dvd{height:1px;background:var(--glass-border);margin:14px 0}
+
+/* ── TABLO ── */
 .rt{width:100%;border-collapse:collapse;font-size:.78rem}
-.rt th,.rt td{padding:7px 8px;border:1px solid var(--border);text-align:center}
-.rt th{background:color-mix(in srgb,var(--fg) 5%,transparent);font-weight:600;font-size:.7rem}
+.rt th,.rt td{padding:7px 8px;border:1px solid var(--glass-border);text-align:center}
+.rt th{background:rgba(99,102,241,.10);font-weight:600;font-size:.7rem;color:var(--fg2)}
 .rc{text-align:center}
-.rok{color:var(--ok);font-weight:700}
+.rok{color:#6ee7b7;font-weight:700}
 .rno{color:var(--fg3)}
-/* PCT classes */
-.pct-ok{color:var(--ok);font-weight:700}
-.pct-wrn{color:var(--warn);font-weight:700}
-.pct-bad{color:var(--err);font-weight:700}
-/* PROGRESS BAR */
-.pbar-wrap{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:5px}
-.pbar-fill{height:100%;border-radius:99px;transition:width .4s}
-.stu-sum-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+
+/* ── YÜZDE RENKLERİ ── */
+.pct-ok{color:#6ee7b7;font-weight:700}
+.pct-wrn{color:#fde68a;font-weight:700}
+.pct-bad{color:#fca5a5;font-weight:700}
+
+/* ── İLERLEME ÇUBUĞU ── */
+.pbar-wrap{height:5px;background:var(--glass-border);border-radius:99px;overflow:hidden;margin-top:5px}
+.pbar-fill{height:100%;border-radius:99px;transition:width .4s;background:linear-gradient(90deg,var(--g1),var(--g3))}
+.stu-sum-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--glass-border)}
 .stu-sum-row:last-child{border-bottom:none}
 .stu-sum-info{flex:1;min-width:0}
 .stu-sum-name{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stu-sum-no{font-size:.7rem;color:var(--fg2)}
 .stu-sum-pct{font-size:1.1rem;font-weight:700;text-align:right;min-width:48px;line-height:1.2}
-/* LOGIN CARD */
+
+/* ── GİRİŞ KARTI ── */
 .login-card{max-width:380px;margin:40px auto}
-.google-btn{background:#fff;color:#1a1d23;border:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 20px;border-radius:var(--rad-sm);cursor:pointer;font-size:.9rem;font-weight:600;font-family:inherit;width:100%;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:box-shadow .15s}
-.google-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.google-btn{
+  background:linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.06));
+  color:var(--fg);
+  border:1.5px solid var(--glass-border2);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 20px;border-radius:var(--rad-xs);cursor:pointer;
+  font-size:.9rem;font-weight:600;font-family:inherit;width:100%;
+  box-shadow:var(--shadow-sm);transition:all .2s;
+  backdrop-filter:blur(16px);
+}
+.google-btn:hover{
+  background:rgba(99,102,241,.18);
+  border-color:var(--g1);
+  box-shadow:0 6px 24px rgba(99,102,241,.30);
+  transform:translateY(-1px);
+}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
-/* SECTION TABS */
+
+/* ── SEKSİYON TABLARİ ── */
 .stabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.stab{padding:6px 12px;border-radius:var(--rad-sm);font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--fg2);font-family:inherit;transition:all .15s}
-.stab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-/* CHART */
+.stab{
+  padding:6px 14px;border-radius:var(--rad-xs);font-size:.78rem;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--glass-border2);
+  background:var(--glass);color:var(--fg2);font-family:inherit;
+  transition:all .18s;backdrop-filter:blur(8px);
+}
+.stab.on{
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  color:#fff;border-color:transparent;
+  box-shadow:0 4px 14px rgba(99,102,241,.40);
+}
+
+/* ── CHART ── */
 #att-chart-wrap{height:220px;margin-top:10px}
-/* ID PREVIEW */
-#id-preview{max-width:100%;border-radius:var(--rad-sm);margin-top:10px}
-/* SESSION CODE BIG */
-.sess-code{font-size:1.4rem;font-weight:700;letter-spacing:.18em;color:var(--accent);font-variant-numeric:tabular-nums}
-/* ACTIVE PROF SESSION CARD */
-.act-card{border:2px solid var(--ok);background:color-mix(in srgb,var(--ok) 6%,var(--bg2));border-radius:var(--rad);padding:16px;margin-bottom:12px}
-/* TOOLTIP */
-.hint{font-size:.72rem;color:var(--fg2);margin-top:4px}
+
+/* ── ID PREVIEW ── */
+#id-preview{max-width:100%;border-radius:var(--rad-xs);margin-top:10px}
+
+/* ── OTURUM KODU ── */
+.sess-code{
+  font-size:1.5rem;font-weight:700;letter-spacing:.20em;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(90deg,#a5b4fc,#c4b5fd);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ── AKTİF HOCa OTURUM KARTI ── */
+.act-card{
+  border:2px solid rgba(52,211,153,.35);
+  background:rgba(52,211,153,.07);
+  border-radius:var(--rad);padding:16px;margin-bottom:12px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 24px rgba(52,211,153,.12);
+}
+
+/* ── İPUCU ── */
+.hint{font-size:.72rem;color:var(--fg3);margin-top:4px}
 </style>
 </head>
 <body>
@@ -163,12 +330,11 @@ textarea{resize:vertical;min-height:80px}
 <!-- Firebase v8 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-database.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-auth.min.js"></script>
 <!-- QR + ZXing + Chart + EmailJS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.3/umd/index.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- EmailJS removed — using Google Apps Script for email -->
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -191,7 +357,7 @@ textarea{resize:vertical;min-height:80px}
 </div>
 
 <!-- ═══ STUDENT VIEW ═══ -->
-<div class="view" id="view-student">
+<div class="view on" id="view-student">
   <div class="card" id="stnosess" style="display:none">
     <div class="card-title">📋 Yoklama</div>
     <div class="al alinfo">Şu anda aktif oturum bulunmuyor. Hocaya danışın.</div>
@@ -282,12 +448,11 @@ textarea{resize:vertical;min-height:80px}
   <div id="sess-login-prompt" style="display:none">
     <div class="card login-card" style="max-width:100%;margin:0">
       <div class="card-title" style="text-align:center;font-size:1.1rem">🎓 Hoca Girişi</div>
-      <p style="color:var(--fg2);font-size:.85rem;text-align:center;margin-bottom:20px;line-height:1.6">E-posta ve şifrenizle giriş yapın.</p>
+      <p style="color:var(--fg2);font-size:.85rem;text-align:center;margin-bottom:20px;line-height:1.6">E-posta adresiniz ve sistem PIN kodunu girin.</p>
       <div style="display:flex;flex-direction:column;gap:10px">
         <input id="login-email" type="email" placeholder="E-posta (örn: hicengiz@pau.edu.tr)" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box">
-        <input id="login-pass" type="password" placeholder="Şifre" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box" onkeydown="if(event.key==='Enter')signInEmail()">
-        <button class="btn bp" onclick="signInEmail()" style="width:100%;padding:12px;font-size:.95rem">Giriş Yap</button>
-        <button class="btn bd" onclick="sendResetEmail()" style="width:100%;font-size:.8rem">Şifremi Unuttum</button>
+        <input id="login-pin" type="password" placeholder="PIN kodu" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box" onkeydown="if(event.key==='Enter')signInPin()">
+        <button class="btn bp" onclick="signInPin()" style="width:100%;padding:12px;font-size:.95rem">Giriş Yap</button>
       </div>
       <div id="login-err" style="margin-top:12px"></div>
     </div>
@@ -325,6 +490,10 @@ textarea{resize:vertical;min-height:80px}
         <input type="number" id="new-dur" min="0" max="480" value="0" placeholder="0">
       </div>
       <div class="form-row" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="new-idreq" style="width:auto">
+        <label for="new-idreq" style="margin:0;cursor:pointer">🪪 Kimlik doğrulama gerektir (öğrenci kimliği taratılır)</label>
+      </div>
+      <div class="form-row" style="display:flex;align-items:center;gap:10px">
         <input type="checkbox" id="new-loc" style="width:auto" onchange="document.getElementById('loc-radius-row').style.display=this.checked?'block':'none'">
         <label for="new-loc" style="margin:0;cursor:pointer">📍 Konum kilidi ekle</label>
       </div>
@@ -340,7 +509,7 @@ textarea{resize:vertical;min-height:80px}
 </div>
 
 <!-- ═══ ACTIVE SESSION DETAIL (overlays session view) ═══ -->
-<div class="view" id="view-active" style="display:none">
+<div class="view" id="view-active">
   <div class="act-card" id="active-header">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px">
       <div style="min-width:0">
@@ -479,6 +648,7 @@ textarea{resize:vertical;min-height:80px}
       <button class="btn bp" onclick="createCourse()">Kaydet</button>
       <button class="btn bg" onclick="hideNewCourse()">İptal</button>
     </div>
+    <div id="course-err" style="margin-top:6px"></div>
   </div>
   <!-- Course detail -->
   <div class="card" id="course-detail" style="display:none">
@@ -512,8 +682,8 @@ textarea{resize:vertical;min-height:80px}
     <ul id="cd-list" style="list-style:none"></ul>
     <div class="dvd"></div>
     <div class="card-title" style="font-size:.82rem">CSV ile Öğrenci Aktar</div>
-    <p class="hint">Format: öğrenci_no,ad_soyad (her satıra bir öğrenci)</p>
-    <textarea id="csv-input" style="margin-top:8px;font-family:monospace;font-size:.78rem" placeholder="2021001,Ali Veli&#10;2021002,Ayşe Fatma"></textarea>
+    <p class="hint">Format: öğrenci_no,ad_soyad,bölüm,email (bölüm ve email isteğe bağlı, her satıra bir öğrenci)</p>
+    <textarea id="csv-input" style="margin-top:8px;font-family:monospace;font-size:.78rem" placeholder="17270103,Muhammed Ali Erdem,Anestezi,merdem17@posta.pau.edu.tr&#10;17270104,Ayşe Fatma Kaya,Anestezi,afkaya18@posta.pau.edu.tr"></textarea>
     <div id="csv-msg" style="margin:8px 0"></div>
     <button class="btn bp bsm" onclick="importCsv()">İçe Aktar</button>
   </div>
@@ -535,38 +705,66 @@ textarea{resize:vertical;min-height:80px}
       </div>
       <div id="prof-err" style="margin-top:8px"></div>
     </div>
-    <p class="hint" style="margin-bottom:10px">Listedeki hocalar Google hesaplarıyla sisteme giriş yapabilir.</p>
+    <p class="hint" style="margin-bottom:10px">Listedeki hocalar <strong>PAU e-postası + sistem PIN</strong> ile giriş yapabilir.</p>
     <ul id="prof-list" style="list-style:none"></ul>
+    <div class="dvd" style="margin-top:12px"></div>
+    <div class="card-title" style="font-size:.82rem">CSV ile Toplu Hoca Aktar</div>
+    <p class="hint">Format: ad_soyad<span style="font-family:monospace">\t</span>email (TAB ile ayrılmış, her satıra bir hoca)</p>
+    <textarea id="prof-csv-input" style="margin-top:8px;font-family:monospace;font-size:.78rem" placeholder="AHMET YILMAZ&#9;ayilmaz@pau.edu.tr&#10;FATMA KAYA&#9;fkaya@pau.edu.tr"></textarea>
+    <div id="prof-csv-msg" style="margin:8px 0"></div>
+    <button class="btn bp bsm" onclick="importProfCsv()">Hocaları Aktar</button>
   </div>
 </div>
 
 <!-- ═══ SETTINGS VIEW ═══ -->
 <div class="view" id="view-settings">
   <div class="card">
-    <div class="card-title">📧 E-posta Ayarları (EmailJS)</div>
-    <p class="hint" style="margin-bottom:14px">EmailJS ücretsiz hesap açın (emailjs.com) ve bir e-posta şablonu oluşturun. Aşağıdaki bilgileri bir kez girin, sistem her oturum kapanışında otomatik mail atar.</p>
-    <div class="form-row"><label>Service ID</label><input id="svc-id" placeholder="service_xxxxxxx"></div>
-    <div class="form-row"><label>Template ID</label><input id="tmpl-id" placeholder="template_xxxxxxx"></div>
-    <div class="form-row"><label>Public Key</label><input id="pub-key" placeholder="xxxxxxxxxxxxxxxxxxxx"></div>
+    <div class="card-title">📧 E-posta Ayarları</div>
+    <p class="hint" style="margin-bottom:14px">Google Apps Script ile ücretsiz, sınırsız mail gönderin. Kurulum için aşağıya tıklayın. Script URL'sini bir kez girin — sistem her oturum kapanışında otomatik mail atar.</p>
+    <div class="form-row">
+      <label>Google Apps Script URL</label>
+      <input id="script-url" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:.8rem">
+    </div>
     <div class="form-row"><label>Admin E-posta (ek alıcı)</label><input id="admin-email" placeholder="admin@pau.edu.tr" value="hicengiz@pau.edu.tr"></div>
     <div id="email-settings-msg" style="margin-bottom:10px"></div>
     <button class="btn bp" onclick="saveEmailSettings()">Kaydet</button>
     <button class="btn bg bsm" style="margin-left:8px" onclick="testEmail()">Test Gönder</button>
   </div>
   <div class="card">
-    <div class="card-title">📧 EmailJS Şablon Değişkenleri</div>
-    <p class="hint" style="margin-bottom:8px">Şablonunuzda bu değişkenleri kullanın:</p>
-    <div style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-family:monospace;font-size:.75rem;line-height:2">
-      <div><strong>{{to_email}}</strong> — Alıcı e-posta</div>
-      <div><strong>{{prof_name}}</strong> — Dersi açan hoca</div>
-      <div><strong>{{session_name}}</strong> — Oturum adı</div>
-      <div><strong>{{date_str}}</strong> — Tarih</div>
-      <div><strong>{{time_str}}</strong> — Saat</div>
-      <div><strong>{{attendance_count}}</strong> — Katılan sayısı</div>
-      <div><strong>{{attendance_list}}</strong> — Katılanlar listesi</div>
-      <div><strong>{{course_name}}</strong> — Ders adı</div>
-      <div><strong>{{sorumlu_name}}</strong> — Sorumlu hocanın adı</div>
-    </div>
+    <div class="card-title">⚙️ Google Apps Script Kurulumu</div>
+    <p class="hint" style="margin-bottom:10px">Aşağıdaki adımları bir kez yapın (5 dakika):</p>
+    <ol style="padding-left:1.2rem;font-size:.82rem;line-height:2;color:var(--fg2)">
+      <li><a href="https://script.google.com" target="_blank" style="color:var(--accent)">script.google.com</a> → Yeni Proje</li>
+      <li>Aşağıdaki kodu yapıştırın ve kaydedin</li>
+      <li>Dağıt → Web uygulaması olarak dağıt → Erişim: <strong>Herkes</strong></li>
+      <li>Oluşan URL'yi yukarıya yapıştırın</li>
+    </ol>
+    <pre style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-size:.72rem;overflow-x:auto;margin-top:8px;line-height:1.6;white-space:pre-wrap">function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var recipients = data.recipients || [];
+    var subject = data.subject || 'Yoklama Raporu';
+    var body = data.body || '';
+    recipients.forEach(function(email) {
+      try { GmailApp.sendEmail(email, subject, body); } catch(err) {}
+    });
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: false, error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</pre>
+  </div>
+  <div class="card" id="pin-mgmt-card">
+    <div class="card-title">🔑 Sistem PIN Yönetimi</div>
+    <p class="hint" style="margin-bottom:14px">Hocaların sisteme giriş yapabilmesi için kullanacağı PIN kodunu buradan belirleyin. Tüm hocalar aynı PIN ile giriş yapar.</p>
+    <div class="form-row"><label>Mevcut PIN</label><span id="current-pin-display" style="font-family:monospace;font-size:1.1rem;font-weight:600;color:var(--accent)">Yükleniyor…</span></div>
+    <div class="form-row"><label>Yeni PIN</label><input id="new-system-pin" type="text" maxlength="20" placeholder="Yeni PIN girin" style="width:100%;padding:10px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.9rem;box-sizing:border-box"></div>
+    <div id="pin-mgmt-msg" style="margin-bottom:10px"></div>
+    <button class="btn bp" onclick="saveSystemPin()">PIN Kaydet</button>
   </div>
   <div class="card">
     <div class="card-title">🎨 Tema</div>
@@ -593,7 +791,7 @@ const FB_CFG={
 };
 
 /* ── GLOBALS ── */
-let db,auth,curUser=null,isAdmin=false,isProfessor=false;
+let db,curUser=null,isAdmin=false,isProfessor=false;
 let courses={},professors={},sessions=[],studentMap={};
 let activeSessions=[];  // professor's active sessions
 let curActiveCode=null;  // which session is displayed in view-active
@@ -617,6 +815,18 @@ function getDeviceId(){try{let id=localStorage.getItem('pau_dv');if(!id){id=cryp
 function saveSessionTemplate(d){try{localStorage.setItem('pau_tmpl',JSON.stringify(d));}catch{}}
 function loadSessionTemplate(){try{const s=localStorage.getItem('pau_tmpl');return s?JSON.parse(s):null;}catch{return null;}}
 
+/* ── FIREBASE REST HELPERS (no Firebase Auth required) ── */
+const FB=FB_CFG.databaseURL;
+const fbGet=async p=>{const r=await fetch(FB+p+'.json');return r.json();};
+const fbPut=async(p,d)=>{const r=await fetch(FB+p+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+const fbPatch=async(p,d)=>{const r=await fetch(FB+p+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+const fbDel=async p=>{const r=await fetch(FB+p+'.json',{method:'DELETE'});if(!r.ok)throw new Error('HTTP '+r.status);};
+
+/* ── POLLING (replaces Firebase SDK real-time listeners) ── */
+const _polls={};
+function _poll(key,ms,fn){if(_polls[key])clearInterval(_polls[key]);fn();_polls[key]=setInterval(fn,ms);}
+function _stopPoll(key){if(_polls[key]){clearInterval(_polls[key]);delete _polls[key];}}
+
 async function computePin(code,off=0){
   const min=Math.floor(Date.now()/60000)+off;
   const enc=new TextEncoder().encode(code+'|'+min);
@@ -632,7 +842,7 @@ async function updatePin(){
   const next=await computePin(curActiveCode,1);
   document.getElementById('act-pin').textContent=pin;
   const sec=60-new Date().getSeconds();
-  document.getElementById('act-pin-sub').textContent=`Sonraki PIN: ${next} (${sec}s)`;
+  document.getElementById('act-pin-sub').textContent=`${sec}s sonra değişir`;
 }
 
 /* ── THEME ── */
@@ -655,7 +865,7 @@ function renderQr(code){
   const wrap=document.getElementById('act-qr');
   wrap.innerHTML='';
   const url=location.origin+location.pathname+'#'+code;
-  qrObj=new QRCode(wrap,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M});
+  qrObj=new QRCode(wrap,{text:url,width:300,height:300,correctLevel:QRCode.CorrectLevel.M});
 }
 async function downloadQr(){
   const sess=activeSessions.find(s=>s.code===curActiveCode);
@@ -672,83 +882,89 @@ function nav(v){
   curView=v;
   ['student','session','active','report','courses','profs','settings'].forEach(x=>{
     const el=document.getElementById('view-'+x);
-    if(el)el.classList.toggle('on',x===v);
+    if(el){el.classList.toggle('on',x===v);el.style.display='';}// inline style'ı temizle, CSS class kazansın
     const nb=document.getElementById('nav-'+x);
     if(nb)nb.classList.toggle('on',x===v);
   });
   if(v==='report'){renderHist();renderChart();buildMatrixCourseFilter();}
-  if(v==='courses')renderCourses();
+  if(v==='courses'){renderCourses();populateSorumluSelects();}
   if(v==='profs')renderProfs();
-  if(v==='settings')loadEmailSettings();
+  if(v==='settings'){loadEmailSettings();if(isAdmin)loadSystemPinDisplay();}
   if(v==='session'){renderMyActiveSessions();initNewForm();}
 }
 
-/* ── AUTH ── */
-async function signInEmail(){
+/* ── AUTH (PIN tabanlı — Firebase Auth yok) ── */
+const ADMIN_PIN_KEY='pau_pin_login';
+
+async function signInPin(){
   const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
-  const pass=document.getElementById('login-pass').value||'';
+  const pin=(document.getElementById('login-pin').value||'').trim();
   const errEl=document.getElementById('login-err');
-  if(!email||!pass){errEl.innerHTML='<div class="al alerr">E-posta ve şifre giriniz.</div>';return;}
+  if(!email||!pin){errEl.innerHTML='<div class="al alerr">E-posta ve PIN giriniz.</div>';return;}
   errEl.innerHTML='<div class="al alinfo">Giriş yapılıyor…</div>';
   try{
-    await auth.signInWithEmailAndPassword(email,pass);
+    // Fetch settings from Firebase (contains the PIN hash)
+    const storedPin=await fbGet('/settings/pin');
+    // Admin emails bypass PIN if pin not set yet (first login)
+    const isAdminEmail=ADMIN_EMAILS.includes(email);
+    if(!storedPin&&!isAdminEmail){errEl.innerHTML='<div class="al alerr">Sistem PIN\'i henüz ayarlanmamış. Admin ile iletişime geçin.</div>';return;}
+    if(storedPin&&pin!==storedPin){errEl.innerHTML='<div class="al alerr">PIN kodu hatalı.</div>';return;}
+    // Check if email is in professors list or admin
+    const profsData=(await fbGet('/professors'))||{};
+    const inList=Object.values(profsData).some(p=>p.email===email);
+    if(!isAdminEmail&&!inList){errEl.innerHTML='<div class="al alerr">Bu e-posta sisteme kayıtlı değil. Admin\'e başvurun.</div>';return;}
+    // "Sign in" — store in localStorage
+    try{localStorage.setItem(ADMIN_PIN_KEY,JSON.stringify({email,ts:Date.now()}));}catch{}
     errEl.innerHTML='';
+    applyPinLogin(email);
   }catch(e){
-    let msg='Giriş hatası.';
-    if(e.code==='auth/user-not-found'||e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')msg='E-posta veya şifre hatalı.';
-    else if(e.code==='auth/too-many-requests')msg='Çok fazla deneme. Lütfen bekleyin.';
-    else if(e.code==='auth/invalid-email')msg='Geçersiz e-posta adresi.';
-    errEl.innerHTML=`<div class="al alerr">${msg}</div>`;
+    errEl.innerHTML=`<div class="al alerr">Bağlantı hatası: ${esc(e.message)}</div>`;
   }
 }
-async function sendResetEmail(){
-  const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
-  const errEl=document.getElementById('login-err');
-  if(!email){errEl.innerHTML='<div class="al alerr">Önce e-posta adresinizi girin.</div>';return;}
-  try{
-    await auth.sendPasswordResetEmail(email);
-    errEl.innerHTML='<div class="al alok">Şifre sıfırlama e-postası gönderildi. E-postanızı kontrol edin.</div>';
-  }catch(e){
-    errEl.innerHTML=`<div class="al alerr">Gönderilemedi: ${esc(e.message)}</div>`;
-  }
+
+function applyPinLogin(email){
+  curUser={email,uid:'pin_'+email.replace(/[^a-z0-9]/g,'_')};
+  isAdmin=ADMIN_EMAILS.includes(email);
+  isProfessor=true;
+  applyRole();
+  loadEmailSettings();
+  listenMyActiveSessions();
+  listenSessions();
+  listenCourses();
+  listenProfessors();
+  document.getElementById('top-sub').textContent=email;
+  document.getElementById('login-btn').textContent='Çıkış';
+  nav('session');
 }
-function signOut(){auth.signOut();}
+
+function signOut(){
+  curUser=null;isAdmin=false;isProfessor=false;
+  try{localStorage.removeItem(ADMIN_PIN_KEY);}catch{}
+  ['professors','my-active-sessions','sessions','courses'].forEach(k=>_stopPoll(k));
+  Object.keys(_polls).filter(k=>k.startsWith('att-')).forEach(k=>_stopPoll(k));
+  profListeners={};
+  applyRole();
+  document.getElementById('top-sub').textContent='';
+  document.getElementById('login-btn').textContent='Hoca Girişi';
+  nav('student');
+}
 
 function handleAuthBtn(){
   if(curUser)signOut();
   else{nav('session');}
 }
 
-async function onAuthChange(user){
-  curUser=user;
-  if(user){
-    const email=user.email||'';
-    isAdmin=ADMIN_EMAILS.includes(email.toLowerCase());
-    // Check professors list (avoid orderByChild when path may not exist)
-    try{
-      const snap=await db.ref('professors').once('value');
-      const profsData=snap.val()||{};
-      const inList=Object.values(profsData).some(p=>p.email===email.toLowerCase());
-      isProfessor=isAdmin||inList;
-    }catch(e){isProfessor=isAdmin;}
-    applyRole();
-    loadEmailSettings();
-    listenMyActiveSessions();
-    listenSessions();
-    listenCourses();
-    listenProfessors();
-    document.getElementById('top-sub').textContent=email;
-    document.getElementById('login-btn').textContent='Çıkış';
-    document.getElementById('login-btn').style.display='';
-  }else{
-    isAdmin=false;isProfessor=false;
-    curUser=null;
-    applyRole();
-    document.getElementById('top-sub').textContent='';
-    document.getElementById('login-btn').textContent='Hoca Girişi';
-    document.getElementById('login-btn').style.display='';
-    if(curView!=='student')nav('student');
-  }
+function onAuthChange(){
+  // PIN auth: check localStorage on load
+  try{
+    const saved=JSON.parse(localStorage.getItem(ADMIN_PIN_KEY)||'null');
+    if(saved&&saved.email&&(Date.now()-saved.ts)<86400000*7){
+      applyPinLogin(saved.email);return;
+    }
+  }catch{}
+  // No saved session — show logged-out state
+  applyRole();
+  nav('student');
 }
 
 function applyRole(){
@@ -762,29 +978,74 @@ function applyRole(){
   const pv=document.getElementById('sess-prof-view');
   if(pr)pr.style.display=(!curUser)?'block':'none';
   if(pv)pv.style.display=curUser?'block':'none';
+  // Show PIN management only to admins
+  const pc=document.getElementById('pin-mgmt-card');
+  if(pc)pc.style.display=isAdmin?'':'none';
 }
 
 /* ── PROFESSORS ── */
 function listenProfessors(){
-  db.ref('professors').on('value',snap=>{
-    professors=snap.val()||{};
-    renderProfs();
-    populateSorumluSelects();
+  _poll('professors',30000,async()=>{
+    try{const d=await fbGet('/professors');professors=d||{};renderProfs();populateSorumluSelects();}catch{}
   });
 }
 function renderProfs(){
   const list=document.getElementById('prof-list');
   if(!list)return;
-  const entries=Object.entries(professors);
+  const entries=Object.entries(professors).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   if(!entries.length){list.innerHTML='<li class="empty">Henüz hoca eklenmedi.</li>';return;}
   list.innerHTML=entries.map(([uid,p])=>`
-    <li class="lrow">
+    <li class="lrow" id="profrow-${esc(uid)}">
       <div class="lname">
         <div class="n">${esc(p.name)}</div>
-        <div class="m">${esc(p.email||'')}${uid===ADMIN_EMAILS[0]?' · Admin':''}</div>
+        <div class="m">${esc(p.email||'')}${ADMIN_EMAILS.includes(p.email)?' · Admin':''}</div>
       </div>
-      ${isAdmin?`<button class="btn bd bsm" onclick="delProf(${JSON.stringify(uid)})">✕</button>`:''}
+      ${isAdmin?`
+        <button class="btn bg bsm" onclick="showEditProf(${JSON.stringify(uid)})" title="Düzenle">✏️</button>
+        <button class="btn bd bsm" onclick="delProf(${JSON.stringify(uid)})" title="Sil">✕</button>
+      `:''}
+    </li>
+    <li id="profedit-${esc(uid)}" style="display:none;padding:10px 0;border-bottom:1px solid var(--glass-border)">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="form-row" style="margin:0"><label>Ad Soyad</label><input id="ep-name-${esc(uid)}" value="${esc(p.name)}"></div>
+        <div class="form-row" style="margin:0"><label>E-posta</label><input id="ep-email-${esc(uid)}" type="email" value="${esc(p.email||'')}"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn bp bsm" onclick="saveEditProf(${JSON.stringify(uid)})">💾 Kaydet</button>
+          <button class="btn bg bsm" onclick="hideEditProf(${JSON.stringify(uid)})">İptal</button>
+        </div>
+        <div id="ep-msg-${esc(uid)}"></div>
+      </div>
     </li>`).join('');
+}
+function showEditProf(uid){
+  // Diğer açık editörleri kapat
+  document.querySelectorAll('[id^="profedit-"]').forEach(el=>el.style.display='none');
+  const el=document.getElementById('profedit-'+uid);
+  if(el)el.style.display='block';
+}
+function hideEditProf(uid){
+  const el=document.getElementById('profedit-'+uid);
+  if(el)el.style.display='none';
+}
+async function saveEditProf(uid){
+  const nameEl=document.getElementById('ep-name-'+uid);
+  const emailEl=document.getElementById('ep-email-'+uid);
+  const msgEl=document.getElementById('ep-msg-'+uid);
+  const name=(nameEl.value||'').trim();
+  const email=(emailEl.value||'').trim().toLowerCase();
+  if(!name||!email){msgEl.innerHTML='<div class="al alerr">Ad ve e-posta zorunlu.</div>';return;}
+  msgEl.innerHTML='<div class="al alinfo">Kaydediliyor…</div>';
+  try{
+    const existing=professors[uid]||{};
+    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...existing,name,email})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    msgEl.innerHTML='<div class="al alok">Kaydedildi ✓</div>';
+    setTimeout(()=>hideEditProf(uid),1200);
+  }catch(e){
+    msgEl.innerHTML='<div class="al alerr">Hata: '+esc(e.message)+'</div>';
+  }
 }
 function showNewProf(){document.getElementById('new-prof-form').style.display='block';}
 async function addProf(){
@@ -794,43 +1055,63 @@ async function addProf(){
   setMsg('prof-err','alinfo','Ekleniyor…');
   try{
     const uid='prof_'+email.replace(/[^a-z0-9]/g,'_');
-    await db.ref('professors/'+uid).set({name,email,addedAt:Date.now(),addedBy:curUser?.email||''});
+    const data={name,email,addedAt:Date.now(),addedBy:curUser.email||''};
+    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    professors[uid]=data;
     document.getElementById('np-name').value='';document.getElementById('np-email').value='';
     document.getElementById('new-prof-form').style.display='none';
     setMsg('prof-err','alok','Hoca eklendi.');
+    renderProfs();
+    _fillSorumluSelects();
   }catch(e){
     setMsg('prof-err','alerr','Eklenemedi: '+e.message);
   }
 }
 async function delProf(uid){
   if(!confirm('Bu hocayı silmek istiyor musunuz?'))return;
-  await db.ref('professors/'+uid).remove();
+  try{
+    await fetch(FB_CFG.databaseURL+'/professors/'+uid+'.json',{method:'DELETE'});
+    delete professors[uid];
+    renderProfs();
+    _fillSorumluSelects();
+  }catch(e){alert('Silinemedi: '+e.message);}
 }
-function populateSorumluSelects(){
+function _fillSorumluSelects(){
   const opts='<option value="">— Seçin —</option>'+Object.entries(professors).map(([uid,p])=>
     `<option value="${esc(uid)}" data-name="${esc(p.name)}" data-email="${esc(p.email||'')}">${esc(p.name)}</option>`).join('');
   ['nc-sorumlu','edit-sorumlu-sel'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+function populateSorumluSelects(){
+  if(Object.keys(professors).length){_fillSorumluSelects();return;}
+  // Hocalar henüz yüklenmediyse REST API'den direkt çek
+  fetch(FB_CFG.databaseURL+'/professors.json')
+    .then(r=>r.ok?r.json():null)
+    .then(data=>{if(data&&typeof data==='object')professors=data;_fillSorumluSelects();})
+    .catch(()=>_fillSorumluSelects());
 }
 
 /* ── MY ACTIVE SESSIONS ── */
 function listenMyActiveSessions(){
   if(!curUser)return;
-  db.ref('sessions').on('value',snap=>{
-    const all=snap.val()||{};
-    activeSessions=Object.values(all).filter(s=>s.active&&(isAdmin||s.profUid===curUser.uid||s.profEmail===curUser.email));
-    renderMyActiveSessions();
-    // If viewing active and session still active, update
-    if(curActiveCode){
-      const still=activeSessions.find(s=>s.code===curActiveCode);
-      if(!still&&curView==='active'){nav('session');}
-    }
-    // Update attendance listeners
-    activeSessions.forEach(s=>{
-      if(!profListeners[s.code]){
-        profListeners[s.code]=true;
-        if(s.code===curActiveCode)listenAtt(s.code);
+  _poll('my-active-sessions',5000,async()=>{
+    try{
+      const all=await fbGet('/sessions');
+      activeSessions=Object.values(all||{}).filter(s=>s.active&&(isAdmin||s.profUid===curUser.uid||s.profEmail===curUser.email));
+      renderMyActiveSessions();
+      if(curActiveCode){
+        const still=activeSessions.find(s=>s.code===curActiveCode);
+        if(!still&&curView==='active'){nav('session');}
       }
-    });
+      activeSessions.forEach(s=>{
+        if(!profListeners[s.code]){
+          profListeners[s.code]=true;
+          if(s.code===curActiveCode)listenAtt(s.code);
+        }
+      });
+    }catch{}
   });
 }
 
@@ -861,6 +1142,7 @@ let attTab='present';   // 'present' | 'all'
 
 function openActiveSession(code){
   curActiveCode=code;
+  nav('active'); // önce ekrana geç, veri yoksa boş görünür
   const sess=activeSessions.find(s=>s.code===code);
   if(!sess)return;
   attTab='present';
@@ -883,7 +1165,6 @@ function openActiveSession(code){
     document.getElementById('bulk-actions').style.display='none';
     document.getElementById('att-view-tabs').style.display='none';
   }
-  nav('active');
   updateActiveHeader(sess);
   renderQr(code);
   listenAtt(code);
@@ -924,6 +1205,7 @@ function initNewForm(){
     if(tmpl.dur!=null)document.getElementById('new-dur').value=tmpl.dur;
     if(tmpl.radius!=null)document.getElementById('new-radius').value=tmpl.radius;
     if(tmpl.loc){document.getElementById('new-loc').checked=true;document.getElementById('loc-radius-row').style.display='block';}
+    if(tmpl.idReq)document.getElementById('new-idreq').checked=true;
   }
 }
 
@@ -935,6 +1217,7 @@ async function createSession(){
   const date=document.getElementById('new-date').value;
   const time=document.getElementById('new-time').value;
   const dur=parseInt(document.getElementById('new-dur').value)||0;
+  const useIdReq=document.getElementById('new-idreq').checked;
   const useLoc=document.getElementById('new-loc').checked;
   const radius=parseInt(document.getElementById('new-radius').value)||100;
   const errEl=document.getElementById('crerr');errEl.style.display='none';
@@ -959,6 +1242,7 @@ async function createSession(){
       courseId:cid||null,
       courseName:course?.name||null,
       createdAt:Date.now(),active:true,
+      idRequired:useIdReq,
       duration:dur||null,closesAt:closesAt||null,
       profUid:curUser.uid,
       profEmail:curUser.email,
@@ -966,8 +1250,10 @@ async function createSession(){
       emailSent:false,
       ...locData
     };
-    await db.ref('sessions/'+code).set({...sess,attendance:{}});
-    saveSessionTemplate({dur,loc:useLoc,radius});
+    const dbUrl=FB_CFG.databaseURL+'/sessions/'+code+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sess,attendance:{}})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    saveSessionTemplate({dur,loc:useLoc,radius,idReq:useIdReq});
     document.getElementById('new-name').value='';
     // Navigate to the new active session
     curActiveCode=code;
@@ -994,105 +1280,130 @@ async function closeSession(){
   const btn=document.getElementById('close-btn');
   btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
   try{
-    await db.ref('sessions/'+curActiveCode).update({active:false,closedAt:Date.now()});
+    const resp=await fetch(FB_CFG.databaseURL+'/sessions/'+curActiveCode+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:false,closedAt:Date.now()})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     await sendSessionEmail(sess);
     nav('session');
   }catch(e){alert('Hata: '+e.message);}
   finally{btn.innerHTML='⏹ Oturumu Kapat';btn.disabled=false;}
 }
 
-/* ── EMAIL ── */
-async function loadEmailSettings(){
+/* ── SYSTEM PIN MANAGEMENT ── */
+async function loadSystemPinDisplay(){
   try{
-    const snap=await db.ref('settings/email').once('value');
-    emailCfg=snap.val()||{};
-  }catch{}
+    const pin=await fbGet('/settings/pin');
+    const el=document.getElementById('current-pin-display');
+    if(el)el.textContent=pin?pin:'(henüz ayarlanmamış)';
+  }catch(e){
+    const el=document.getElementById('current-pin-display');
+    if(el)el.textContent='Yüklenemedi';
+  }
 }
+async function saveSystemPin(){
+  const pin=(document.getElementById('new-system-pin').value||'').trim();
+  if(!pin){setMsg('pin-mgmt-msg','alerr','PIN boş olamaz.');return;}
+  setMsg('pin-mgmt-msg','alinfo','Kaydediliyor…');
+  try{
+    const dbUrl=FB_CFG.databaseURL+'/settings/pin.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(pin)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    document.getElementById('new-system-pin').value='';
+    document.getElementById('current-pin-display').textContent=pin;
+    setMsg('pin-mgmt-msg','alok','PIN kaydedildi. Hocalar bu PIN ile giriş yapabilir.');
+  }catch(e){setMsg('pin-mgmt-msg','alerr','Hata: '+e.message);}
+}
+
+/* ── EMAIL ── */
 async function saveEmailSettings(){
   const cfg={
-    serviceId:document.getElementById('svc-id').value.trim(),
-    templateId:document.getElementById('tmpl-id').value.trim(),
-    publicKey:document.getElementById('pub-key').value.trim(),
+    scriptUrl:document.getElementById('script-url').value.trim(),
     adminEmail:document.getElementById('admin-email').value.trim()||'hicengiz@pau.edu.tr'
   };
   try{
-    await db.ref('settings/email').set(cfg);
+    await fbPut('/settings/email',cfg);
     emailCfg=cfg;
     setMsg('email-settings-msg','alok','Ayarlar kaydedildi.');
-    if(emailCfg.publicKey)emailjs.init(emailCfg.publicKey);
   }catch(e){setMsg('email-settings-msg','alerr','Hata: '+e.message);}
 }
 function loadEmailSettingsToForm(){
-  if(emailCfg.serviceId)document.getElementById('svc-id').value=emailCfg.serviceId;
-  if(emailCfg.templateId)document.getElementById('tmpl-id').value=emailCfg.templateId;
-  if(emailCfg.publicKey)document.getElementById('pub-key').value=emailCfg.publicKey;
+  if(emailCfg.scriptUrl)document.getElementById('script-url').value=emailCfg.scriptUrl;
   if(emailCfg.adminEmail)document.getElementById('admin-email').value=emailCfg.adminEmail;
 }
 async function loadEmailSettings(){
   try{
-    const snap=await db.ref('settings/email').once('value');
-    emailCfg=snap.val()||{};
+    const d=await fbGet('/settings/email');
+    emailCfg=d||{};
     loadEmailSettingsToForm();
-    if(emailCfg.publicKey)emailjs.init(emailCfg.publicKey);
   }catch{}
 }
 
+async function callScriptEmail(payload){
+  if(!emailCfg.scriptUrl)return;
+  await fetch(emailCfg.scriptUrl,{
+    method:'POST',
+    body:JSON.stringify(payload),
+    headers:{'Content-Type':'text/plain'} // Apps Script CORS needs text/plain
+  });
+}
+
 async function sendSessionEmail(sess){
-  if(!emailCfg.serviceId||!emailCfg.templateId||!emailCfg.publicKey)return;
+  if(!emailCfg.scriptUrl)return;
   const att=sess.attendance||attendees||{};
-  const rows=Object.values(att).sort((a,b)=>(a.time||0)-(b.time||0));
+  const rows=Object.values(att).filter(a=>!a.absent).sort((a,b)=>(a.time||0)-(b.time||0));
   const list=rows.map((a,i)=>`${i+1}. ${a.studentName||'—'} (${a.studentNo||''})`).join('\n');
   const course=sess.courseId&&courses[sess.courseId]?courses[sess.courseId]:null;
   const sorumlu=course&&course.sorumlulUid&&professors[course.sorumlulUid]?professors[course.sorumlulUid]:null;
-  const params={
-    prof_name:sess.profName||sess.profEmail||'—',
-    session_name:sess.name||'—',
-    date_str:`${dayN(sess.date)} ${fmtDate(sess.date)}`,
-    time_str:sess.time||'—',
-    attendance_count:String(rows.length),
-    attendance_list:list||'—',
-    course_name:sess.courseName||course?.name||'—',
-    sorumlu_name:sorumlu?.name||'—'
-  };
+  const subject=`Yoklama Raporu — ${sess.name||''} (${dayN(sess.date)} ${fmtDate(sess.date)})`;
+  const body=`PAÜ Tıp Fakültesi — Yoklama Raporu
+
+Hoca      : ${sess.profName||sess.profEmail||'—'}
+Ders      : ${sess.courseName||course?.name||'—'}
+Sorumlu   : ${sorumlu?.name||'—'}
+Tarih     : ${dayN(sess.date)} ${fmtDate(sess.date)}
+Saat      : ${sess.time||'—'}
+Katılan   : ${rows.length} öğrenci
+
+Katılan Öğrenciler:
+${list||'—'}`;
+
   const recipients=new Set();
   if(sess.profEmail)recipients.add(sess.profEmail);
-  const adminEmail=emailCfg.adminEmail||'hicengiz@pau.edu.tr';
-  recipients.add(adminEmail);
+  recipients.add(emailCfg.adminEmail||'hicengiz@pau.edu.tr');
   recipients.add('hicengiz@pau.edu.tr');
   if(sorumlu?.email)recipients.add(sorumlu.email);
-  const svc=emailCfg.serviceId,tmpl=emailCfg.templateId,pk=emailCfg.publicKey;
-  for(const email of recipients){
-    try{await emailjs.send(svc,tmpl,{...params,to_email:email},pk);}
-    catch(e){console.warn('Email error to',email,e);}
-  }
-  await db.ref('sessions/'+sess.code).update({emailSent:true});
+  try{
+    await callScriptEmail({recipients:[...recipients],subject,body});
+    await fbPatch('/sessions/'+sess.code,{emailSent:true});
+  }catch(e){console.warn('Email error',e);}
 }
 
 async function testEmail(){
-  if(!emailCfg.serviceId){alert('Önce ayarları kaydedin.');return;}
+  if(!emailCfg.scriptUrl){setMsg('email-settings-msg','alerr','Önce Script URL girin ve kaydedin.');return;}
   try{
-    await emailjs.send(emailCfg.serviceId,emailCfg.templateId,{
-      to_email:curUser?.email||emailCfg.adminEmail||'hicengiz@pau.edu.tr',
-      prof_name:'Test Hoca',session_name:'Test Oturumu',date_str:'Bugün',time_str:'12:00',
-      attendance_count:'5',attendance_list:'1. Test Öğrenci (2021001)',course_name:'Test Dersi',sorumlu_name:'Test Sorumlu'
-    },emailCfg.publicKey);
-    setMsg('email-settings-msg','alok','Test e-postası gönderildi!');
+    await callScriptEmail({
+      recipients:[curUser?.email||emailCfg.adminEmail||'hicengiz@pau.edu.tr'],
+      subject:'Test — PAÜ Yoklama Sistemi',
+      body:'Bu bir test e-postasıdır. PAÜ Yoklama sistemi doğru şekilde yapılandırılmış.'
+    });
+    setMsg('email-settings-msg','alok','Test e-postası gönderildi! Gelen kutunuzu kontrol edin.');
   }catch(e){setMsg('email-settings-msg','alerr','Hata: '+esc(e.message));}
 }
 
 /* ── ATTENDANCE LISTENER ── */
 function listenAtt(code){
-  db.ref('sessions/'+code+'/attendance').on('value',snap=>{
-    attendees=snap.val()||{};
-    renderAtt(code);
-    // Count only present (absent:true = yok olarak işaretli)
-    const presentCnt=Object.values(attendees).filter(a=>!a.absent).length;
-    const total=Object.keys(courseStudents).length;
-    document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
-    document.getElementById('att-cnt-badge').textContent=presentCnt;
-    if(total)document.getElementById('att-total-badge').textContent=total+' kayıtlı';
-    const idx=activeSessions.findIndex(s=>s.code===code);
-    if(idx>=0){activeSessions[idx].attendance=attendees;}
+  _poll('att-'+code,3000,async()=>{
+    try{
+      const d=await fbGet('/sessions/'+code+'/attendance');
+      attendees=d||{};
+      renderAtt(code);
+      const presentCnt=Object.values(attendees).filter(a=>!a.absent).length;
+      const total=Object.keys(courseStudents).length;
+      document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
+      document.getElementById('att-cnt-badge').textContent=presentCnt;
+      if(total)document.getElementById('att-total-badge').textContent=total+' kayıtlı';
+      const idx=activeSessions.findIndex(s=>s.code===code);
+      if(idx>=0){activeSessions[idx].attendance=attendees;}
+    }catch{}
   });
 }
 
@@ -1158,16 +1469,14 @@ function renderAtt(code){
 async function toggleStudentStatus(code,no,name,newStatus){
   const now=new Date();
   if(newStatus==='present'){
-    // VAR olarak işaretle (absent flag'i kaldır)
-    await db.ref('sessions/'+code+'/attendance/'+no).set({
+    await fbPut('/sessions/'+code+'/attendance/'+no,{
       studentNo:no,studentName:name,
       time:attendees[no]?.time||now.getTime(),
       timeStr:attendees[no]?.timeStr||now.toTimeString().slice(0,5),
       manual:true,absent:false
     });
   } else {
-    // YOK olarak işaretle
-    await db.ref('sessions/'+code+'/attendance/'+no).set({
+    await fbPut('/sessions/'+code+'/attendance/'+no,{
       studentNo:no,studentName:name,
       time:now.getTime(),timeStr:now.toTimeString().slice(0,5),
       manual:true,absent:true
@@ -1203,7 +1512,7 @@ async function markAllPresent(){
       absent:false
     };
   });
-  await db.ref().update(updates);
+  await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
 }
 
 async function markAllAbsent(){
@@ -1220,11 +1529,11 @@ async function markAllAbsent(){
       manual:true,absent:true
     };
   });
-  await db.ref().update(updates);
+  await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
 }
 async function delAtt(code,no){
   if(!confirm(no+' öğrencisini yoklamadan çıkarmak istiyor musunuz?'))return;
-  await db.ref('sessions/'+code+'/attendance/'+no).remove();
+  await fbDel('/sessions/'+code+'/attendance/'+no);
 }
 function showManualAdd(){document.getElementById('manual-add').style.display='block';document.getElementById('ma-no').focus();}
 function lookupManual(no){const n=lookupName(no);if(n)document.getElementById('ma-name').value=n;}
@@ -1233,7 +1542,7 @@ async function manualAdd(){
   const name=document.getElementById('ma-name').value.trim()||lookupName(no);
   if(!curActiveCode||!no||!name)return;
   const now=new Date();
-  await db.ref('sessions/'+curActiveCode+'/attendance/'+no).set({
+  await fbPut('/sessions/'+curActiveCode+'/attendance/'+no,{
     studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:true
   });
   document.getElementById('ma-no').value='';document.getElementById('ma-name').value='';
@@ -1242,10 +1551,12 @@ async function manualAdd(){
 
 /* ── SESSIONS / HISTORY ── */
 function listenSessions(){
-  db.ref('sessions').on('value',snap=>{
-    const val=snap.val()||{};
-    sessions=Object.values(val).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    if(curView==='report'){renderHist();renderChart();}
+  _poll('sessions',10000,async()=>{
+    try{
+      const val=await fbGet('/sessions');
+      sessions=Object.values(val||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      if(curView==='report'){renderHist();renderChart();}
+    }catch{}
   });
 }
 function renderHist(){
@@ -1360,15 +1671,18 @@ function buildMatrix(){
 
 /* ── COURSES ── */
 function listenCourses(){
-  db.ref('courses').on('value',snap=>{
-    courses=snap.val()||{};
-    buildStudentMap();
-    populateCourseSelect();
-    if(curView==='courses')renderCourses();
+  _poll('courses',30000,async()=>{
+    try{
+      const d=await fbGet('/courses');
+      courses=d||{};
+      buildStudentMap();
+      populateCourseSelect();
+      if(curView==='courses')renderCourses();
+    }catch{}
   });
 }
 function buildStudentMap(){studentMap={};Object.values(courses).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}
-function lookupName(no){return studentMap[no]||'';}
+function lookupName(no){const e=studentMap[no];if(!e)return '';return typeof e==='string'?e:(e.name||'');}
 function lookupSt(no){const n=lookupName(no);if(n)document.getElementById('st-name').value=n;}
 function lookupSt2(no){const n=lookupName(no);if(n)document.getElementById('st-name2').value=n;}
 function populateCourseSelect(){
@@ -1379,18 +1693,26 @@ function populateCourseSelect(){
 }
 function renderCourses(){
   const list=document.getElementById('clist');if(!list)return;
-  const entries=Object.entries(courses);
+  const entries=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   if(!entries.length){list.innerHTML='<li class="empty">Henüz ders eklenmedi.</li>';return;}
   list.innerHTML=entries.map(([id,c])=>{
     const cnt=c.students?Object.keys(c.students).length:0;
     const sorumlu=c.sorumlulUid&&professors[c.sorumlulUid]?professors[c.sorumlulUid].name:(c.sorumlulName||'—');
-    return`<li class="lrow" style="cursor:pointer" onclick="showCourseDetail(${JSON.stringify(id)})">
+    return`<li class="lrow" style="cursor:pointer" onclick="showCourseDetail('${id}')">
       <div class="lname"><div class="n">${esc(c.name)}</div><div class="m">${c.code?esc(c.code)+' · ':''} ${cnt} öğrenci · Sorumlu: ${esc(sorumlu)}</div></div>
       <span style="color:var(--fg2)">›</span>
     </li>`;
   }).join('');
 }
-function showNewCourse(){document.getElementById('new-course-card').style.display='block';populateSorumluSelects();}
+async function showNewCourse(){
+  document.getElementById('new-course-card').style.display='block';
+  try{
+    const r=await fetch(FB_CFG.databaseURL+'/professors.json');
+    const data=await r.json();
+    if(data&&typeof data==='object')professors=data;
+  }catch(e){}
+  _fillSorumluSelects();
+}
 function hideNewCourse(){document.getElementById('new-course-card').style.display='none';}
 async function createCourse(){
   const name=document.getElementById('nc-name').value.trim();
@@ -1400,11 +1722,19 @@ async function createCourse(){
   const sorumluOpt=sorumluSel.options[sorumluSel.selectedIndex];
   const sorumlulName=sorumlulUid?sorumluOpt.dataset.name||'':'';
   const sorumlulEmail=sorumlulUid?sorumluOpt.dataset.email||'':'';
-  if(!name){alert('Ders adı gerekli.');return;}
-  const id='c'+Date.now();
-  await db.ref('courses/'+id).set({name,code:code||null,sorumlulUid:sorumlulUid||null,sorumlulName:sorumlulName||null,sorumlulEmail:sorumlulEmail||null,students:{}});
-  document.getElementById('nc-name').value='';document.getElementById('nc-code').value='';
-  hideNewCourse();
+  if(!name){setMsg('course-err','alerr','Ders adı gerekli.');return;}
+  setMsg('course-err','alinfo','Kaydediliyor…');
+  try{
+    const id='c'+Date.now();
+    const data={name,code:code||null,sorumlulUid:sorumlulUid||null,sorumlulName:sorumlulName||null,sorumlulEmail:sorumlulEmail||null,students:{}};
+    const dbUrl=FB_CFG.databaseURL+'/courses/'+id+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    courses[id]=data;
+    document.getElementById('nc-name').value='';document.getElementById('nc-code').value='';
+    renderCourses();
+    hideNewCourse();
+  }catch(e){setMsg('course-err','alerr','Kaydedilemedi: '+e.message);}
 }
 function showCourseDetail(id){
   curCourse=id;const c=courses[id];if(!c)return;
@@ -1417,8 +1747,13 @@ function showCourseDetail(id){
   document.getElementById('cd-sorumlu').textContent='Sorumlu: '+sorumlu;
   renderCourseStudents(id);
 }
-function showEditSorumlu(){
-  populateSorumluSelects();
+async function showEditSorumlu(){
+  try{
+    const r=await fetch(FB_CFG.databaseURL+'/professors.json');
+    const data=await r.json();
+    if(data&&typeof data==='object')professors=data;
+  }catch(e){}
+  _fillSorumluSelects();
   const c=courses[curCourse];
   if(c?.sorumlulUid){
     const sel=document.getElementById('edit-sorumlu-sel');
@@ -1431,7 +1766,12 @@ async function saveSorumlu(){
   const sel=document.getElementById('edit-sorumlu-sel');
   const uid=sel.value;
   const opt=sel.options[sel.selectedIndex];
-  await db.ref('courses/'+curCourse).update({sorumlulUid:uid||null,sorumlulName:uid?opt.dataset.name||'':null,sorumlulEmail:uid?opt.dataset.email||'':null});
+  try{
+    const patch={sorumlulUid:uid||null,sorumlulName:uid?opt.dataset.name||'':null,sorumlulEmail:uid?opt.dataset.email||'':null};
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(patch)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    if(courses[curCourse])Object.assign(courses[curCourse],patch);
+  }catch(e){alert('Kaydedilemedi: '+e.message);return;}
   document.getElementById('edit-sorumlu-form').style.display='none';
   showCourseDetail(curCourse);
 }
@@ -1440,15 +1780,37 @@ function renderCourseStudents(id){
   const stus=c.students?Object.entries(c.students):[];
   document.getElementById('cd-cnt').textContent=stus.length;
   document.getElementById('cd-list').innerHTML=stus.length
-    ?stus.map(([no,name],i)=>`<li class="lrow"><span class="lno">${i+1}</span>
-        <div class="lname"><div class="n">${esc(name)}</div><div class="m">${esc(no)}</div></div>
-        <button class="btn bd bsm" onclick="delStudent(${JSON.stringify(no)})">✕</button>
-      </li>`).join('')
+    ?stus.map(([no,entry],i)=>{
+        const nm=typeof entry==='string'?entry:(entry.name||'');
+        const bl=typeof entry==='string'?'':(entry.bolum||'');
+        const em=typeof entry==='string'?'':(entry.email||'');
+        return`<li class="lrow"><span class="lno">${i+1}</span>
+          <div class="lname"><div class="n">${esc(nm)}${bl?`<span style="color:var(--fg2);font-size:.75rem;font-weight:400"> · ${esc(bl)}</span>`:''}</div><div class="m">${esc(no)}${em?` · <span style="color:var(--fg2)">${esc(em)}</span>`:''}</div></div>
+          <button class="btn bd bsm" onclick="delStudent(${JSON.stringify(no)})">✕</button>
+        </li>`;}).join('')
     :'<li class="empty">Öğrenci yok.</li>';
 }
 function hideCourseDetail(){document.getElementById('course-detail').style.display='none';document.getElementById('courses-list-card').style.display='block';curCourse=null;}
-async function deleteCourse(){if(!curCourse||!confirm('Bu dersi ve öğrenci listesini silmek istiyor musunuz?'))return;await db.ref('courses/'+curCourse).remove();hideCourseDetail();}
-async function delStudent(no){if(!curCourse||!confirm(no+' öğrencisini silmek istiyor musunuz?'))return;await db.ref('courses/'+curCourse+'/students/'+no).remove();}
+async function deleteCourse(){
+  if(!curCourse||!confirm('Bu dersi ve öğrenci listesini silmek istiyor musunuz?'))return;
+  try{
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'.json',{method:'DELETE'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    delete courses[curCourse];
+    renderCourses();
+    hideCourseDetail();
+  }catch(e){alert('Silinemedi: '+e.message);}
+}
+async function delStudent(no){
+  if(!curCourse||!confirm(no+' öğrencisini silmek istiyor musunuz?'))return;
+  try{
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'/students/'+no+'.json',{method:'DELETE'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    if(courses[curCourse]?.students)delete courses[curCourse].students[no];
+    renderCourseStudents(curCourse);
+    buildStudentMap();
+  }catch(e){alert('Silinemedi: '+e.message);}
+}
 async function importCsv(){
   const raw=document.getElementById('csv-input').value.trim();
   const msgEl=document.getElementById('csv-msg');
@@ -1458,16 +1820,69 @@ async function importCsv(){
   lines.forEach(line=>{
     const parts=line.split(/[,;\t]/).map(s=>s.trim().replace(/^["']|["']$/g,''));
     if(parts.length<2){skip++;return;}
-    const no=parts[0],name=parts.slice(1).join(' ');
-    if(!no||!name||no.toLowerCase()==='öğrenci'||no.toLowerCase()==='no'){skip++;return;}
-    updates[no]=name;count++;
+    const no=parts[0];
+    if(!no||no.toLowerCase()==='öğrenci'||no.toLowerCase()==='no'){skip++;return;}
+    const name=parts[1]||'';
+    const bolum=(parts[2]||'').trim();
+    const email=(parts[3]||'').trim().toLowerCase();
+    if(!name){skip++;return;}
+    const val=(bolum||email)?{name,...(bolum&&{bolum}),...(email&&{email})}:name;
+    updates[no]=val;count++;
   });
-  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Format: öğrenci_no,ad_soyad</div>';return;}
+  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Format: öğrenci_no,ad_soyad,bölüm,email</div>';return;}
   try{
-    await db.ref('courses/'+curCourse+'/students').update(updates);
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'/students.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    if(!courses[curCourse])courses[curCourse]={};
+    if(!courses[curCourse].students)courses[curCourse].students={};
+    Object.assign(courses[curCourse].students,updates);
+    buildStudentMap();
     msgEl.innerHTML=`<div class="al alok">${count} öğrenci eklendi.${skip?' ('+skip+' satır atlandı)':''}</div>`;
     document.getElementById('csv-input').value='';
+    renderCourseStudents(curCourse);
   }catch(e){msgEl.innerHTML='<div class="al alerr">Hata: '+esc(e.message)+'</div>';}
+}
+
+/* ── PROF CSV IMPORT ── */
+async function importProfCsv(){
+  const raw=document.getElementById('prof-csv-input').value.trim();
+  const msgEl=document.getElementById('prof-csv-msg');
+  if(!raw){msgEl.innerHTML='<div class="al alwrn">Liste boş.</div>';return;}
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const updates={};let count=0,skip=0;
+  lines.forEach(line=>{
+    // Herhangi bir boşluk (tab veya çoklu boşluk) ile böl, son token email
+    const parts=line.trim().split(/\s+/).filter(Boolean);
+    if(parts.length<2){skip++;return;}
+    const email=parts[parts.length-1].toLowerCase();
+    const name=parts.slice(0,parts.length-1).join(' ');
+    if(!name||!email||!email.includes('@')){skip++;return;}
+    // Başlık satırını atla
+    if(name.toLowerCase()==='adı'||name.toLowerCase()==='ad soyad'||name.toLowerCase()==='ad'){skip++;return;}
+    const key=email.replace(/\./g,'_').replace('@','_at_');
+    updates[key]={name,email};count++;
+  });
+  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Son sütun email olmalı.</div>';return;}
+  msgEl.innerHTML=`<div class="al alinfo">Yükleniyor… (0/${count})</div>`;
+  const baseUrl=FB_CFG.databaseURL+'/professors';
+  let done=0,failed=0;
+  // Hocaları tek tek PUT ile ekle — toplu PATCH yerine
+  const entries2=Object.entries(updates);
+  for(const [key,val] of entries2){
+    try{
+      const r=await fetch(baseUrl+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)});
+      if(r.ok)done++; else failed++;
+    }catch{failed++;}
+    if((done+failed)%10===0||done+failed===entries2.length){
+      msgEl.innerHTML=`<div class="al alinfo">Yükleniyor… (${done+failed}/${count})</div>`;
+    }
+  }
+  if(done>0){
+    msgEl.innerHTML=`<div class="al alok">${done} hoca eklendi.${failed?' ('+failed+' başarısız)':''}</div>`;
+    document.getElementById('prof-csv-input').value='';
+  }else{
+    msgEl.innerHTML='<div class="al alerr">Hiçbir hoca eklenemedi. Internet bağlantısını kontrol edin.</div>';
+  }
 }
 
 /* ── CSV EXPORT ── */
@@ -1523,10 +1938,10 @@ function listenActiveSt(){
     document.getElementById('st-code').value=hash;
     document.getElementById('st-code2').value=hash;
   }
-  // Show the form
-  document.getElementById('stform').style.display='block';
-  document.getElementById('stform2').style.display='none';
-  document.getElementById('st-tabs').style.display='block';
+  // Show the form (tabs hidden — mode set by professor per session)
+  document.getElementById('stform').style.display='none';
+  document.getElementById('stform2').style.display='block';
+  document.getElementById('st-tabs').style.display='none';
   document.getElementById('stnosess').style.display='none';
 }
 
@@ -1534,8 +1949,9 @@ function resetStForm(){
   pendingAtt=null;
   document.getElementById('st-ok').style.display='none';
   document.getElementById('st-idscan').style.display='none';
-  document.getElementById('stform').style.display=stMode===1?'block':'none';
-  document.getElementById('stform2').style.display=stMode===2?'block':'none';
+  document.getElementById('stform').style.display='none';
+  document.getElementById('stform2').style.display='block';
+  document.getElementById('st-tabs').style.display='none';
 }
 
 async function validateForScan(){
@@ -1551,16 +1967,25 @@ async function validateForScan(){
   const btn=document.getElementById('stbtn');
   btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
   try{
-    const sessSnap=await db.ref('sessions/'+code).once('value');
-    const sess=sessSnap.val();
+    const sess=await fbGet('/sessions/'+code);
     if(!sess){setMsg('stmsg','alerr','Oturum bulunamadı.');return;}
     if(!sess.active){setMsg('stmsg','alwrn','Bu oturum kapatılmış.');return;}
     if(sess.closesAt&&Date.now()>sess.closesAt){setMsg('stmsg','alwrn','Oturum süresi dolmuş.');return;}
     const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
     if(p!==pNow&&p!==pPrev){setMsg('stmsg','alerr','PIN hatalı. Tahtadaki kodu kontrol edin.');return;}
-    if((await db.ref('sessions/'+code+'/attendance/'+no).once('value')).exists()){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
+    if(sess.courseId&&!curUser){
+      const roster=await fbGet('/courses/'+sess.courseId+'/students');
+      if(roster&&Object.keys(roster).length>0){
+        const entry=roster[no];
+        if(!entry){setMsg('stmsg','alerr','❌ Bu derse kayıtlı öğrenci listesinde bulunamadınız. Öğrenci numaranızı kontrol edin.');return;}
+        const rosterName=typeof entry==='string'?entry:(entry.name||'');
+        const norm=s=>s.toLocaleUpperCase('tr').replace(/\s+/g,' ').trim();
+        if(rosterName&&norm(name)!==norm(rosterName)){setMsg('stmsg','alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}
+      }
+    }
+    if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
-    if((await db.ref('sessions/'+code+'/devices/'+dvId.slice(0,32)).once('value')).exists()){setMsg('stmsg','alwrn','Bu cihazdan bu oturum için zaten yoklama alındı.');return;}
+    if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg('stmsg','alwrn','Bu cihazdan bu oturum için zaten yoklama alındı.');return;}
     if(sess.locLat){
       btn.innerHTML='<span class="spin"></span> Konum…';
       try{const pos=await getLocation(10000);const dist=haversine(sess.locLat,sess.locLng,pos.lat,pos.lng);if(dist>sess.locRadius){setMsg('stmsg','alerr',`📍 Konumunuz sınıftan uzak (${Math.round(dist)}m). Gerekli: ≤${sess.locRadius}m.`);return;}}
@@ -1578,7 +2003,7 @@ async function validateForScan(){
   }catch(e){setMsg('stmsg','alerr','Hata: '+esc(e.message));}
   finally{btn.innerHTML='Devam — Kimliği Doğrula →';btn.disabled=false;}
 }
-function cancelIdScan(){pendingAtt=null;document.getElementById('st-idscan').style.display='none';document.getElementById('stform').style.display='block';}
+function cancelIdScan(){pendingAtt=null;document.getElementById('st-idscan').style.display='none';document.getElementById('stform2').style.display='block';}
 async function decodeIdCard(input){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
@@ -1616,7 +2041,7 @@ async function finalSubmitAtt(){
     const updates={};
     updates[`sessions/${code}/attendance/${no}`]={studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:false,idVerified:true};
     if(dvId)updates[`sessions/${code}/devices/${dvId.slice(0,32)}`]={no,time:now.getTime()};
-    await db.ref().update(updates);
+    await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
     pendingAtt=null;
     document.getElementById('st-idscan').style.display='none';
     document.getElementById('st-ok').style.display='block';
@@ -1640,26 +2065,48 @@ async function submitAtt2(){
   const btn=document.getElementById(btnEl);
   btn.innerHTML='<span class="spin"></span> Gönderiliyor…';btn.disabled=true;
   try{
-    const sessSnap=await db.ref('sessions/'+code).once('value');
-    const sess=sessSnap.val();
+    const sess=await fbGet('/sessions/'+code);
     if(!sess){setMsg(msgEl,'alerr','Oturum bulunamadı.');return;}
     if(!sess.active){setMsg(msgEl,'alwrn','Bu oturum kapatılmış.');return;}
     if(sess.closesAt&&Date.now()>sess.closesAt){setMsg(msgEl,'alwrn','Oturum süresi dolmuş.');return;}
     const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
     if(p!==pNow&&p!==pPrev){setMsg(msgEl,'alerr','PIN hatalı.');return;}
-    if((await db.ref('sessions/'+code+'/attendance/'+no).once('value')).exists()){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
+    if(sess.courseId&&!curUser){
+      const roster=await fbGet('/courses/'+sess.courseId+'/students');
+      if(roster&&Object.keys(roster).length>0){
+        const entry=roster[no];
+        if(!entry){setMsg(msgEl,'alerr','❌ Bu derse kayıtlı öğrenci listesinde bulunamadınız. Öğrenci numaranızı kontrol edin.');return;}
+        const rosterName=typeof entry==='string'?entry:(entry.name||'');
+        const norm=s=>s.toLocaleUpperCase('tr').replace(/\s+/g,' ').trim();
+        if(rosterName&&norm(name)!==norm(rosterName)){setMsg(msgEl,'alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}
+      }
+    }
+    if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
-    if((await db.ref('sessions/'+code+'/devices/'+dvId.slice(0,32)).once('value')).exists()){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
+    if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
     if(sess.locLat){
       btn.innerHTML='<span class="spin"></span> Konum…';
       try{const pos=await getLocation(10000);const dist=haversine(sess.locLat,sess.locLng,pos.lat,pos.lng);if(dist>sess.locRadius){setMsg(msgEl,'alerr',`📍 Konumunuz sınıftan uzak.`);return;}}
       catch{setMsg(msgEl,'alwrn','📍 Konum alınamadı.');return;}
     }
+    // If professor required ID, redirect to ID scan flow
+    if(sess.idRequired){
+      pendingAtt={code,no,name,sess,dvId};
+      document.getElementById('stform2').style.display='none';
+      document.getElementById('st-idscan').style.display='block';
+      document.getElementById('id-msg').innerHTML='';
+      document.getElementById('id-preview').style.display='none';
+      document.getElementById('id-cam-inp').value='';
+      document.getElementById('scan-btn').innerHTML='📷 Kartı Kameraya Göster';
+      document.getElementById('scan-btn').disabled=false;
+      document.getElementById('scan-btn').style.display='';
+      return;
+    }
     const now=new Date();
     const updates={};
     updates[`sessions/${code}/attendance/${no}`]={studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:false};
     updates[`sessions/${code}/devices/${dvId.slice(0,32)}`]={no,time:now.getTime()};
-    await db.ref().update(updates);
+    await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
     document.getElementById('stform2').style.display='none';
     document.getElementById('st-tabs').style.display='none';
     document.getElementById('st-ok').style.display='block';
@@ -1673,28 +2120,28 @@ async function main(){
   // Theme
   try{const t=localStorage.getItem('pau_theme');if(t!==null)setTheme(t);}catch{}
 
-  // Firebase
-  firebase.initializeApp(FB_CFG);
-  db=firebase.database();
-  auth=firebase.auth();
-
   // Student view always shown by default
   listenActiveSt();
   nav('student');
   document.getElementById('login-btn').style.display='';
 
-  // Auth
-  auth.onAuthStateChanged(onAuthChange);
+  // PIN auth: check localStorage session
+  onAuthChange();
 
-  // Load student courses for name lookup (no auth needed)
-  db.ref('courses').on('value',snap=>{
-    const cs=snap.val()||{};
-    studentMap={};
-    Object.values(cs).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});
+  // Load courses for student name lookup (no auth needed)
+  _poll('courses-anon',60000,async()=>{
+    try{const cs=await fbGet('/courses');studentMap={};Object.values(cs||{}).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}catch{}
   });
 }
 
-main();
+main().catch(e=>{
+  console.error('main() error:',e);
+  // Show a basic error so page is never fully blank
+  const errDiv=document.createElement('div');
+  errDiv.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1d23;color:#f87171;padding:24px;border-radius:12px;text-align:center;font-family:system-ui;z-index:999;max-width:90vw';
+  errDiv.innerHTML='<div style="font-size:2rem">⚠️</div><div style="margin-top:8px">Sayfa yüklenemedi.</div><div style="margin-top:4px;font-size:.8rem;color:#94a3b8">Lütfen sayfayı yenileyin.</div><button onclick="location.reload()" style="margin-top:12px;padding:8px 20px;background:#3b82f6;color:#fff;border:none;border-radius:8px;cursor:pointer">Yenile</button>';
+  document.body.appendChild(errDiv);
+});
 </script>
 
 </body>
