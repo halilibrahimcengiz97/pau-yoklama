@@ -964,13 +964,57 @@ function renderProfs(){
   const entries=Object.entries(professors);
   if(!entries.length){list.innerHTML='<li class="empty">Henüz hoca eklenmedi.</li>';return;}
   list.innerHTML=entries.map(([uid,p])=>`
-    <li class="lrow">
+    <li class="lrow" id="profrow-${esc(uid)}">
       <div class="lname">
         <div class="n">${esc(p.name)}</div>
-        <div class="m">${esc(p.email||'')}${uid===ADMIN_EMAILS[0]?' · Admin':''}</div>
+        <div class="m">${esc(p.email||'')}${ADMIN_EMAILS.includes(p.email)?' · Admin':''}</div>
       </div>
-      ${isAdmin?`<button class="btn bd bsm" onclick="delProf(${JSON.stringify(uid)})">✕</button>`:''}
+      ${isAdmin?`
+        <button class="btn bg bsm" onclick="showEditProf(${JSON.stringify(uid)})" title="Düzenle">✏️</button>
+        <button class="btn bd bsm" onclick="delProf(${JSON.stringify(uid)})" title="Sil">✕</button>
+      `:''}
+    </li>
+    <li id="profedit-${esc(uid)}" style="display:none;padding:10px 0;border-bottom:1px solid var(--glass-border)">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="form-row" style="margin:0"><label>Ad Soyad</label><input id="ep-name-${esc(uid)}" value="${esc(p.name)}"></div>
+        <div class="form-row" style="margin:0"><label>E-posta</label><input id="ep-email-${esc(uid)}" type="email" value="${esc(p.email||'')}"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn bp bsm" onclick="saveEditProf(${JSON.stringify(uid)})">💾 Kaydet</button>
+          <button class="btn bg bsm" onclick="hideEditProf(${JSON.stringify(uid)})">İptal</button>
+        </div>
+        <div id="ep-msg-${esc(uid)}"></div>
+      </div>
     </li>`).join('');
+}
+function showEditProf(uid){
+  // Diğer açık editörleri kapat
+  document.querySelectorAll('[id^="profedit-"]').forEach(el=>el.style.display='none');
+  const el=document.getElementById('profedit-'+uid);
+  if(el)el.style.display='block';
+}
+function hideEditProf(uid){
+  const el=document.getElementById('profedit-'+uid);
+  if(el)el.style.display='none';
+}
+async function saveEditProf(uid){
+  const nameEl=document.getElementById('ep-name-'+uid);
+  const emailEl=document.getElementById('ep-email-'+uid);
+  const msgEl=document.getElementById('ep-msg-'+uid);
+  const name=(nameEl.value||'').trim();
+  const email=(emailEl.value||'').trim().toLowerCase();
+  if(!name||!email){msgEl.innerHTML='<div class="al alerr">Ad ve e-posta zorunlu.</div>';return;}
+  msgEl.innerHTML='<div class="al alinfo">Kaydediliyor…</div>';
+  try{
+    const existing=professors[uid]||{};
+    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...existing,name,email})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    msgEl.innerHTML='<div class="al alok">Kaydedildi ✓</div>';
+    setTimeout(()=>hideEditProf(uid),1200);
+  }catch(e){
+    msgEl.innerHTML='<div class="al alerr">Hata: '+esc(e.message)+'</div>';
+  }
 }
 function showNewProf(){document.getElementById('new-prof-form').style.display='block';}
 async function addProf(){
