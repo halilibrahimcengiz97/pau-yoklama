@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>PAÜ Tıp — Yoklama Sistemi</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
@@ -1538,14 +1541,26 @@ async function importProfCsv(){
     updates[key]={name,email};count++;
   });
   if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Son sütun email olmalı.</div>';return;}
-  msgEl.innerHTML='<div class="al alinfo">Yükleniyor…</div>';
-  try{
-    const url=FB_CFG.databaseURL+'/professors.json';
-    const resp=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
-    if(!resp.ok)throw new Error('Sunucu hatası: '+resp.status);
-    msgEl.innerHTML=`<div class="al alok">${count} hoca eklendi.${skip?' ('+skip+' satır atlandı)':''}</div>`;
+  msgEl.innerHTML=`<div class="al alinfo">Yükleniyor… (0/${count})</div>`;
+  const baseUrl=FB_CFG.databaseURL+'/professors';
+  let done=0,failed=0;
+  // Hocaları tek tek PUT ile ekle — toplu PATCH yerine
+  const entries2=Object.entries(updates);
+  for(const [key,val] of entries2){
+    try{
+      const r=await fetch(baseUrl+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)});
+      if(r.ok)done++; else failed++;
+    }catch{failed++;}
+    if((done+failed)%10===0||done+failed===entries2.length){
+      msgEl.innerHTML=`<div class="al alinfo">Yükleniyor… (${done+failed}/${count})</div>`;
+    }
+  }
+  if(done>0){
+    msgEl.innerHTML=`<div class="al alok">${done} hoca eklendi.${failed?' ('+failed+' başarısız)':''}</div>`;
     document.getElementById('prof-csv-input').value='';
-  }catch(e){msgEl.innerHTML='<div class="al alerr">Hata: '+esc(e.message)+'</div>';}
+  }else{
+    msgEl.innerHTML='<div class="al alerr">Hiçbir hoca eklenemedi. Internet bağlantısını kontrol edin.</div>';
+  }
 }
 
 /* ── CSV EXPORT ── */
