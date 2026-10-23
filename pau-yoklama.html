@@ -1123,6 +1123,7 @@ let attTab='present';   // 'present' | 'all'
 
 function openActiveSession(code){
   curActiveCode=code;
+  nav('active'); // önce ekrana geç, veri yoksa boş görünür
   const sess=activeSessions.find(s=>s.code===code);
   if(!sess)return;
   attTab='present';
@@ -1145,7 +1146,6 @@ function openActiveSession(code){
     document.getElementById('bulk-actions').style.display='none';
     document.getElementById('att-view-tabs').style.display='none';
   }
-  nav('active');
   updateActiveHeader(sess);
   renderQr(code);
   listenAtt(code);
