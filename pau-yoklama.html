@@ -643,6 +643,7 @@ select option{background:var(--c2);color:var(--fg)}
       <button class="btn bp" onclick="createCourse()">Kaydet</button>
       <button class="btn bg" onclick="hideNewCourse()">İptal</button>
     </div>
+    <div id="course-err" style="margin-top:6px"></div>
   </div>
   <!-- Course detail -->
   <div class="card" id="course-detail" style="display:none">
@@ -961,7 +962,7 @@ function listenProfessors(){
 function renderProfs(){
   const list=document.getElementById('prof-list');
   if(!list)return;
-  const entries=Object.entries(professors);
+  const entries=Object.entries(professors).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   if(!entries.length){list.innerHTML='<li class="empty">Henüz hoca eklenmedi.</li>';return;}
   list.innerHTML=entries.map(([uid,p])=>`
     <li class="lrow" id="profrow-${esc(uid)}">
@@ -1024,20 +1025,29 @@ async function addProf(){
   setMsg('prof-err','alinfo','Ekleniyor…');
   try{
     const uid='prof_'+email.replace(/[^a-z0-9]/g,'_');
+    const data={name,email,addedAt:Date.now(),addedBy:curUser.email||''};
     const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,email,addedAt:Date.now(),addedBy:curUser.email||''})});
+      body:JSON.stringify(data)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
+    professors[uid]=data;
     document.getElementById('np-name').value='';document.getElementById('np-email').value='';
     document.getElementById('new-prof-form').style.display='none';
     setMsg('prof-err','alok','Hoca eklendi.');
+    renderProfs();
+    _fillSorumluSelects();
   }catch(e){
     setMsg('prof-err','alerr','Eklenemedi: '+e.message);
   }
 }
 async function delProf(uid){
   if(!confirm('Bu hocayı silmek istiyor musunuz?'))return;
-  await db.ref('professors/'+uid).remove();
+  try{
+    await fetch(FB_CFG.databaseURL+'/professors/'+uid+'.json',{method:'DELETE'});
+    delete professors[uid];
+    renderProfs();
+    _fillSorumluSelects();
+  }catch(e){alert('Silinemedi: '+e.message);}
 }
 function _fillSorumluSelects(){
   const opts='<option value="">— Seçin —</option>'+Object.entries(professors).map(([uid,p])=>
@@ -1646,7 +1656,7 @@ function populateCourseSelect(){
 }
 function renderCourses(){
   const list=document.getElementById('clist');if(!list)return;
-  const entries=Object.entries(courses);
+  const entries=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   if(!entries.length){list.innerHTML='<li class="empty">Henüz ders eklenmedi.</li>';return;}
   list.innerHTML=entries.map(([id,c])=>{
     const cnt=c.students?Object.keys(c.students).length:0;
@@ -1657,7 +1667,15 @@ function renderCourses(){
     </li>`;
   }).join('');
 }
-function showNewCourse(){document.getElementById('new-course-card').style.display='block';populateSorumluSelects();}
+async function showNewCourse(){
+  document.getElementById('new-course-card').style.display='block';
+  try{
+    const r=await fetch(FB_CFG.databaseURL+'/professors.json');
+    const data=await r.json();
+    if(data&&typeof data==='object')professors=data;
+  }catch(e){}
+  _fillSorumluSelects();
+}
 function hideNewCourse(){document.getElementById('new-course-card').style.display='none';}
 async function createCourse(){
   const name=document.getElementById('nc-name').value.trim();
@@ -1667,11 +1685,19 @@ async function createCourse(){
   const sorumluOpt=sorumluSel.options[sorumluSel.selectedIndex];
   const sorumlulName=sorumlulUid?sorumluOpt.dataset.name||'':'';
   const sorumlulEmail=sorumlulUid?sorumluOpt.dataset.email||'':'';
-  if(!name){alert('Ders adı gerekli.');return;}
-  const id='c'+Date.now();
-  await db.ref('courses/'+id).set({name,code:code||null,sorumlulUid:sorumlulUid||null,sorumlulName:sorumlulName||null,sorumlulEmail:sorumlulEmail||null,students:{}});
-  document.getElementById('nc-name').value='';document.getElementById('nc-code').value='';
-  hideNewCourse();
+  if(!name){setMsg('course-err','alerr','Ders adı gerekli.');return;}
+  setMsg('course-err','alinfo','Kaydediliyor…');
+  try{
+    const id='c'+Date.now();
+    const data={name,code:code||null,sorumlulUid:sorumlulUid||null,sorumlulName:sorumlulName||null,sorumlulEmail:sorumlulEmail||null,students:{}};
+    const dbUrl=FB_CFG.databaseURL+'/courses/'+id+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    courses[id]=data;
+    document.getElementById('nc-name').value='';document.getElementById('nc-code').value='';
+    renderCourses();
+    hideNewCourse();
+  }catch(e){setMsg('course-err','alerr','Kaydedilemedi: '+e.message);}
 }
 function showCourseDetail(id){
   curCourse=id;const c=courses[id];if(!c)return;
@@ -1684,8 +1710,13 @@ function showCourseDetail(id){
   document.getElementById('cd-sorumlu').textContent='Sorumlu: '+sorumlu;
   renderCourseStudents(id);
 }
-function showEditSorumlu(){
-  populateSorumluSelects();
+async function showEditSorumlu(){
+  try{
+    const r=await fetch(FB_CFG.databaseURL+'/professors.json');
+    const data=await r.json();
+    if(data&&typeof data==='object')professors=data;
+  }catch(e){}
+  _fillSorumluSelects();
   const c=courses[curCourse];
   if(c?.sorumlulUid){
     const sel=document.getElementById('edit-sorumlu-sel');
@@ -1698,7 +1729,12 @@ async function saveSorumlu(){
   const sel=document.getElementById('edit-sorumlu-sel');
   const uid=sel.value;
   const opt=sel.options[sel.selectedIndex];
-  await db.ref('courses/'+curCourse).update({sorumlulUid:uid||null,sorumlulName:uid?opt.dataset.name||'':null,sorumlulEmail:uid?opt.dataset.email||'':null});
+  try{
+    const patch={sorumlulUid:uid||null,sorumlulName:uid?opt.dataset.name||'':null,sorumlulEmail:uid?opt.dataset.email||'':null};
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(patch)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    if(courses[curCourse])Object.assign(courses[curCourse],patch);
+  }catch(e){alert('Kaydedilemedi: '+e.message);return;}
   document.getElementById('edit-sorumlu-form').style.display='none';
   showCourseDetail(curCourse);
 }
@@ -1714,8 +1750,26 @@ function renderCourseStudents(id){
     :'<li class="empty">Öğrenci yok.</li>';
 }
 function hideCourseDetail(){document.getElementById('course-detail').style.display='none';document.getElementById('courses-list-card').style.display='block';curCourse=null;}
-async function deleteCourse(){if(!curCourse||!confirm('Bu dersi ve öğrenci listesini silmek istiyor musunuz?'))return;await db.ref('courses/'+curCourse).remove();hideCourseDetail();}
-async function delStudent(no){if(!curCourse||!confirm(no+' öğrencisini silmek istiyor musunuz?'))return;await db.ref('courses/'+curCourse+'/students/'+no).remove();}
+async function deleteCourse(){
+  if(!curCourse||!confirm('Bu dersi ve öğrenci listesini silmek istiyor musunuz?'))return;
+  try{
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'.json',{method:'DELETE'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    delete courses[curCourse];
+    renderCourses();
+    hideCourseDetail();
+  }catch(e){alert('Silinemedi: '+e.message);}
+}
+async function delStudent(no){
+  if(!curCourse||!confirm(no+' öğrencisini silmek istiyor musunuz?'))return;
+  try{
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'/students/'+no+'.json',{method:'DELETE'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    if(courses[curCourse]?.students)delete courses[curCourse].students[no];
+    renderCourseStudents(curCourse);
+    buildStudentMap();
+  }catch(e){alert('Silinemedi: '+e.message);}
+}
 async function importCsv(){
   const raw=document.getElementById('csv-input').value.trim();
   const msgEl=document.getElementById('csv-msg');
@@ -1731,9 +1785,15 @@ async function importCsv(){
   });
   if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Format: öğrenci_no,ad_soyad</div>';return;}
   try{
-    await db.ref('courses/'+curCourse+'/students').update(updates);
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'/students.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    if(!courses[curCourse])courses[curCourse]={};
+    if(!courses[curCourse].students)courses[curCourse].students={};
+    Object.assign(courses[curCourse].students,updates);
+    buildStudentMap();
     msgEl.innerHTML=`<div class="al alok">${count} öğrenci eklendi.${skip?' ('+skip+' satır atlandı)':''}</div>`;
     document.getElementById('csv-input').value='';
+    renderCourseStudents(curCourse);
   }catch(e){msgEl.innerHTML='<div class="al alerr">Hata: '+esc(e.message)+'</div>';}
 }
 
