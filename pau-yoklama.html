@@ -1526,15 +1526,18 @@ async function importProfCsv(){
   const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
   const updates={};let count=0,skip=0;
   lines.forEach(line=>{
-    const parts=line.split('\t').map(s=>s.trim());
+    // Herhangi bir boşluk (tab veya çoklu boşluk) ile böl, son token email
+    const parts=line.trim().split(/\s+/).filter(Boolean);
     if(parts.length<2){skip++;return;}
-    const name=parts[0], email=parts[1].toLowerCase();
+    const email=parts[parts.length-1].toLowerCase();
+    const name=parts.slice(0,parts.length-1).join(' ');
     if(!name||!email||!email.includes('@')){skip++;return;}
-    if(name.toLowerCase()==='adı'||name.toLowerCase()==='ad soyad'){skip++;return;}
+    // Başlık satırını atla
+    if(name.toLowerCase()==='adı'||name.toLowerCase()==='ad soyad'||name.toLowerCase()==='ad'){skip++;return;}
     const key=email.replace(/\./g,'_').replace('@','_at_');
     updates[key]={name,email};count++;
   });
-  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Format: Ad Soyad TAB email</div>';return;}
+  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Son sütun email olmalı.</div>';return;}
   msgEl.innerHTML='<div class="al alinfo">Yükleniyor…</div>';
   try{
     await db.ref('professors').update(updates);
