@@ -796,6 +796,18 @@ function getDeviceId(){try{let id=localStorage.getItem('pau_dv');if(!id){id=cryp
 function saveSessionTemplate(d){try{localStorage.setItem('pau_tmpl',JSON.stringify(d));}catch{}}
 function loadSessionTemplate(){try{const s=localStorage.getItem('pau_tmpl');return s?JSON.parse(s):null;}catch{return null;}}
 
+/* ── FIREBASE REST HELPERS (no Firebase Auth required) ── */
+const FB=FB_CFG.databaseURL;
+const fbGet=async p=>{const r=await fetch(FB+p+'.json');return r.json();};
+const fbPut=async(p,d)=>{const r=await fetch(FB+p+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+const fbPatch=async(p,d)=>{const r=await fetch(FB+p+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+const fbDel=async p=>{const r=await fetch(FB+p+'.json',{method:'DELETE'});if(!r.ok)throw new Error('HTTP '+r.status);};
+
+/* ── POLLING (replaces Firebase SDK real-time listeners) ── */
+const _polls={};
+function _poll(key,ms,fn){if(_polls[key])clearInterval(_polls[key]);fn();_polls[key]=setInterval(fn,ms);}
+function _stopPoll(key){if(_polls[key]){clearInterval(_polls[key]);delete _polls[key];}}
+
 async function computePin(code,off=0){
   const min=Math.floor(Date.now()/60000)+off;
   const enc=new TextEncoder().encode(code+'|'+min);
@@ -873,15 +885,13 @@ async function signInPin(){
   errEl.innerHTML='<div class="al alinfo">Giriş yapılıyor…</div>';
   try{
     // Fetch settings from Firebase (contains the PIN hash)
-    const snap=await db.ref('settings/pin').once('value');
-    const storedPin=snap.val();
+    const storedPin=await fbGet('/settings/pin');
     // Admin emails bypass PIN if pin not set yet (first login)
     const isAdminEmail=ADMIN_EMAILS.includes(email);
     if(!storedPin&&!isAdminEmail){errEl.innerHTML='<div class="al alerr">Sistem PIN\'i henüz ayarlanmamış. Admin ile iletişime geçin.</div>';return;}
     if(storedPin&&pin!==storedPin){errEl.innerHTML='<div class="al alerr">PIN kodu hatalı.</div>';return;}
     // Check if email is in professors list or admin
-    const profsSnap=await db.ref('professors').once('value');
-    const profsData=profsSnap.val()||{};
+    const profsData=(await fbGet('/professors'))||{};
     const inList=Object.values(profsData).some(p=>p.email===email);
     if(!isAdminEmail&&!inList){errEl.innerHTML='<div class="al alerr">Bu e-posta sisteme kayıtlı değil. Admin\'e başvurun.</div>';return;}
     // "Sign in" — store in localStorage
@@ -911,6 +921,9 @@ function applyPinLogin(email){
 function signOut(){
   curUser=null;isAdmin=false;isProfessor=false;
   try{localStorage.removeItem(ADMIN_PIN_KEY);}catch{}
+  ['professors','my-active-sessions','sessions','courses'].forEach(k=>_stopPoll(k));
+  Object.keys(_polls).filter(k=>k.startsWith('att-')).forEach(k=>_stopPoll(k));
+  profListeners={};
   applyRole();
   document.getElementById('top-sub').textContent='';
   document.getElementById('login-btn').textContent='Hoca Girişi';
@@ -953,10 +966,8 @@ function applyRole(){
 
 /* ── PROFESSORS ── */
 function listenProfessors(){
-  db.ref('professors').on('value',snap=>{
-    professors=snap.val()||{};
-    renderProfs();
-    populateSorumluSelects();
+  _poll('professors',30000,async()=>{
+    try{const d=await fbGet('/professors');professors=d||{};renderProfs();populateSorumluSelects();}catch{}
   });
 }
 function renderProfs(){
@@ -1066,22 +1077,22 @@ function populateSorumluSelects(){
 /* ── MY ACTIVE SESSIONS ── */
 function listenMyActiveSessions(){
   if(!curUser)return;
-  db.ref('sessions').on('value',snap=>{
-    const all=snap.val()||{};
-    activeSessions=Object.values(all).filter(s=>s.active&&(isAdmin||s.profUid===curUser.uid||s.profEmail===curUser.email));
-    renderMyActiveSessions();
-    // If viewing active and session still active, update
-    if(curActiveCode){
-      const still=activeSessions.find(s=>s.code===curActiveCode);
-      if(!still&&curView==='active'){nav('session');}
-    }
-    // Update attendance listeners
-    activeSessions.forEach(s=>{
-      if(!profListeners[s.code]){
-        profListeners[s.code]=true;
-        if(s.code===curActiveCode)listenAtt(s.code);
+  _poll('my-active-sessions',5000,async()=>{
+    try{
+      const all=await fbGet('/sessions');
+      activeSessions=Object.values(all||{}).filter(s=>s.active&&(isAdmin||s.profUid===curUser.uid||s.profEmail===curUser.email));
+      renderMyActiveSessions();
+      if(curActiveCode){
+        const still=activeSessions.find(s=>s.code===curActiveCode);
+        if(!still&&curView==='active'){nav('session');}
       }
-    });
+      activeSessions.forEach(s=>{
+        if(!profListeners[s.code]){
+          profListeners[s.code]=true;
+          if(s.code===curActiveCode)listenAtt(s.code);
+        }
+      });
+    }catch{}
   });
 }
 
@@ -1217,7 +1228,9 @@ async function createSession(){
       emailSent:false,
       ...locData
     };
-    await db.ref('sessions/'+code).set({...sess,attendance:{}});
+    const dbUrl=FB_CFG.databaseURL+'/sessions/'+code+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sess,attendance:{}})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     saveSessionTemplate({dur,loc:useLoc,radius});
     document.getElementById('new-name').value='';
     // Navigate to the new active session
@@ -1245,7 +1258,8 @@ async function closeSession(){
   const btn=document.getElementById('close-btn');
   btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
   try{
-    await db.ref('sessions/'+curActiveCode).update({active:false,closedAt:Date.now()});
+    const resp=await fetch(FB_CFG.databaseURL+'/sessions/'+curActiveCode+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:false,closedAt:Date.now()})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     await sendSessionEmail(sess);
     nav('session');
   }catch(e){alert('Hata: '+e.message);}
@@ -1255,8 +1269,7 @@ async function closeSession(){
 /* ── SYSTEM PIN MANAGEMENT ── */
 async function loadSystemPinDisplay(){
   try{
-    const snap=await db.ref('settings/pin').once('value');
-    const pin=snap.val();
+    const pin=await fbGet('/settings/pin');
     const el=document.getElementById('current-pin-display');
     if(el)el.textContent=pin?pin:'(henüz ayarlanmamış)';
   }catch(e){
@@ -1279,12 +1292,6 @@ async function saveSystemPin(){
 }
 
 /* ── EMAIL ── */
-async function loadEmailSettings(){
-  try{
-    const snap=await db.ref('settings/email').once('value');
-    emailCfg=snap.val()||{};
-  }catch{}
-}
 async function saveEmailSettings(){
   const cfg={
     serviceId:document.getElementById('svc-id').value.trim(),
@@ -1293,7 +1300,7 @@ async function saveEmailSettings(){
     adminEmail:document.getElementById('admin-email').value.trim()||'hicengiz@pau.edu.tr'
   };
   try{
-    await db.ref('settings/email').set(cfg);
+    await fbPut('/settings/email',cfg);
     emailCfg=cfg;
     setMsg('email-settings-msg','alok','Ayarlar kaydedildi.');
     if(emailCfg.publicKey)emailjs.init(emailCfg.publicKey);
@@ -1307,8 +1314,8 @@ function loadEmailSettingsToForm(){
 }
 async function loadEmailSettings(){
   try{
-    const snap=await db.ref('settings/email').once('value');
-    emailCfg=snap.val()||{};
+    const d=await fbGet('/settings/email');
+    emailCfg=d||{};
     loadEmailSettingsToForm();
     if(emailCfg.publicKey)emailjs.init(emailCfg.publicKey);
   }catch{}
@@ -1342,7 +1349,7 @@ async function sendSessionEmail(sess){
     try{await emailjs.send(svc,tmpl,{...params,to_email:email},pk);}
     catch(e){console.warn('Email error to',email,e);}
   }
-  await db.ref('sessions/'+sess.code).update({emailSent:true});
+  try{await fbPatch('/sessions/'+sess.code,{emailSent:true});}catch{}
 }
 
 async function testEmail(){
@@ -1359,17 +1366,19 @@ async function testEmail(){
 
 /* ── ATTENDANCE LISTENER ── */
 function listenAtt(code){
-  db.ref('sessions/'+code+'/attendance').on('value',snap=>{
-    attendees=snap.val()||{};
-    renderAtt(code);
-    // Count only present (absent:true = yok olarak işaretli)
-    const presentCnt=Object.values(attendees).filter(a=>!a.absent).length;
-    const total=Object.keys(courseStudents).length;
-    document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
-    document.getElementById('att-cnt-badge').textContent=presentCnt;
-    if(total)document.getElementById('att-total-badge').textContent=total+' kayıtlı';
-    const idx=activeSessions.findIndex(s=>s.code===code);
-    if(idx>=0){activeSessions[idx].attendance=attendees;}
+  _poll('att-'+code,3000,async()=>{
+    try{
+      const d=await fbGet('/sessions/'+code+'/attendance');
+      attendees=d||{};
+      renderAtt(code);
+      const presentCnt=Object.values(attendees).filter(a=>!a.absent).length;
+      const total=Object.keys(courseStudents).length;
+      document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
+      document.getElementById('att-cnt-badge').textContent=presentCnt;
+      if(total)document.getElementById('att-total-badge').textContent=total+' kayıtlı';
+      const idx=activeSessions.findIndex(s=>s.code===code);
+      if(idx>=0){activeSessions[idx].attendance=attendees;}
+    }catch{}
   });
 }
 
@@ -1435,16 +1444,14 @@ function renderAtt(code){
 async function toggleStudentStatus(code,no,name,newStatus){
   const now=new Date();
   if(newStatus==='present'){
-    // VAR olarak işaretle (absent flag'i kaldır)
-    await db.ref('sessions/'+code+'/attendance/'+no).set({
+    await fbPut('/sessions/'+code+'/attendance/'+no,{
       studentNo:no,studentName:name,
       time:attendees[no]?.time||now.getTime(),
       timeStr:attendees[no]?.timeStr||now.toTimeString().slice(0,5),
       manual:true,absent:false
     });
   } else {
-    // YOK olarak işaretle
-    await db.ref('sessions/'+code+'/attendance/'+no).set({
+    await fbPut('/sessions/'+code+'/attendance/'+no,{
       studentNo:no,studentName:name,
       time:now.getTime(),timeStr:now.toTimeString().slice(0,5),
       manual:true,absent:true
@@ -1480,7 +1487,7 @@ async function markAllPresent(){
       absent:false
     };
   });
-  await db.ref().update(updates);
+  await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
 }
 
 async function markAllAbsent(){
@@ -1497,11 +1504,11 @@ async function markAllAbsent(){
       manual:true,absent:true
     };
   });
-  await db.ref().update(updates);
+  await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
 }
 async function delAtt(code,no){
   if(!confirm(no+' öğrencisini yoklamadan çıkarmak istiyor musunuz?'))return;
-  await db.ref('sessions/'+code+'/attendance/'+no).remove();
+  await fbDel('/sessions/'+code+'/attendance/'+no);
 }
 function showManualAdd(){document.getElementById('manual-add').style.display='block';document.getElementById('ma-no').focus();}
 function lookupManual(no){const n=lookupName(no);if(n)document.getElementById('ma-name').value=n;}
@@ -1510,7 +1517,7 @@ async function manualAdd(){
   const name=document.getElementById('ma-name').value.trim()||lookupName(no);
   if(!curActiveCode||!no||!name)return;
   const now=new Date();
-  await db.ref('sessions/'+curActiveCode+'/attendance/'+no).set({
+  await fbPut('/sessions/'+curActiveCode+'/attendance/'+no,{
     studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:true
   });
   document.getElementById('ma-no').value='';document.getElementById('ma-name').value='';
@@ -1519,10 +1526,12 @@ async function manualAdd(){
 
 /* ── SESSIONS / HISTORY ── */
 function listenSessions(){
-  db.ref('sessions').on('value',snap=>{
-    const val=snap.val()||{};
-    sessions=Object.values(val).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    if(curView==='report'){renderHist();renderChart();}
+  _poll('sessions',10000,async()=>{
+    try{
+      const val=await fbGet('/sessions');
+      sessions=Object.values(val||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      if(curView==='report'){renderHist();renderChart();}
+    }catch{}
   });
 }
 function renderHist(){
@@ -1637,11 +1646,14 @@ function buildMatrix(){
 
 /* ── COURSES ── */
 function listenCourses(){
-  db.ref('courses').on('value',snap=>{
-    courses=snap.val()||{};
-    buildStudentMap();
-    populateCourseSelect();
-    if(curView==='courses')renderCourses();
+  _poll('courses',30000,async()=>{
+    try{
+      const d=await fbGet('/courses');
+      courses=d||{};
+      buildStudentMap();
+      populateCourseSelect();
+      if(curView==='courses')renderCourses();
+    }catch{}
   });
 }
 function buildStudentMap(){studentMap={};Object.values(courses).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}
@@ -1920,16 +1932,15 @@ async function validateForScan(){
   const btn=document.getElementById('stbtn');
   btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
   try{
-    const sessSnap=await db.ref('sessions/'+code).once('value');
-    const sess=sessSnap.val();
+    const sess=await fbGet('/sessions/'+code);
     if(!sess){setMsg('stmsg','alerr','Oturum bulunamadı.');return;}
     if(!sess.active){setMsg('stmsg','alwrn','Bu oturum kapatılmış.');return;}
     if(sess.closesAt&&Date.now()>sess.closesAt){setMsg('stmsg','alwrn','Oturum süresi dolmuş.');return;}
     const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
     if(p!==pNow&&p!==pPrev){setMsg('stmsg','alerr','PIN hatalı. Tahtadaki kodu kontrol edin.');return;}
-    if((await db.ref('sessions/'+code+'/attendance/'+no).once('value')).exists()){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
+    if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
-    if((await db.ref('sessions/'+code+'/devices/'+dvId.slice(0,32)).once('value')).exists()){setMsg('stmsg','alwrn','Bu cihazdan bu oturum için zaten yoklama alındı.');return;}
+    if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg('stmsg','alwrn','Bu cihazdan bu oturum için zaten yoklama alındı.');return;}
     if(sess.locLat){
       btn.innerHTML='<span class="spin"></span> Konum…';
       try{const pos=await getLocation(10000);const dist=haversine(sess.locLat,sess.locLng,pos.lat,pos.lng);if(dist>sess.locRadius){setMsg('stmsg','alerr',`📍 Konumunuz sınıftan uzak (${Math.round(dist)}m). Gerekli: ≤${sess.locRadius}m.`);return;}}
@@ -1985,7 +1996,7 @@ async function finalSubmitAtt(){
     const updates={};
     updates[`sessions/${code}/attendance/${no}`]={studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:false,idVerified:true};
     if(dvId)updates[`sessions/${code}/devices/${dvId.slice(0,32)}`]={no,time:now.getTime()};
-    await db.ref().update(updates);
+    await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
     pendingAtt=null;
     document.getElementById('st-idscan').style.display='none';
     document.getElementById('st-ok').style.display='block';
@@ -2009,16 +2020,15 @@ async function submitAtt2(){
   const btn=document.getElementById(btnEl);
   btn.innerHTML='<span class="spin"></span> Gönderiliyor…';btn.disabled=true;
   try{
-    const sessSnap=await db.ref('sessions/'+code).once('value');
-    const sess=sessSnap.val();
+    const sess=await fbGet('/sessions/'+code);
     if(!sess){setMsg(msgEl,'alerr','Oturum bulunamadı.');return;}
     if(!sess.active){setMsg(msgEl,'alwrn','Bu oturum kapatılmış.');return;}
     if(sess.closesAt&&Date.now()>sess.closesAt){setMsg(msgEl,'alwrn','Oturum süresi dolmuş.');return;}
     const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
     if(p!==pNow&&p!==pPrev){setMsg(msgEl,'alerr','PIN hatalı.');return;}
-    if((await db.ref('sessions/'+code+'/attendance/'+no).once('value')).exists()){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
+    if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
-    if((await db.ref('sessions/'+code+'/devices/'+dvId.slice(0,32)).once('value')).exists()){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
+    if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
     if(sess.locLat){
       btn.innerHTML='<span class="spin"></span> Konum…';
       try{const pos=await getLocation(10000);const dist=haversine(sess.locLat,sess.locLng,pos.lat,pos.lng);if(dist>sess.locRadius){setMsg(msgEl,'alerr',`📍 Konumunuz sınıftan uzak.`);return;}}
@@ -2028,7 +2038,7 @@ async function submitAtt2(){
     const updates={};
     updates[`sessions/${code}/attendance/${no}`]={studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:false};
     updates[`sessions/${code}/devices/${dvId.slice(0,32)}`]={no,time:now.getTime()};
-    await db.ref().update(updates);
+    await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
     document.getElementById('stform2').style.display='none';
     document.getElementById('st-tabs').style.display='none';
     document.getElementById('st-ok').style.display='block';
@@ -2042,10 +2052,6 @@ async function main(){
   // Theme
   try{const t=localStorage.getItem('pau_theme');if(t!==null)setTheme(t);}catch{}
 
-  // Firebase (database only — no Auth)
-  firebase.initializeApp(FB_CFG);
-  db=firebase.database();
-
   // Student view always shown by default
   listenActiveSt();
   nav('student');
@@ -2054,11 +2060,9 @@ async function main(){
   // PIN auth: check localStorage session
   onAuthChange();
 
-  // Load student courses for name lookup (no auth needed)
-  db.ref('courses').on('value',snap=>{
-    const cs=snap.val()||{};
-    studentMap={};
-    Object.values(cs).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});
+  // Load courses for student name lookup (no auth needed)
+  _poll('courses-anon',60000,async()=>{
+    try{const cs=await fbGet('/courses');studentMap={};Object.values(cs||{}).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}catch{}
   });
 }
 
