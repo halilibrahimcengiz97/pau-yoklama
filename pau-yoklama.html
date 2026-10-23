@@ -204,7 +204,7 @@ select option{background:var(--c2);color:var(--fg)}
 /* ── QR ── */
 .qr-wrap{display:flex;justify-content:center;margin:12px 0}
 .qr-wrap>div canvas,.qr-wrap>div img{
-  border-radius:14px;max-width:220px;
+  border-radius:14px;max-width:300px;width:100%;
   box-shadow:0 0 40px rgba(99,102,241,.35),0 8px 32px rgba(0,0,0,.4);
   border:3px solid rgba(99,102,241,.30);
 }
@@ -333,7 +333,7 @@ select option{background:var(--c2);color:var(--fg)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.3/umd/index.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- EmailJS removed — using Google Apps Script for email -->
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -487,6 +487,10 @@ select option{background:var(--c2);color:var(--fg)}
       <div class="form-row">
         <label>Süre (dakika, 0=süresiz)</label>
         <input type="number" id="new-dur" min="0" max="480" value="0" placeholder="0">
+      </div>
+      <div class="form-row" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="new-idreq" style="width:auto">
+        <label for="new-idreq" style="margin:0;cursor:pointer">🪪 Kimlik doğrulama gerektir (öğrenci kimliği taratılır)</label>
       </div>
       <div class="form-row" style="display:flex;align-items:center;gap:10px">
         <input type="checkbox" id="new-loc" style="width:auto" onchange="document.getElementById('loc-radius-row').style.display=this.checked?'block':'none'">
@@ -677,8 +681,8 @@ select option{background:var(--c2);color:var(--fg)}
     <ul id="cd-list" style="list-style:none"></ul>
     <div class="dvd"></div>
     <div class="card-title" style="font-size:.82rem">CSV ile Öğrenci Aktar</div>
-    <p class="hint">Format: öğrenci_no,ad_soyad (her satıra bir öğrenci)</p>
-    <textarea id="csv-input" style="margin-top:8px;font-family:monospace;font-size:.78rem" placeholder="2021001,Ali Veli&#10;2021002,Ayşe Fatma"></textarea>
+    <p class="hint">Format: öğrenci_no,ad_soyad,bölüm,email (bölüm ve email isteğe bağlı, her satıra bir öğrenci)</p>
+    <textarea id="csv-input" style="margin-top:8px;font-family:monospace;font-size:.78rem" placeholder="17270103,Muhammed Ali Erdem,Anestezi,merdem17@posta.pau.edu.tr&#10;17270104,Ayşe Fatma Kaya,Anestezi,afkaya18@posta.pau.edu.tr"></textarea>
     <div id="csv-msg" style="margin:8px 0"></div>
     <button class="btn bp bsm" onclick="importCsv()">İçe Aktar</button>
   </div>
@@ -714,30 +718,44 @@ select option{background:var(--c2);color:var(--fg)}
 <!-- ═══ SETTINGS VIEW ═══ -->
 <div class="view" id="view-settings">
   <div class="card">
-    <div class="card-title">📧 E-posta Ayarları (EmailJS)</div>
-    <p class="hint" style="margin-bottom:14px">EmailJS ücretsiz hesap açın (emailjs.com) ve bir e-posta şablonu oluşturun. Aşağıdaki bilgileri bir kez girin, sistem her oturum kapanışında otomatik mail atar.</p>
-    <div class="form-row"><label>Service ID</label><input id="svc-id" placeholder="service_xxxxxxx"></div>
-    <div class="form-row"><label>Template ID</label><input id="tmpl-id" placeholder="template_xxxxxxx"></div>
-    <div class="form-row"><label>Public Key</label><input id="pub-key" placeholder="xxxxxxxxxxxxxxxxxxxx"></div>
+    <div class="card-title">📧 E-posta Ayarları</div>
+    <p class="hint" style="margin-bottom:14px">Google Apps Script ile ücretsiz, sınırsız mail gönderin. Kurulum için aşağıya tıklayın. Script URL'sini bir kez girin — sistem her oturum kapanışında otomatik mail atar.</p>
+    <div class="form-row">
+      <label>Google Apps Script URL</label>
+      <input id="script-url" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:.8rem">
+    </div>
     <div class="form-row"><label>Admin E-posta (ek alıcı)</label><input id="admin-email" placeholder="admin@pau.edu.tr" value="hicengiz@pau.edu.tr"></div>
     <div id="email-settings-msg" style="margin-bottom:10px"></div>
     <button class="btn bp" onclick="saveEmailSettings()">Kaydet</button>
     <button class="btn bg bsm" style="margin-left:8px" onclick="testEmail()">Test Gönder</button>
   </div>
   <div class="card">
-    <div class="card-title">📧 EmailJS Şablon Değişkenleri</div>
-    <p class="hint" style="margin-bottom:8px">Şablonunuzda bu değişkenleri kullanın:</p>
-    <div style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-family:monospace;font-size:.75rem;line-height:2">
-      <div><strong>{{to_email}}</strong> — Alıcı e-posta</div>
-      <div><strong>{{prof_name}}</strong> — Dersi açan hoca</div>
-      <div><strong>{{session_name}}</strong> — Oturum adı</div>
-      <div><strong>{{date_str}}</strong> — Tarih</div>
-      <div><strong>{{time_str}}</strong> — Saat</div>
-      <div><strong>{{attendance_count}}</strong> — Katılan sayısı</div>
-      <div><strong>{{attendance_list}}</strong> — Katılanlar listesi</div>
-      <div><strong>{{course_name}}</strong> — Ders adı</div>
-      <div><strong>{{sorumlu_name}}</strong> — Sorumlu hocanın adı</div>
-    </div>
+    <div class="card-title">⚙️ Google Apps Script Kurulumu</div>
+    <p class="hint" style="margin-bottom:10px">Aşağıdaki adımları bir kez yapın (5 dakika):</p>
+    <ol style="padding-left:1.2rem;font-size:.82rem;line-height:2;color:var(--fg2)">
+      <li><a href="https://script.google.com" target="_blank" style="color:var(--accent)">script.google.com</a> → Yeni Proje</li>
+      <li>Aşağıdaki kodu yapıştırın ve kaydedin</li>
+      <li>Dağıt → Web uygulaması olarak dağıt → Erişim: <strong>Herkes</strong></li>
+      <li>Oluşan URL'yi yukarıya yapıştırın</li>
+    </ol>
+    <pre style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-size:.72rem;overflow-x:auto;margin-top:8px;line-height:1.6;white-space:pre-wrap">function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var recipients = data.recipients || [];
+    var subject = data.subject || 'Yoklama Raporu';
+    var body = data.body || '';
+    recipients.forEach(function(email) {
+      try { GmailApp.sendEmail(email, subject, body); } catch(err) {}
+    });
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: false, error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</pre>
   </div>
   <div class="card" id="pin-mgmt-card">
     <div class="card-title">🔑 Sistem PIN Yönetimi</div>
@@ -823,7 +841,7 @@ async function updatePin(){
   const next=await computePin(curActiveCode,1);
   document.getElementById('act-pin').textContent=pin;
   const sec=60-new Date().getSeconds();
-  document.getElementById('act-pin-sub').textContent=`Sonraki PIN: ${next} (${sec}s)`;
+  document.getElementById('act-pin-sub').textContent=`${sec}s sonra değişir`;
 }
 
 /* ── THEME ── */
@@ -846,7 +864,7 @@ function renderQr(code){
   const wrap=document.getElementById('act-qr');
   wrap.innerHTML='';
   const url=location.origin+location.pathname+'#'+code;
-  qrObj=new QRCode(wrap,{text:url,width:200,height:200,correctLevel:QRCode.CorrectLevel.M});
+  qrObj=new QRCode(wrap,{text:url,width:300,height:300,correctLevel:QRCode.CorrectLevel.M});
 }
 async function downloadQr(){
   const sess=activeSessions.find(s=>s.code===curActiveCode);
@@ -863,7 +881,7 @@ function nav(v){
   curView=v;
   ['student','session','active','report','courses','profs','settings'].forEach(x=>{
     const el=document.getElementById('view-'+x);
-    if(el){el.classList.toggle('on',x===v);el.style.display='';}// inline style temizle
+    if(el){el.classList.toggle('on',x===v);el.style.display='';}// inline style'ı temizle, CSS class kazansın
     const nb=document.getElementById('nav-'+x);
     if(nb)nb.classList.toggle('on',x===v);
   });
@@ -1186,6 +1204,7 @@ function initNewForm(){
     if(tmpl.dur!=null)document.getElementById('new-dur').value=tmpl.dur;
     if(tmpl.radius!=null)document.getElementById('new-radius').value=tmpl.radius;
     if(tmpl.loc){document.getElementById('new-loc').checked=true;document.getElementById('loc-radius-row').style.display='block';}
+    if(tmpl.idReq)document.getElementById('new-idreq').checked=true;
   }
 }
 
@@ -1197,6 +1216,7 @@ async function createSession(){
   const date=document.getElementById('new-date').value;
   const time=document.getElementById('new-time').value;
   const dur=parseInt(document.getElementById('new-dur').value)||0;
+  const useIdReq=document.getElementById('new-idreq').checked;
   const useLoc=document.getElementById('new-loc').checked;
   const radius=parseInt(document.getElementById('new-radius').value)||100;
   const errEl=document.getElementById('crerr');errEl.style.display='none';
@@ -1221,6 +1241,7 @@ async function createSession(){
       courseId:cid||null,
       courseName:course?.name||null,
       createdAt:Date.now(),active:true,
+      idRequired:useIdReq,
       duration:dur||null,closesAt:closesAt||null,
       profUid:curUser.uid,
       profEmail:curUser.email,
@@ -1231,7 +1252,7 @@ async function createSession(){
     const dbUrl=FB_CFG.databaseURL+'/sessions/'+code+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sess,attendance:{}})});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
-    saveSessionTemplate({dur,loc:useLoc,radius});
+    saveSessionTemplate({dur,loc:useLoc,radius,idReq:useIdReq});
     document.getElementById('new-name').value='';
     // Navigate to the new active session
     curActiveCode=code;
@@ -1294,22 +1315,17 @@ async function saveSystemPin(){
 /* ── EMAIL ── */
 async function saveEmailSettings(){
   const cfg={
-    serviceId:document.getElementById('svc-id').value.trim(),
-    templateId:document.getElementById('tmpl-id').value.trim(),
-    publicKey:document.getElementById('pub-key').value.trim(),
+    scriptUrl:document.getElementById('script-url').value.trim(),
     adminEmail:document.getElementById('admin-email').value.trim()||'hicengiz@pau.edu.tr'
   };
   try{
     await fbPut('/settings/email',cfg);
     emailCfg=cfg;
     setMsg('email-settings-msg','alok','Ayarlar kaydedildi.');
-    if(emailCfg.publicKey)emailjs.init(emailCfg.publicKey);
   }catch(e){setMsg('email-settings-msg','alerr','Hata: '+e.message);}
 }
 function loadEmailSettingsToForm(){
-  if(emailCfg.serviceId)document.getElementById('svc-id').value=emailCfg.serviceId;
-  if(emailCfg.templateId)document.getElementById('tmpl-id').value=emailCfg.templateId;
-  if(emailCfg.publicKey)document.getElementById('pub-key').value=emailCfg.publicKey;
+  if(emailCfg.scriptUrl)document.getElementById('script-url').value=emailCfg.scriptUrl;
   if(emailCfg.adminEmail)document.getElementById('admin-email').value=emailCfg.adminEmail;
 }
 async function loadEmailSettings(){
@@ -1317,50 +1333,58 @@ async function loadEmailSettings(){
     const d=await fbGet('/settings/email');
     emailCfg=d||{};
     loadEmailSettingsToForm();
-    if(emailCfg.publicKey)emailjs.init(emailCfg.publicKey);
   }catch{}
 }
 
+async function callScriptEmail(payload){
+  if(!emailCfg.scriptUrl)return;
+  await fetch(emailCfg.scriptUrl,{
+    method:'POST',
+    body:JSON.stringify(payload),
+    headers:{'Content-Type':'text/plain'} // Apps Script CORS needs text/plain
+  });
+}
+
 async function sendSessionEmail(sess){
-  if(!emailCfg.serviceId||!emailCfg.templateId||!emailCfg.publicKey)return;
+  if(!emailCfg.scriptUrl)return;
   const att=sess.attendance||attendees||{};
-  const rows=Object.values(att).sort((a,b)=>(a.time||0)-(b.time||0));
+  const rows=Object.values(att).filter(a=>!a.absent).sort((a,b)=>(a.time||0)-(b.time||0));
   const list=rows.map((a,i)=>`${i+1}. ${a.studentName||'—'} (${a.studentNo||''})`).join('\n');
   const course=sess.courseId&&courses[sess.courseId]?courses[sess.courseId]:null;
   const sorumlu=course&&course.sorumlulUid&&professors[course.sorumlulUid]?professors[course.sorumlulUid]:null;
-  const params={
-    prof_name:sess.profName||sess.profEmail||'—',
-    session_name:sess.name||'—',
-    date_str:`${dayN(sess.date)} ${fmtDate(sess.date)}`,
-    time_str:sess.time||'—',
-    attendance_count:String(rows.length),
-    attendance_list:list||'—',
-    course_name:sess.courseName||course?.name||'—',
-    sorumlu_name:sorumlu?.name||'—'
-  };
+  const subject=`Yoklama Raporu — ${sess.name||''} (${dayN(sess.date)} ${fmtDate(sess.date)})`;
+  const body=`PAÜ Tıp Fakültesi — Yoklama Raporu
+
+Hoca      : ${sess.profName||sess.profEmail||'—'}
+Ders      : ${sess.courseName||course?.name||'—'}
+Sorumlu   : ${sorumlu?.name||'—'}
+Tarih     : ${dayN(sess.date)} ${fmtDate(sess.date)}
+Saat      : ${sess.time||'—'}
+Katılan   : ${rows.length} öğrenci
+
+Katılan Öğrenciler:
+${list||'—'}`;
+
   const recipients=new Set();
   if(sess.profEmail)recipients.add(sess.profEmail);
-  const adminEmail=emailCfg.adminEmail||'hicengiz@pau.edu.tr';
-  recipients.add(adminEmail);
+  recipients.add(emailCfg.adminEmail||'hicengiz@pau.edu.tr');
   recipients.add('hicengiz@pau.edu.tr');
   if(sorumlu?.email)recipients.add(sorumlu.email);
-  const svc=emailCfg.serviceId,tmpl=emailCfg.templateId,pk=emailCfg.publicKey;
-  for(const email of recipients){
-    try{await emailjs.send(svc,tmpl,{...params,to_email:email},pk);}
-    catch(e){console.warn('Email error to',email,e);}
-  }
-  try{await fbPatch('/sessions/'+sess.code,{emailSent:true});}catch{}
+  try{
+    await callScriptEmail({recipients:[...recipients],subject,body});
+    await fbPatch('/sessions/'+sess.code,{emailSent:true});
+  }catch(e){console.warn('Email error',e);}
 }
 
 async function testEmail(){
-  if(!emailCfg.serviceId){alert('Önce ayarları kaydedin.');return;}
+  if(!emailCfg.scriptUrl){setMsg('email-settings-msg','alerr','Önce Script URL girin ve kaydedin.');return;}
   try{
-    await emailjs.send(emailCfg.serviceId,emailCfg.templateId,{
-      to_email:curUser?.email||emailCfg.adminEmail||'hicengiz@pau.edu.tr',
-      prof_name:'Test Hoca',session_name:'Test Oturumu',date_str:'Bugün',time_str:'12:00',
-      attendance_count:'5',attendance_list:'1. Test Öğrenci (2021001)',course_name:'Test Dersi',sorumlu_name:'Test Sorumlu'
-    },emailCfg.publicKey);
-    setMsg('email-settings-msg','alok','Test e-postası gönderildi!');
+    await callScriptEmail({
+      recipients:[curUser?.email||emailCfg.adminEmail||'hicengiz@pau.edu.tr'],
+      subject:'Test — PAÜ Yoklama Sistemi',
+      body:'Bu bir test e-postasıdır. PAÜ Yoklama sistemi doğru şekilde yapılandırılmış.'
+    });
+    setMsg('email-settings-msg','alok','Test e-postası gönderildi! Gelen kutunuzu kontrol edin.');
   }catch(e){setMsg('email-settings-msg','alerr','Hata: '+esc(e.message));}
 }
 
@@ -1657,7 +1681,7 @@ function listenCourses(){
   });
 }
 function buildStudentMap(){studentMap={};Object.values(courses).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}
-function lookupName(no){return studentMap[no]||'';}
+function lookupName(no){const e=studentMap[no];if(!e)return '';return typeof e==='string'?e:(e.name||'');}
 function lookupSt(no){const n=lookupName(no);if(n)document.getElementById('st-name').value=n;}
 function lookupSt2(no){const n=lookupName(no);if(n)document.getElementById('st-name2').value=n;}
 function populateCourseSelect(){
@@ -1673,7 +1697,7 @@ function renderCourses(){
   list.innerHTML=entries.map(([id,c])=>{
     const cnt=c.students?Object.keys(c.students).length:0;
     const sorumlu=c.sorumlulUid&&professors[c.sorumlulUid]?professors[c.sorumlulUid].name:(c.sorumlulName||'—');
-    return`<li class="lrow" style="cursor:pointer" onclick="showCourseDetail(${JSON.stringify(id)})">
+    return`<li class="lrow" style="cursor:pointer" onclick="showCourseDetail('${id}')">
       <div class="lname"><div class="n">${esc(c.name)}</div><div class="m">${c.code?esc(c.code)+' · ':''} ${cnt} öğrenci · Sorumlu: ${esc(sorumlu)}</div></div>
       <span style="color:var(--fg2)">›</span>
     </li>`;
@@ -1755,10 +1779,14 @@ function renderCourseStudents(id){
   const stus=c.students?Object.entries(c.students):[];
   document.getElementById('cd-cnt').textContent=stus.length;
   document.getElementById('cd-list').innerHTML=stus.length
-    ?stus.map(([no,name],i)=>`<li class="lrow"><span class="lno">${i+1}</span>
-        <div class="lname"><div class="n">${esc(name)}</div><div class="m">${esc(no)}</div></div>
-        <button class="btn bd bsm" onclick="delStudent(${JSON.stringify(no)})">✕</button>
-      </li>`).join('')
+    ?stus.map(([no,entry],i)=>{
+        const nm=typeof entry==='string'?entry:(entry.name||'');
+        const bl=typeof entry==='string'?'':(entry.bolum||'');
+        const em=typeof entry==='string'?'':(entry.email||'');
+        return`<li class="lrow"><span class="lno">${i+1}</span>
+          <div class="lname"><div class="n">${esc(nm)}${bl?`<span style="color:var(--fg2);font-size:.75rem;font-weight:400"> · ${esc(bl)}</span>`:''}</div><div class="m">${esc(no)}${em?` · <span style="color:var(--fg2)">${esc(em)}</span>`:''}</div></div>
+          <button class="btn bd bsm" onclick="delStudent(${JSON.stringify(no)})">✕</button>
+        </li>`;}).join('')
     :'<li class="empty">Öğrenci yok.</li>';
 }
 function hideCourseDetail(){document.getElementById('course-detail').style.display='none';document.getElementById('courses-list-card').style.display='block';curCourse=null;}
@@ -1791,11 +1819,16 @@ async function importCsv(){
   lines.forEach(line=>{
     const parts=line.split(/[,;\t]/).map(s=>s.trim().replace(/^["']|["']$/g,''));
     if(parts.length<2){skip++;return;}
-    const no=parts[0],name=parts.slice(1).join(' ');
-    if(!no||!name||no.toLowerCase()==='öğrenci'||no.toLowerCase()==='no'){skip++;return;}
-    updates[no]=name;count++;
+    const no=parts[0];
+    if(!no||no.toLowerCase()==='öğrenci'||no.toLowerCase()==='no'){skip++;return;}
+    const name=parts[1]||'';
+    const bolum=(parts[2]||'').trim();
+    const email=(parts[3]||'').trim().toLowerCase();
+    if(!name){skip++;return;}
+    const val=(bolum||email)?{name,...(bolum&&{bolum}),...(email&&{email})}:name;
+    updates[no]=val;count++;
   });
-  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Format: öğrenci_no,ad_soyad</div>';return;}
+  if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Format: öğrenci_no,ad_soyad,bölüm,email</div>';return;}
   try{
     const resp=await fetch(FB_CFG.databaseURL+'/courses/'+curCourse+'/students.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -1904,10 +1937,10 @@ function listenActiveSt(){
     document.getElementById('st-code').value=hash;
     document.getElementById('st-code2').value=hash;
   }
-  // Show the form
-  document.getElementById('stform').style.display='block';
-  document.getElementById('stform2').style.display='none';
-  document.getElementById('st-tabs').style.display='block';
+  // Show the form (tabs hidden — mode set by professor per session)
+  document.getElementById('stform').style.display='none';
+  document.getElementById('stform2').style.display='block';
+  document.getElementById('st-tabs').style.display='none';
   document.getElementById('stnosess').style.display='none';
 }
 
@@ -1915,8 +1948,9 @@ function resetStForm(){
   pendingAtt=null;
   document.getElementById('st-ok').style.display='none';
   document.getElementById('st-idscan').style.display='none';
-  document.getElementById('stform').style.display=stMode===1?'block':'none';
-  document.getElementById('stform2').style.display=stMode===2?'block':'none';
+  document.getElementById('stform').style.display='none';
+  document.getElementById('stform2').style.display='block';
+  document.getElementById('st-tabs').style.display='none';
 }
 
 async function validateForScan(){
@@ -1938,6 +1972,16 @@ async function validateForScan(){
     if(sess.closesAt&&Date.now()>sess.closesAt){setMsg('stmsg','alwrn','Oturum süresi dolmuş.');return;}
     const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
     if(p!==pNow&&p!==pPrev){setMsg('stmsg','alerr','PIN hatalı. Tahtadaki kodu kontrol edin.');return;}
+    if(sess.courseId&&!curUser){
+      const roster=await fbGet('/courses/'+sess.courseId+'/students');
+      if(roster&&Object.keys(roster).length>0){
+        const entry=roster[no];
+        if(!entry){setMsg('stmsg','alerr','❌ Bu derse kayıtlı öğrenci listesinde bulunamadınız. Öğrenci numaranızı kontrol edin.');return;}
+        const rosterName=typeof entry==='string'?entry:(entry.name||'');
+        const norm=s=>s.toLocaleUpperCase('tr').replace(/\s+/g,' ').trim();
+        if(rosterName&&norm(name)!==norm(rosterName)){setMsg('stmsg','alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}
+      }
+    }
     if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
     if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg('stmsg','alwrn','Bu cihazdan bu oturum için zaten yoklama alındı.');return;}
@@ -1958,7 +2002,7 @@ async function validateForScan(){
   }catch(e){setMsg('stmsg','alerr','Hata: '+esc(e.message));}
   finally{btn.innerHTML='Devam — Kimliği Doğrula →';btn.disabled=false;}
 }
-function cancelIdScan(){pendingAtt=null;document.getElementById('st-idscan').style.display='none';document.getElementById('stform').style.display='block';}
+function cancelIdScan(){pendingAtt=null;document.getElementById('st-idscan').style.display='none';document.getElementById('stform2').style.display='block';}
 async function decodeIdCard(input){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
@@ -2026,6 +2070,16 @@ async function submitAtt2(){
     if(sess.closesAt&&Date.now()>sess.closesAt){setMsg(msgEl,'alwrn','Oturum süresi dolmuş.');return;}
     const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
     if(p!==pNow&&p!==pPrev){setMsg(msgEl,'alerr','PIN hatalı.');return;}
+    if(sess.courseId&&!curUser){
+      const roster=await fbGet('/courses/'+sess.courseId+'/students');
+      if(roster&&Object.keys(roster).length>0){
+        const entry=roster[no];
+        if(!entry){setMsg(msgEl,'alerr','❌ Bu derse kayıtlı öğrenci listesinde bulunamadınız. Öğrenci numaranızı kontrol edin.');return;}
+        const rosterName=typeof entry==='string'?entry:(entry.name||'');
+        const norm=s=>s.toLocaleUpperCase('tr').replace(/\s+/g,' ').trim();
+        if(rosterName&&norm(name)!==norm(rosterName)){setMsg(msgEl,'alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}
+      }
+    }
     if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
     if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
@@ -2033,6 +2087,19 @@ async function submitAtt2(){
       btn.innerHTML='<span class="spin"></span> Konum…';
       try{const pos=await getLocation(10000);const dist=haversine(sess.locLat,sess.locLng,pos.lat,pos.lng);if(dist>sess.locRadius){setMsg(msgEl,'alerr',`📍 Konumunuz sınıftan uzak.`);return;}}
       catch{setMsg(msgEl,'alwrn','📍 Konum alınamadı.');return;}
+    }
+    // If professor required ID, redirect to ID scan flow
+    if(sess.idRequired){
+      pendingAtt={code,no,name,sess,dvId};
+      document.getElementById('stform2').style.display='none';
+      document.getElementById('st-idscan').style.display='block';
+      document.getElementById('id-msg').innerHTML='';
+      document.getElementById('id-preview').style.display='none';
+      document.getElementById('id-cam-inp').value='';
+      document.getElementById('scan-btn').innerHTML='📷 Kartı Kameraya Göster';
+      document.getElementById('scan-btn').disabled=false;
+      document.getElementById('scan-btn').style.display='';
+      return;
     }
     const now=new Date();
     const updates={};
