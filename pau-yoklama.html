@@ -1540,7 +1540,9 @@ async function importProfCsv(){
   if(!count){msgEl.innerHTML='<div class="al alerr">Geçerli satır bulunamadı. Son sütun email olmalı.</div>';return;}
   msgEl.innerHTML='<div class="al alinfo">Yükleniyor…</div>';
   try{
-    await db.ref('professors').update(updates);
+    const url=FB_CFG.databaseURL+'/professors.json';
+    const resp=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
+    if(!resp.ok)throw new Error('Sunucu hatası: '+resp.status);
     msgEl.innerHTML=`<div class="al alok">${count} hoca eklendi.${skip?' ('+skip+' satır atlandı)':''}</div>`;
     document.getElementById('prof-csv-input').value='';
   }catch(e){msgEl.innerHTML='<div class="al alerr">Hata: '+esc(e.message)+'</div>';}
