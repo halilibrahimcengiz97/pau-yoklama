@@ -855,7 +855,7 @@ function nav(v){
     if(nb)nb.classList.toggle('on',x===v);
   });
   if(v==='report'){renderHist();renderChart();buildMatrixCourseFilter();}
-  if(v==='courses')renderCourses();
+  if(v==='courses'){renderCourses();populateSorumluSelects();}
   if(v==='profs')renderProfs();
   if(v==='settings'){loadEmailSettings();if(isAdmin)loadSystemPinDisplay();}
   if(v==='session'){renderMyActiveSessions();initNewForm();}
@@ -995,10 +995,18 @@ async function delProf(uid){
   if(!confirm('Bu hocayı silmek istiyor musunuz?'))return;
   await db.ref('professors/'+uid).remove();
 }
-function populateSorumluSelects(){
+function _fillSorumluSelects(){
   const opts='<option value="">— Seçin —</option>'+Object.entries(professors).map(([uid,p])=>
     `<option value="${esc(uid)}" data-name="${esc(p.name)}" data-email="${esc(p.email||'')}">${esc(p.name)}</option>`).join('');
   ['nc-sorumlu','edit-sorumlu-sel'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+function populateSorumluSelects(){
+  if(Object.keys(professors).length){_fillSorumluSelects();return;}
+  // Hocalar henüz yüklenmediyse REST API'den direkt çek
+  fetch(FB_CFG.databaseURL+'/professors.json')
+    .then(r=>r.ok?r.json():null)
+    .then(data=>{if(data&&typeof data==='object')professors=data;_fillSorumluSelects();})
+    .catch(()=>_fillSorumluSelects());
 }
 
 /* ── MY ACTIVE SESSIONS ── */
