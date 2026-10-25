@@ -4842,11 +4842,13 @@ Katılan   : ${rows.length} öğrenci
 Katılan Öğrenciler:
 ${list||'—'}`;
 
+  // TEST MODU — sadece yönetici alıyor.
+  // Canlıya geçince aşağıdaki 3 satırın başındaki // kaldırın:
+  // if(sess.profEmail)recipients.add(sess.profEmail);
+  // if(emailCfg.adminEmail)recipients.add(emailCfg.adminEmail);
+  // if(sorumlu?.email)recipients.add(sorumlu.email);
   const recipients=new Set();
-  if(sess.profEmail)recipients.add(sess.profEmail);
-  recipients.add(emailCfg.adminEmail||'hicengiz@pau.edu.tr');
   recipients.add('hicengiz@pau.edu.tr');
-  if(sorumlu?.email)recipients.add(sorumlu.email);
   const excelRows=rows.map((a,i)=>({
     sira:i+1,
     no:a.studentNo||'',
