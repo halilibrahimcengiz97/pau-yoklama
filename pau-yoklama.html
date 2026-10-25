@@ -1926,15 +1926,16 @@ label{font-size:.68rem;letter-spacing:.05em;font-weight:800;color:var(--fg2)}
     <span style="font-size:.82rem;font-weight:600;color:var(--pau-gold-dk,#7a5a1a)">Bu oturum kimlik doğrulama gerektiriyor.<br><span style="font-weight:400">Lütfen öğrenci kimliğinizi (barkodlu) hazırlayın.</span></span>
   </div>
 
-  <!-- Mode tabs -->
+  <!-- Mode tabs — sadece yardımcı sekmeler, mod seçimi sisteme ait -->
   <div id="st-tabs" style="display:none">
     <div class="stabs" style="justify-content:center">
-      <button class="stab on" id="stab1" onclick="stab(1)">🪪 Kimlikli</button>
-      <button class="stab" id="stab2" onclick="stab(2)">📝 Kimliksiz</button>
       <button class="stab" id="stab3" onclick="stab(3)">📊 Geçmişim</button>
       <button class="stab" id="stab4" onclick="stab(4)">⚠️ İtiraz</button>
     </div>
   </div>
+  <!-- Gizli stab1/stab2 — JS uyumluluğu için var, kullanıcıya gösterilmez -->
+  <button id="stab1" style="display:none"></button>
+  <button id="stab2" style="display:none"></button>
 </div>
 
 <!-- ═══ SESSION VIEW (PROFESSOR) ═══ -->
@@ -6046,15 +6047,13 @@ function listenActiveSt(){
     document.getElementById('st-code').value=hash;
     document.getElementById('st-code2').value=hash;
   }
-  // Show tabs; kimliksiz form by default
+  // Kimliksiz formu varsayılan aç, mod seçimi yok
   document.getElementById('stform').style.display='none';
   document.getElementById('stform2').style.display='block';
   document.getElementById('stform3').style.display='none';
   document.getElementById('stform4').style.display='none';
   document.getElementById('st-tabs').style.display='block';
   document.getElementById('stnosess').style.display='none';
-  document.getElementById('stab1').classList.remove('on');
-  document.getElementById('stab2').classList.add('on');
   document.getElementById('stab3').classList.remove('on');
   document.getElementById('stab4').classList.remove('on');
   stMode=2;
