@@ -1920,6 +1920,12 @@ label{font-size:.68rem;letter-spacing:.05em;font-weight:800;color:var(--fg2)}
     <button class="btn bp bfull" onclick="submitObjection()">İtirazı Gönder</button>
   </div>
 
+  <!-- Kimlik hazırlık uyarısı (idReq=true olunca gösterilir) -->
+  <div id="st-idreq-banner" style="display:none;margin-bottom:8px;padding:10px 14px;border-radius:var(--rad-sm);background:color-mix(in srgb,var(--pau-gold) 12%,transparent);border:1.5px solid color-mix(in srgb,var(--pau-gold) 40%,transparent);display:none;align-items:center;gap:10px">
+    <span style="font-size:1.4rem">🪪</span>
+    <span style="font-size:.82rem;font-weight:600;color:var(--pau-gold-dk,#7a5a1a)">Bu oturum kimlik doğrulama gerektiriyor.<br><span style="font-weight:400">Lütfen öğrenci kimliğinizi (barkodlu) hazırlayın.</span></span>
+  </div>
+
   <!-- Mode tabs -->
   <div id="st-tabs" style="display:none">
     <div class="stabs" style="justify-content:center">
@@ -6005,14 +6011,30 @@ async function _autoDetectSessionMode(code){
     const sess=await fbGet('/sessions/'+code);
     if(!sess||!sess.active)return;
     _forcedStMode=sess.idReq===true?true:false;
-    // stab1 görünürlüğü
     const t1=document.getElementById('stab1');
     const t2=document.getElementById('stab2');
-    if(t1)t1.style.display=_forcedStMode===false?'none':'';
-    if(t2)t2.style.display=_forcedStMode===true?'none':'';
-    // Aktif formu doğru moda çek
-    if(_forcedStMode===true&&stMode!==1&&stMode!==3&&stMode!==4)stab(1);
-    if(_forcedStMode===false&&stMode!==2&&stMode!==3&&stMode!==4)stab(2);
+    const banner=document.getElementById('st-idreq-banner');
+    if(_forcedStMode===true){
+      // Kimlikli zorunlu: tabları gizle, sadece form1 göster, banner aç
+      if(t1)t1.style.display='none';
+      if(t2)t2.style.display='none';
+      if(banner)banner.style.display='flex';
+      stMode=1;
+      document.getElementById('stform').style.display='block';
+      document.getElementById('stform2').style.display='none';
+      document.getElementById('stab1').classList.add('on');
+      document.getElementById('stab2').classList.remove('on');
+    } else {
+      // Kimliksiz: tabları gizle, sadece form2 göster, banner kapat
+      if(t1)t1.style.display='none';
+      if(t2)t2.style.display='none';
+      if(banner)banner.style.display='none';
+      stMode=2;
+      document.getElementById('stform').style.display='none';
+      document.getElementById('stform2').style.display='block';
+      document.getElementById('stab2').classList.add('on');
+      document.getElementById('stab1').classList.remove('on');
+    }
   }catch{}
 }
 
@@ -6041,9 +6063,10 @@ function listenActiveSt(){
 function resetStForm(){
   pendingAtt=null;
   _forcedStMode=null;
-  // Tabları tekrar göster
+  // Tabları ve banner'ı sıfırla
   const t1=document.getElementById('stab1');const t2=document.getElementById('stab2');
   if(t1)t1.style.display='';if(t2)t2.style.display='';
+  const banner=document.getElementById('st-idreq-banner');if(banner)banner.style.display='none';
   document.getElementById('st-ok').style.display='none';
   document.getElementById('st-idscan').style.display='none';
   document.getElementById('stform').style.display='none';
