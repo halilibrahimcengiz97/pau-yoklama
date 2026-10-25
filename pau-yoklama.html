@@ -1801,7 +1801,7 @@ label{font-size:.68rem;letter-spacing:.05em;font-weight:800;color:var(--fg2)}
     <div class="al alinfo" style="margin-bottom:12px;font-size:.78rem">QR kodu okutun veya oturum kodunu yazın. Son adımda öğrenci kimliğinizi (barkod) göstermeniz gerekecek.</div>
     <div class="form-row">
       <label>Oturum Kodu</label>
-      <input id="st-code" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase()" placeholder="6 haneli kod">
+      <input id="st-code" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code2').value=this.value;if(this.value.length===6)_autoDetectSessionMode(this.value)" placeholder="6 haneli kod">
     </div>
     <div class="form-row">
       <label>Öğrenci No</label>
@@ -1867,7 +1867,7 @@ label{font-size:.68rem;letter-spacing:.05em;font-weight:800;color:var(--fg2)}
     <div class="card-title">📋 Yoklama Al — Kimliksiz</div>
     <div class="form-row">
       <label>Oturum Kodu</label>
-      <input id="st-code2" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase()" placeholder="6 haneli kod">
+      <input id="st-code2" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code').value=this.value;if(this.value.length===6)_autoDetectSessionMode(this.value)" placeholder="6 haneli kod">
     </div>
     <div class="form-row">
       <label>Öğrenci No</label>
@@ -5980,7 +5980,13 @@ function runGSearch(q){
 }
 
 /* ── STUDENT FLOW ── */
+// _forcedStMode: null=serbest, true=sadece kimlikli, false=sadece kimliksiz
+let _forcedStMode=null;
+
 function stab(n){
+  // Kimlikli/kimliksiz arası geçiş kilitliyse engelle
+  if(_forcedStMode===true&&n===2)return;   // kimliksiz yasak
+  if(_forcedStMode===false&&n===1)return;  // kimlikli yasak
   stMode=n;
   document.getElementById('stab1').classList.toggle('on',n===1);
   document.getElementById('stab2').classList.toggle('on',n===2);
@@ -5990,6 +5996,24 @@ function stab(n){
   document.getElementById('stform2').style.display=n===2?'block':'none';
   document.getElementById('stform3').style.display=n===3?'block':'none';
   document.getElementById('stform4').style.display=n===4?'block':'none';
+}
+
+// Oturum kodu girilince modu otomatik belirle
+async function _autoDetectSessionMode(code){
+  if(!code||code.length!==6)return;
+  try{
+    const sess=await fbGet('/sessions/'+code);
+    if(!sess||!sess.active)return;
+    _forcedStMode=sess.idReq===true?true:false;
+    // stab1 görünürlüğü
+    const t1=document.getElementById('stab1');
+    const t2=document.getElementById('stab2');
+    if(t1)t1.style.display=_forcedStMode===false?'none':'';
+    if(t2)t2.style.display=_forcedStMode===true?'none':'';
+    // Aktif formu doğru moda çek
+    if(_forcedStMode===true&&stMode!==1&&stMode!==3&&stMode!==4)stab(1);
+    if(_forcedStMode===false&&stMode!==2&&stMode!==3&&stMode!==4)stab(2);
+  }catch{}
 }
 
 function listenActiveSt(){
@@ -6016,6 +6040,10 @@ function listenActiveSt(){
 
 function resetStForm(){
   pendingAtt=null;
+  _forcedStMode=null;
+  // Tabları tekrar göster
+  const t1=document.getElementById('stab1');const t2=document.getElementById('stab2');
+  if(t1)t1.style.display='';if(t2)t2.style.display='';
   document.getElementById('st-ok').style.display='none';
   document.getElementById('st-idscan').style.display='none';
   document.getElementById('stform').style.display='none';
