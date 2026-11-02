@@ -2730,9 +2730,18 @@ input:focus,select:focus,textarea:focus{
           <div id="proj-qr-inner"></div>
         </div>
         <div id="proj-pin-area">
-          <div id="proj-pin-label">Geçerli PIN</div>
-          <div id="proj-pin-val">—</div>
-          <div id="proj-pin-timer">— saniye</div>
+          <div style="display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:4px">
+            <div style="text-align:center">
+              <div id="proj-pin-label" style="font-size:.62rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.16em;margin-bottom:5px">Geçerli PIN</div>
+              <div id="proj-pin-val" style="font-size:clamp(2rem,4vw,3.2rem);font-weight:900;letter-spacing:.22em;color:#fff;font-variant-numeric:tabular-nums">—</div>
+            </div>
+            <div style="width:1px;background:rgba(255,255,255,.12);align-self:stretch;margin:4px 0"></div>
+            <div style="text-align:center">
+              <div id="proj-vc-label" style="font-size:.62rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.16em;margin-bottom:5px">Ekran Kodu</div>
+              <div id="proj-vc-val" style="font-size:clamp(2rem,4vw,3.2rem);font-weight:900;letter-spacing:.22em;color:#4ade80;font-variant-numeric:tabular-nums">—</div>
+            </div>
+          </div>
+          <div id="proj-pin-timer" style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:6px;text-align:center">— saniye</div>
         </div>
       </div>
       </div><!-- /proj-qr-ring-wrap -->
@@ -3323,8 +3332,7 @@ input:focus,select:focus,textarea:focus{
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
       <button class="btn bg bsm" onclick="downloadQr()">⬇ QR İndir</button>
-      <button class="btn bp bsm" onclick="openQrFullscreen()" title="QR Tam Ekran">📺 QR</button>
-      <button class="btn bp bsm" onclick="openProjFullscreen()" title="Projeksiyon modu">🖥 Projeksiyon</button>
+      <button class="btn bp bsm" style="font-weight:700;padding:0 18px" onclick="openProjFullscreen()" title="QR + Projeksiyon tam ekran">📺 QR &amp; Projeksiyon</button>
       <button class="btn bp bsm" onclick="startRoundMode()" id="round-mode-btn" title="Tur modu — ekip ekip yoklama al">🔄 Tur</button>
       <button class="btn bwarn bsm" onclick="snapSession()" id="snap-btn">📩 Anlık Bitir</button>
       <button class="btn bd bsm" onclick="closeSession()" id="close-btn">🛑 Tamamen Bitir</button>
@@ -8560,8 +8568,8 @@ async function createSession(){
       renderAtt(code);
     }
     _selGroups.clear();
-    // Hoca için otomatik tam ekran QR — tek tıkla yoklama deneyimi
-    setTimeout(()=>openQrFullscreen(),400);
+    // Hoca için otomatik projeksiyon ekranı — oturum başlar başlamaz büyük ekran
+    setTimeout(()=>openProjFullscreen(),400);
   }catch(e){errEl.textContent='Hata: '+e.message;errEl.style.display='block';}
   finally{btn.innerHTML='Oturumu Başlat';btn.disabled=false;}
 }
@@ -11356,18 +11364,23 @@ async function submitAtt2(){
     } else {
       if(!/^\d{3,15}$/.test(no)){setMsg(msgEl,'alerr','Geçerli bir öğrenci numarası girin.');return;}
     }
-    // PIN doğrulaması
+    // Step-2 alanları görünür mü? (öğrenci listede bulunamamışsa gizli kalır)
+    const step2El=document.getElementById('st-step2-fields');
+    const step2Shown=step2El&&step2El.style.display!=='none';
+    // PIN doğrulaması — sadece step-2 görünüyorsa
     const p2=(document.getElementById('st-pin2')?.value||'').trim();
-    if(sess.pinRequired!==false){
+    if(step2Shown&&sess.pinRequired!==false){
       if(!p2||p2.length!==4){setMsg(msgEl,'alerr','4 haneli PIN girin (tahtadaki kod).');return;}
       const[pNow2,pPrev2]=await Promise.all([computePin(code,0),computePin(code,-1)]);
       if(p2!==pNow2&&p2!==pPrev2){setMsg(msgEl,'alerr','PIN hatalı. Tahtadaki kodu kontrol edin.');return;}
     }
-    // Ekran kodu doğrulaması
+    // Ekran kodu doğrulaması — sadece step-2 görünüyorsa
     const vc2=(document.getElementById('st-vcode2')?.value||'').trim().toUpperCase();
-    if(!vc2||vc2.length!==3){setMsg(msgEl,'alerr','Hocanın ekranındaki 3 harfli kodu girin.');return;}
-    const[vcNow2,vcPrev2]=await Promise.all([computeVisualCode(code,0),computeVisualCode(code,-1)]);
-    if(vc2!==vcNow2&&vc2!==vcPrev2){setMsg(msgEl,'alerr','🔡 Ekran kodu hatalı. Hocanın ekranındaki 3 harfi doğru girin.');return;}
+    if(step2Shown){
+      if(!vc2||vc2.length!==3){setMsg(msgEl,'alerr','Hocanın ekranındaki 3 harfli kodu girin.');return;}
+      const[vcNow2,vcPrev2]=await Promise.all([computeVisualCode(code,0),computeVisualCode(code,-1)]);
+      if(vc2!==vcNow2&&vc2!==vcPrev2){setMsg(msgEl,'alerr','🔡 Ekran kodu hatalı. Hocanın ekranındaki 3 harfi doğru girin.');return;}
+    }
     // Halka konumu doğrulaması — QR'deki sektör, gönderim anındaki sektörle eşleşmeli
     // _hashRingSec=-1 ise eski QR (sektör yok) → doğrulama atla; yeni QR'lerde zorunlu
     if(_hashRingSec>=0){
@@ -12304,21 +12317,23 @@ function _renderProjQr(){
   if(!wrap||!curActiveCode)return;
   wrap.innerHTML='';
   // Size: use available space — roughly 42vh capped at 400px
-  const sz=Math.min(400,Math.max(220,Math.round(window.innerHeight*0.42)));
+  const sz=Math.min(480,Math.max(260,Math.round(window.innerHeight*0.50)));
   try{new QRCode(wrap,{text:_qrUrl(curActiveCode),width:sz,height:sz,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
 }
 
 async function _updateProjPin(){
   if(!projFsOpen)return;
   const pinEl=document.getElementById('proj-pin-val');
+  const vcEl=document.getElementById('proj-vc-val');
   const timerEl=document.getElementById('proj-pin-timer');
   const nowSec=Math.floor(Date.now()/1000)%20;
   const sec=20-nowSec;
   if(timerEl)timerEl.textContent=sec+' saniyede değişir';
-  if(!curActiveCode){if(pinEl)pinEl.textContent='—';return;}
+  if(!curActiveCode){if(pinEl)pinEl.textContent='—';if(vcEl)vcEl.textContent='—';return;}
   try{
-    const pin=await computePin(curActiveCode,0);
+    const [pin,vc]=await Promise.all([computePin(curActiveCode,0),computeVisualCode(curActiveCode,0)]);
     if(pinEl)pinEl.textContent=pin;
+    if(vcEl)vcEl.textContent=vc;
   }catch(e){}
 }
 
