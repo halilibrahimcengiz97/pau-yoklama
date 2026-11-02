@@ -2878,6 +2878,11 @@ input:focus,select:focus,textarea:focus{
         <label>👥 Katılımcı Grubu <span style="font-size:.67rem;color:var(--fg3);font-weight:400">— boş bırakılırsa ön yükleme olmaz</span></label>
         <div id="new-group-btns" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"></div>
         <div id="new-group-hint" style="font-size:.75rem;color:var(--pau-285c);font-weight:600;margin-top:6px"></div>
+        <!-- Ekip filtresi (isteğe bağlı) -->
+        <div id="new-ekip-row" style="display:none;margin-top:10px;padding:10px 12px;border:1.5px dashed var(--border);border-radius:10px;background:var(--bg3)">
+          <div style="font-size:.76rem;font-weight:700;color:var(--fg2);margin-bottom:8px">🏷 Ekip Filtresi <span style="font-weight:400;color:var(--fg3)">(seçmezseniz tüm seçili grup dahil)</span></div>
+          <div id="new-ekip-btns" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
         <!-- Öğrenci önizleme (salt okunur) -->
         <div id="new-stu-preview" style="display:none;margin-top:10px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -3003,10 +3008,29 @@ input:focus,select:focus,textarea:focus{
       <div class="pin-sub" id="act-vcode-sub">Her 60 saniyede değişir</div>
     </div>
     <div class="qr-wrap" id="act-qr" style="margin:16px 0"></div>
+    <!-- ── TUR MODU paneli ── -->
+    <div id="round-panel" style="display:none;margin:14px 0 8px;padding:12px 14px;border:1.5px solid var(--pau-285c);border-radius:var(--rad-sm);background:color-mix(in srgb,var(--pau-285c) 6%,transparent)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        <div style="font-size:.78rem;font-weight:700;color:var(--pau-285c)">🔄 Tur Modu — <span id="round-label">Ekip seçilmedi</span></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn bp bsm" onclick="showRoundEkipPicker()">➕ Ekip Seç</button>
+          <button class="btn bg bsm" onclick="closeRoundMode()" style="font-size:.72rem">✕ Kapat</button>
+        </div>
+      </div>
+      <div id="round-stu-list" style="display:flex;flex-wrap:wrap;gap:5px;max-height:180px;overflow-y:auto"><span style="font-size:.75rem;color:var(--fg3)">Ekip seçin →</span></div>
+      <div id="round-progress" style="margin-top:8px;font-size:.73rem;color:var(--fg2)"></div>
+    </div>
+    <!-- ── Ekip seçici (Tur Modu) ── -->
+    <div id="round-picker" style="display:none;margin-bottom:10px;padding:12px;border:1px dashed var(--border);border-radius:var(--rad-sm);background:var(--bg3)">
+      <div style="font-size:.75rem;font-weight:700;color:var(--fg2);margin-bottom:8px">Hangi Ekibin Turu?</div>
+      <div id="round-picker-list"><span class="spin"></span></div>
+      <button class="btn bg bsm" style="margin-top:8px" onclick="document.getElementById('round-picker').style.display='none'">İptal</button>
+    </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
       <button class="btn bg bsm" onclick="downloadQr()">⬇ QR İndir</button>
       <button class="btn bp bsm" onclick="openQrFullscreen()" title="QR Tam Ekran">📺 QR</button>
       <button class="btn bp bsm" onclick="openProjFullscreen()" title="Projeksiyon modu">🖥 Projeksiyon</button>
+      <button class="btn bp bsm" onclick="startRoundMode()" id="round-mode-btn" title="Tur modu — ekip ekip yoklama al">🔄 Tur</button>
       <button class="btn bwarn bsm" onclick="snapSession()" id="snap-btn">📩 Anlık Bitir</button>
       <button class="btn bd bsm" onclick="closeSession()" id="close-btn">🛑 Tamamen Bitir</button>
       <button class="btn bg bsm" onclick="exportCsv()">📊 CSV</button>
@@ -3604,6 +3628,52 @@ input:focus,select:focus,textarea:focus{
     </div>
   </div>
 
+  <!-- Manuel Ders / Task Ekle -->
+  <div class="card" style="margin-top:12px" id="manual-task-card">
+    <div class="card-title">✏️ Manuel Ders / Task Ekle</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="form-row" style="margin:0">
+        <label>Dönem</label>
+        <select id="mt-donem" onchange="_onMtDonemChange()" style="width:100%">
+          <option value="">— Dönem seç —</option>
+          <option value="Dönem 1">Dönem 1</option>
+          <option value="Dönem 2">Dönem 2</option>
+          <option value="Dönem 3">Dönem 3</option>
+          <option value="Dönem 4">Dönem 4</option>
+          <option value="Dönem 5">Dönem 5</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0" id="mt-blok-wrap">
+        <label>Blok</label>
+        <select id="mt-blok" onchange="_onMtBlokChange()" style="width:100%">
+          <option value="">— Önce dönem seçin —</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0;display:none" id="mt-modul-wrap">
+        <label>Modül</label>
+        <input id="mt-modul" placeholder="Modül adı">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>Task Adı / No</label>
+        <input id="mt-name" placeholder="Task 3">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>Sorumlu Hoca(lar)</label>
+        <div style="border:1px solid var(--border2);border-radius:var(--rad-xs);padding:6px 8px;background:var(--bg2);display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:38px">
+          <div id="mt-sorumlu-chips" style="display:contents"></div>
+          <select id="mt-sorumlu-pick" onchange="addMtSorumluChip(this)" style="border:none;background:transparent;color:var(--fg2);font-size:.82rem;padding:0;flex:1;min-width:120px;outline:none;cursor:pointer">
+            <option value="">+ Hoca seç…</option>
+          </select>
+        </div>
+      </div>
+      <div id="mt-err"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn bg bsm" onclick="_mtReset()">Temizle</button>
+        <button class="btn bp" onclick="addManualTask()">➕ Ekle</button>
+      </div>
+    </div>
+  </div>
+
   </div><!-- /stpanel-program -->
   <!-- ── LİSTELER PANELİ (admin only) ── -->
   <div id="stpanel-listeler" style="display:none">
@@ -3613,6 +3683,12 @@ input:focus,select:focus,textarea:focus{
         <div class="card-title" style="margin:0">📋 Dönem Listeleri &amp; Gruplar</div>
         <p class="hint" style="margin-top:4px">Her dönem için grup oluşturun (A Grubu, A1, B2 gibi). Dönem 4–5'te grupları blok'lara atayın; rotasyon sırasında atamayı değiştirmeniz yeterli.</p>
       </div>
+    </div>
+    <!-- Tıp / Tıp Dışı modu -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center">
+      <span style="font-size:.75rem;font-weight:700;color:var(--fg3);text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Fakülte türü:</span>
+      <button id="dl-mode-tip" class="btn bp bsm" onclick="setDlMode('tip')" style="min-width:80px">🏥 Tıp</button>
+      <button id="dl-mode-tipdisi" class="btn bg bsm" onclick="setDlMode('tipdisi')" style="min-width:80px">📚 Tıp Dışı</button>
     </div>
     <div id="dl-tab-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
     <div id="dl-tab-content"></div>
@@ -4568,6 +4644,7 @@ function switchStTab(tab){
     if(b)b.classList.toggle('active',t===tab);
   });
   if(tab==='task'){renderTaskPanel();renderTaskMgmt();loadTaskSorumluCard();}
+  if(tab==='program'){_populateMtSorumluSelect();}
   try{localStorage.setItem('pau_st_tab',tab);}catch{}
 }
 
@@ -4611,7 +4688,7 @@ function applyRole(){
 /* ── PROFESSORS ── */
 function listenProfessors(){
   _poll('professors',30000,async()=>{
-    try{const d=await fbGet('/professors');professors=d||{};renderProfs();populateSorumluSelects();}catch{}
+    try{const d=await fbGet('/professors');professors=Object.assign({},PROFS_SEED,d||{});renderProfs();populateSorumluSelects();}catch{}
   });
 }
 
@@ -7507,12 +7584,20 @@ function deleteSession(code,name){
 
 let courseStudents={};  // {no: name} from course roster
 let attTab='present';   // 'present' | 'all'
+let _roundModeActive=false;
+let _roundEkipStu={};  // {no: name} — seçilen ekibin öğrencileri
+let _roundEkipName=''; // seçilen ekip adı
+let _roundNum=0;       // tur sayacı
 
 function openActiveSession(code){
   curActiveCode=code;
   nav('active'); // önce ekrana geç, veri yoksa boş görünür
   // Panelleri kapat
   ['manual-add','paste-add','group-add'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  _roundModeActive=false;_roundEkipStu={};_roundEkipName='';_roundNum=0;
+  const _rp=document.getElementById('round-panel');if(_rp)_rp.style.display='none';
+  const _rpick=document.getElementById('round-picker');if(_rpick)_rpick.style.display='none';
+  const _rbtn=document.getElementById('round-mode-btn');if(_rbtn){_rbtn.style.background='';_rbtn.style.color='';}
   const sess=activeSessions.find(s=>s.code===code);
   if(!sess)return;
   attTab='present';
@@ -7621,6 +7706,7 @@ function updateAttCdown(attClosesAt){
 
 /* ── GRUP SEÇİMİ (yeni oturum formu) ── */
 let _selGroups=new Set(); // seçili group key'leri: 'dk__gid'
+let _selEkipler=new Set();// seçili ekip key'leri (boş=tümü dahil)
 let _grpData={};          // key → {dk,gid,name,students,count} — aktif (filtrelenmiş)
 let _allGrpData={};       // tüm gruplar (dönem filtresi öncesi)
 
@@ -7669,7 +7755,7 @@ async function loadGroupButtons(){
 function _applyGroupFilter(donem){
   const row=document.getElementById('new-group-row');
   if(!row)return;
-  _selGroups.clear();
+  _selGroups.clear();_selEkipler.clear();
   if(!donem){
     // Dönem seçilmemişse grup panelini gizle
     _grpData={};
@@ -7745,6 +7831,7 @@ function _toggleNewGroup(key,isAll,mode){
   } else {
     if(_selGroups.has(key))_selGroups.delete(key);else _selGroups.add(key);
   }
+  _selEkipler.clear();
   _renderGroupBtns();
   _updateGroupHint();
 }
@@ -7760,12 +7847,15 @@ function _updateGroupHint(){
   }
   const names=[..._selGroups].map(k=>_grpData[k]?.name||k).join(' + ');
   hint.textContent=`${names} seçildi`;
+  _renderEkipFilter();
   _refreshStuPreview();
 }
 
 function _getStuMap(){
   const map={};
-  for(const key of _selGroups){
+  // Ekip filtresi aktifse sadece seçili ekipleri kullan
+  const sourceKeys=_selEkipler.size>0?_selEkipler:_selGroups;
+  for(const key of sourceKeys){
     const grp=_grpData[key];
     if(!grp?.students)continue;
     Object.entries(grp.students).forEach(([no,name])=>{map[no]=name;});
@@ -7818,6 +7908,43 @@ function _updateStuToggleBtn(){
   const btn=document.getElementById('nsp-toggle-btn');
   if(!btn||!list)return;
   btn.textContent=list.style.display==='none'?'👁 Listeyi Göster':'🙈 Listeyi Gizle';
+}
+
+function _renderEkipFilter(){
+  const row=document.getElementById('new-ekip-row');
+  const btns=document.getElementById('new-ekip-btns');
+  if(!row||!btns)return;
+  // Seçili gruplara ait alt grupları (ekipleri) bul
+  const allKeys=Object.keys(_grpData);
+  const ekips=allKeys.filter(k=>{
+    const g=_grpData[k];
+    return g.parentKey&&_selGroups.has(g.parentKey);
+  }).sort((a,b)=>(_grpData[a]?.name||a).localeCompare(_grpData[b]?.name||b,'tr'));
+  if(!ekips.length||!_selGroups.size){row.style.display='none';return;}
+  row.style.display='';
+  const selCount=_selEkipler.size;
+  let html='';
+  ekips.forEach(k=>{
+    const g=_grpData[k];
+    const sel=_selEkipler.has(k);
+    html+=`<button onclick="_toggleEkip(${attrJ(k)})"
+      style="padding:6px 14px;font-size:.8rem;font-weight:700;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;
+             border:2px solid ${sel?'var(--pau-285c)':'var(--border)'};
+             background:${sel?'var(--pau-285c)':'var(--bg2)'};
+             color:${sel?'#fff':'var(--fg)'}">${esc(g.name)}</button>`;
+  });
+  if(selCount>0){
+    html+=`<button onclick="_selEkipler.clear();_renderEkipFilter();_refreshStuPreview();"
+      style="padding:6px 12px;font-size:.76rem;font-weight:600;border-radius:8px;cursor:pointer;
+             border:1.5px solid var(--border);background:var(--bg3);color:var(--fg3)">✕ Filtreyi temizle</button>`;
+  }
+  btns.innerHTML=html;
+}
+
+function _toggleEkip(key){
+  if(_selEkipler.has(key))_selEkipler.delete(key);else _selEkipler.add(key);
+  _renderEkipFilter();
+  _refreshStuPreview();
 }
 
 
@@ -7975,8 +8102,7 @@ async function createSession(){
     if(_selGroups.size>0){
       const now2=new Date();const ts2=now2.toTimeString().slice(0,5);const t2=now2.getTime();
       const grpNames=[..._selGroups].map(k=>_grpData[k]?.name||k).filter(Boolean);
-      const stuToAdd={};
-      for(const key of _selGroups){const grp=_grpData[key];if(grp?.students)Object.assign(stuToAdd,grp.students);}
+      const stuToAdd=_getStuMap(); // ekip filtresi aktifse otomatik filtreler
       for(const [no,sname] of Object.entries(stuToAdd)){
         const entry={studentNo:no,studentName:sname,time:t2,timeStr:ts2,manual:true};
         await fbPut('/sessions/'+code+'/attendance/'+no,entry);
@@ -8165,6 +8291,7 @@ function listenAtt(code){
       attendees=d||{};
       checkNewAttendees();// ← live toast for prof
       renderAtt(code);
+      if(_roundModeActive)renderRoundStudents();
       const presentCnt=Object.values(attendees).filter(a=>!a.absent).length;
       const total=Object.keys(courseStudents).length;
       document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
@@ -8445,6 +8572,101 @@ async function addGroupToSession(dk,gid,gname){
     renderAtt(curActiveCode);
   }catch(e){showToast('❌','Hata',String(e),'err',3000);}
 }
+// ── TUR MODU ─────────────────────────────────────────────────────────────────
+function startRoundMode(){
+  _roundModeActive=true;
+  document.getElementById('round-panel').style.display='';
+  const btn=document.getElementById('round-mode-btn');
+  if(btn){btn.style.background='var(--pau-285c)';btn.style.color='#fff';}
+  showRoundEkipPicker();
+}
+
+function closeRoundMode(){
+  _roundModeActive=false;
+  _roundEkipStu={};_roundEkipName='';_roundNum=0;
+  document.getElementById('round-panel').style.display='none';
+  document.getElementById('round-picker').style.display='none';
+  const btn=document.getElementById('round-mode-btn');
+  if(btn){btn.style.background='';btn.style.color='';}
+}
+
+async function showRoundEkipPicker(){
+  const picker=document.getElementById('round-picker');
+  const list=document.getElementById('round-picker-list');
+  picker.style.display='';
+  list.innerHTML='<div class="al alinfo" style="font-size:.78rem"><span class="spin"></span> Gruplar yükleniyor…</div>';
+  try{
+    const allGroups=await fbGet('/donem-groups');
+    if(!allGroups||!Object.keys(allGroups).length){
+      list.innerHTML='<div class="al alerr" style="font-size:.78rem">Kayıtlı grup yok.</div>';
+      return;
+    }
+    const gmap={};
+    Object.entries(allGroups).forEach(([dk,groups])=>{
+      if(!groups)return;
+      Object.entries(groups).forEach(([gid,g])=>{if(g?.name)gmap[dk+'__'+gid]={dk,gid,g};});
+    });
+    const parentItems=[];
+    Object.entries(gmap).forEach(([key,item])=>{if(!item.g.parent)parentItems.push({...item,children:[]});});
+    Object.entries(gmap).forEach(([key,{dk,gid,g}])=>{
+      if(g.parent){const p=parentItems.find(x=>x.dk===dk&&x.gid===g.parent);if(p)p.children.push({dk,gid,g});else parentItems.push({dk,gid,g,children:[]});}
+    });
+    const mkBtn=(dk,gid,g)=>{const cnt=g.count||Object.keys(g.students||{}).length;
+      return`<button class="btn bp bsm" style="font-size:.82rem" onclick="selectRoundEkip(${attrJ(dk)},${attrJ(gid)},${attrJ(g.name)})">${esc(g.name)}<span class="bdg" style="margin-left:4px;font-size:.6rem;background:rgba(255,255,255,.3)">${cnt}</span></button>`;};
+    const rendered=new Set();
+    let html='<div style="display:flex;flex-direction:column;gap:10px">';
+    parentItems.sort((a,b)=>a.g.name.localeCompare(b.g.name,'tr')).forEach(({dk,gid,g,children})=>{
+      rendered.add(dk+'__'+gid);
+      if(children&&children.length){
+        html+=`<div><div style="font-size:.73rem;font-weight:700;color:var(--fg2);margin-bottom:5px">${esc(g.name)}</div><div style="display:flex;flex-wrap:wrap;gap:6px">`;
+        children.sort((a,b)=>a.g.name.localeCompare(b.g.name,'tr')).forEach(({dk:cdk,gid:cgid,g:cg})=>{rendered.add(cdk+'__'+cgid);html+=mkBtn(cdk,cgid,cg);});
+        html+='</div></div>';
+      }else{html+=`<div>${mkBtn(dk,gid,g)}</div>`;}
+    });
+    Object.entries(gmap).forEach(([key,{dk,gid,g}])=>{if(!rendered.has(key))html+=`<div>${mkBtn(dk,gid,g)}</div>`;});
+    html+='</div>';
+    list.innerHTML=html;
+  }catch(e){list.innerHTML='<div class="al alerr" style="font-size:.78rem">'+esc(String(e))+'</div>';}
+}
+
+async function selectRoundEkip(dk,gid,gname){
+  document.getElementById('round-picker').style.display='none';
+  try{
+    const g=await fbGet('/donem-groups/'+dk+'/'+gid);
+    _roundEkipStu=g?.students||{};
+    _roundEkipName=gname;
+    _roundNum++;
+    document.getElementById('round-label').textContent=`Tur ${_roundNum} — ${gname} (${Object.keys(_roundEkipStu).length} öğrenci)`;
+    _auditLog(curActiveCode,'round_start',{round:_roundNum,ekip:gname,count:Object.keys(_roundEkipStu).length});
+    renderRoundStudents();
+  }catch(e){showToast('❌','Hata',String(e),'err',3000);}
+}
+
+function renderRoundStudents(){
+  const container=document.getElementById('round-stu-list');
+  const progress=document.getElementById('round-progress');
+  if(!container)return;
+  const stuEntries=Object.entries(_roundEkipStu);
+  if(!stuEntries.length){
+    container.innerHTML='<span style="font-size:.75rem;color:var(--fg3)">Bu ekipte öğrenci yok.</span>';
+    if(progress)progress.textContent='';
+    return;
+  }
+  let scanned=0;
+  let html='';
+  stuEntries.sort((a,b)=>(a[1]||'').localeCompare(b[1]||'','tr')).forEach(([no,name])=>{
+    const att=attendees[no];
+    const present=att&&!att.absent;
+    if(present)scanned++;
+    html+=`<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:.71rem;font-weight:600;white-space:nowrap;background:${present?'var(--ok-bg)':'var(--bg2)'};color:${present?'var(--ok)':'var(--fg3)'};border:1.5px solid ${present?'var(--ok-bd)':'var(--border)'}">${present?'✓ ':''} ${esc(name)}</span>`;
+  });
+  const total=stuEntries.length;
+  const pct=total?Math.round(scanned/total*100):0;
+  container.innerHTML=html;
+  if(progress)progress.textContent=`${scanned} / ${total} taradı (${pct}%)${scanned===total?' ✓ Tamamlandı!':''}`;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function pasteAdd(){
   const raw=document.getElementById('pa-text').value;
   const lines=raw.split(/\n/).map(l=>l.trim()).filter(Boolean);
@@ -9732,6 +9954,7 @@ function _matchProfByName(targetRaw,profList){
 
 async function renderTaskSorumluTab(dk){
   const wrap=document.getElementById('ts-content');if(!wrap)return;
+  const _rStamp=Date.now();wrap._tsRenderStamp=_rStamp;
   // ── Yardımcı: obje kaynağından profesör listesi ve isim haritası oluştur ──
   const _trMap={'ğ':'g','Ğ':'g','ü':'u','Ü':'u','ş':'s','Ş':'s','ı':'i','İ':'i','ö':'o','Ö':'o','ç':'c','Ç':'c'};
   const _profNorm=s=>(s||'').toLowerCase().replace(/[ğĞüÜşŞıİöÖçÇ]/g,c=>_trMap[c]||c).replace(/\s+/g,'').trim();
@@ -9776,9 +9999,9 @@ async function renderTaskSorumluTab(dk){
         name:taskNameOverrides[bi+'_'+ti]||task.name
       }))
     }));
-    if(!bloks.length){wrap.innerHTML='<p class="hint">Bu d\xf6nem i\xe7in veri yok.</p>';return;}
+    if(!bloks.length){if(wrap._tsRenderStamp===_rStamp)wrap.innerHTML='<p class="hint">Bu d\xf6nem i\xe7in veri yok.</p>';return;}
     if(!profList.length){
-      wrap.innerHTML='<div class="al alerr">Sistemde kayıtlı hoca bulunamadı. Önce <strong>Hocalar</strong> sekmesinden hoca ekleyin.</div>';return;
+      if(wrap._tsRenderStamp===_rStamp)wrap.innerHTML='<div class="al alerr">Sistemde kayıtlı hoca bulunamadı. Önce <strong>Hocalar</strong> sekmesinden hoca ekleyin.</div>';return;
     }
     // Bölüm bazlı optgroup oluştur
     const _tsByDept={};
@@ -9842,6 +10065,7 @@ async function renderTaskSorumluTab(dk){
       });
       html+=`</div></details>`;
     });
+    if(wrap._tsRenderStamp!==_rStamp)return;
     wrap.innerHTML=html;
     // Kaydedilmiş atamaları chip olarak göster
     bloks.forEach((blok,bi)=>{
@@ -9856,7 +10080,7 @@ async function renderTaskSorumluTab(dk){
         }
       });
     });
-  }catch(e){if(wrap)wrap.innerHTML=`<div class="al alerr">Y\xfcklenemedi: ${esc(String(e))}</div>`;}
+  }catch(e){if(wrap&&wrap._tsRenderStamp===_rStamp)wrap.innerHTML=`<div class="al alerr">Y\xfcklenemedi: ${esc(String(e))}</div>`;}
 }
 
 // ── Hoca arama (ts-inp) ──
@@ -11773,6 +11997,119 @@ async function renderStats(){
     }
     barWrap.innerHTML=`<div style="margin-top:16px"><h3 style="font-size:.9rem;margin-bottom:8px;color:var(--fg2)">Oturum bazlı katılım</h3>${labels.map((l,i)=>{const v=data[i];const c=v>=80?'var(--ok)':v>=50?'var(--warn,#f59e0b)':'var(--err)';return`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:2px"><span>${l}</span><span style="color:${c};font-weight:700">%${v}</span></div><div style="background:var(--bg2);border-radius:4px;height:10px;overflow:hidden"><div style="width:${v}%;height:100%;background:${c};border-radius:4px;transition:width .5s"></div></div></div>`;}).join('')}</div>`;
   }catch(e){console.error('renderStats',e);barWrap.innerHTML='<div class="empty" style="color:var(--err)">İstatistik yüklenemedi.</div>';}
+}
+
+/* ── Manuel Task — Program sekmesi ── */
+let selectedMtSorumluEmails=[];
+function _onMtDonemChange(){
+  const donem=document.getElementById('mt-donem').value;
+  const blokSel=document.getElementById('mt-blok');
+  const modulWrap=document.getElementById('mt-modul-wrap');
+  const modulEl=document.getElementById('mt-modul');
+  if(modulEl)modulEl.value='';
+  if(modulWrap)modulWrap.style.display='none';
+  blokSel.innerHTML='<option value="">— Blok seç —</option>';
+  if(!donem)return;
+  const bloklar=NT_BLOK_MAP[donem]||[];
+  if(bloklar.length){
+    bloklar.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;blokSel.appendChild(o);});
+  } else {
+    const o=document.createElement('option');o.value='';o.textContent='— (Blok bilgisi yakında eklenecek) —';blokSel.appendChild(o);
+  }
+}
+function _onMtBlokChange(){
+  const donem=document.getElementById('mt-donem').value;
+  const blok=document.getElementById('mt-blok').value;
+  const modulWrap=document.getElementById('mt-modul-wrap');
+  const erken=['Dönem 1','Dönem 2','Dönem 3'].includes(donem);
+  if(modulWrap)modulWrap.style.display=(erken&&blok)?'block':'none';
+}
+function _populateMtSorumluSelect(){
+  const sel=document.getElementById('mt-sorumlu-pick');
+  if(!sel)return;
+  sel.innerHTML='<option value="">+ Hoca seç…</option>';
+  const byDept={};
+  const _US={'PROFESÖR':'Prof. Dr.','DOÇENT':'Doç. Dr.','DOKTOR ÖĞRETİM ÜYESİ':'Dr. Öğr. Üyesi','UZM.DR.':'Uzm. Dr.','ÖĞRETİM GÖREVLİSİ':'Öğr. Gör.','ARŞ. GÖR. DR.':'Arş. Gör. Dr.','ARŞ. GÖR.':'Arş. Gör.'};
+  const _score=p=>(p.dept?2:0)+(p.unvan?2:0)+(p.bolum?1:0)+((p.name&&p.name!==p.name.toUpperCase())?1:0);
+  const dedupByEmail={};
+  Object.entries(professors).forEach(([uid,p])=>{
+    const em=(p.email||uid).toLowerCase();
+    if(!dedupByEmail[em]||_score(p)>_score(dedupByEmail[em][1]))dedupByEmail[em]=[uid,p];
+  });
+  Object.values(dedupByEmail).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr')).forEach(([uid,p])=>{
+    const email=p.email||uid;
+    if(selectedMtSorumluEmails.includes(email))return;
+    const dept=p.dept||p.bolum||'⚠️ ABD Girilmemiş';
+    if(!byDept[dept])byDept[dept]=[];
+    byDept[dept].push({email,p});
+  });
+  Object.keys(byDept).sort((a,b)=>a==='⚠️ ABD Girilmemiş'?1:b==='⚠️ ABD Girilmemiş'?-1:a.localeCompare(b,'tr')).forEach(dept=>{
+    const grp=document.createElement('optgroup');grp.label=dept;
+    byDept[dept].forEach(({email,p})=>{
+      const o=document.createElement('option');o.value=email;
+      const unvanPfx=p.unvan?(_US[p.unvan]||p.unvan)+' ':'';
+      o.textContent=unvanPfx+(p.name||email);grp.appendChild(o);
+    });
+    sel.appendChild(grp);
+  });
+}
+function _renderMtSorumluChips(){
+  const wrap=document.getElementById('mt-sorumlu-chips');
+  if(!wrap)return;
+  const _US2={'PROFESÖR':'Prof. Dr.','DOÇENT':'Doç. Dr.','DOKTOR ÖĞRETİM ÜYESİ':'Dr. Öğr. Üyesi','UZM.DR.':'Uzm. Dr.','ÖĞRETİM GÖREVLİSİ':'Öğr. Gör.','ARŞ. GÖR. DR.':'Arş. Gör. Dr.','ARŞ. GÖR.':'Arş. Gör.'};
+  const profLookup={};
+  Object.entries(professors).forEach(([uid,p])=>{
+    const label=((_US2[p.unvan]||'')+' '+(p.name||'')).trim()||p.email||uid;
+    if(p.email)profLookup[p.email]=label;
+    profLookup[uid]=label;
+  });
+  wrap.innerHTML=selectedMtSorumluEmails.map(key=>`<span style="display:inline-flex;align-items:center;gap:4px;background:var(--pau-285c);color:#fff;padding:3px 10px 3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;white-space:nowrap">${esc(profLookup[key]||key)}<button onclick="removeMtSorumluChip(this.dataset.e)" data-e="${esc(key)}" style="background:none;border:none;color:rgba(255,255,255,.75);cursor:pointer;font-size:.9rem;line-height:1;padding:0 0 0 4px;margin:0">✕</button></span>`).join('');
+  _populateMtSorumluSelect();
+}
+function addMtSorumluChip(sel){
+  const email=sel.value;
+  if(!email||selectedMtSorumluEmails.includes(email)){sel.value='';return;}
+  selectedMtSorumluEmails.push(email);
+  sel.value='';
+  _renderMtSorumluChips();
+}
+function removeMtSorumluChip(email){
+  selectedMtSorumluEmails=selectedMtSorumluEmails.filter(e=>e!==email);
+  _renderMtSorumluChips();
+}
+function _mtReset(){
+  selectedMtSorumluEmails=[];
+  ['mt-donem','mt-blok','mt-modul','mt-name'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const mw=document.getElementById('mt-modul-wrap');if(mw)mw.style.display='none';
+  _renderMtSorumluChips();
+  const errEl=document.getElementById('mt-err');if(errEl)errEl.innerHTML='';
+}
+async function addManualTask(){
+  const donem=(document.getElementById('mt-donem')?.value||'').trim();
+  const blok=(document.getElementById('mt-blok')?.value||'').trim();
+  const modul=(document.getElementById('mt-modul')?.value||'').trim();
+  const name=(document.getElementById('mt-name')?.value||'').trim();
+  const errEl=document.getElementById('mt-err');
+  if(errEl)errEl.innerHTML='';
+  if(!donem){if(errEl)errEl.innerHTML='<div class="al alerr">Dönem seçimi zorunlu.</div>';return;}
+  if(!blok){if(errEl)errEl.innerHTML='<div class="al alerr">Blok seçimi zorunlu.</div>';return;}
+  if(!name){if(errEl)errEl.innerHTML='<div class="al alerr">Task adı zorunlu.</div>';return;}
+  const id='task_'+Date.now();
+  const sorumluEmail=selectedMtSorumluEmails[0]||'';
+  const data={name,blokName:blok,donem,modul:modul||null,sorumluEmail,sorumluEmails:selectedMtSorumluEmails.length?selectedMtSorumluEmails:[],createdAt:Date.now()};
+  try{
+    await fbPut('/tasks/'+id,data);
+    tasks[id]=data;
+    if(isAdmin)myTasks=Object.entries(tasks).map(([i,t])=>({id:i,...t}));
+    _fillTaskSelect();
+    renderTaskPanel();
+    showToast('✅','Task eklendi',data.name,'ok');
+    _mtReset();
+  }catch(e){if(errEl)errEl.innerHTML='<div class="al alerr">Hata: '+esc(String(e))+'</div>';}
+}
+/* ── Hoca seçicisini Program sekmesi açıldığında doldur ── */
+function _onShowProgramPanel(){
+  _populateMtSorumluSelect();
 }
 </script>
 
