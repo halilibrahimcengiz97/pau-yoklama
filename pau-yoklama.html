@@ -274,20 +274,29 @@ select option{background:var(--bg2);color:var(--fg)}
 #proj-close-btn{position:fixed;top:18px;right:18px;z-index:10;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.1rem;border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;backdrop-filter:blur(6px)}
 #proj-close-btn:hover{background:rgba(255,255,255,.28)}
 #proj-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr;height:100vh;gap:0}
-#proj-left{display:flex;flex-direction:column;justify-content:center;padding:40px 28px 40px 40px;border-right:1px solid rgba(255,255,255,.07)}
-#proj-course-name{font-size:clamp(.9rem,1.8vw,1.4rem);font-weight:800;color:#fff;letter-spacing:.01em;margin-bottom:6px;line-height:1.3}
-#proj-date-info{font-size:.75rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-bottom:28px}
-#proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:0 0 24px 0}
-#proj-ring-svg{width:clamp(130px,20vh,200px);height:clamp(130px,20vh,200px)}
-#proj-ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-#proj-cnt-big{font-size:clamp(1.8rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;transition:all .4s}
-#proj-cnt-label{font-size:clamp(.55rem,1vw,.8rem);color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-#proj-pct-big{font-size:clamp(.9rem,2vw,1.6rem);font-weight:800;color:#60bfff;letter-spacing:-.02em;transition:all .4s}
+#proj-left{display:flex;flex-direction:column;padding:24px 20px 24px 32px;border-right:1px solid rgba(255,255,255,.07);overflow:hidden}
+#proj-left-top{flex-shrink:0}
+#proj-course-name{font-size:clamp(.85rem,1.5vw,1.2rem);font-weight:800;color:#fff;letter-spacing:.01em;margin-bottom:4px;line-height:1.3}
+#proj-date-info{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-bottom:16px}
+#proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:0 0 14px 0}
+#proj-ring-svg{width:clamp(100px,13vh,150px);height:clamp(100px,13vh,150px)}
+#proj-ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+#proj-cnt-big{font-size:clamp(1.4rem,3.5vw,2.6rem);font-weight:900;color:#fff;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;transition:all .4s}
+#proj-cnt-label{font-size:clamp(.5rem,.85vw,.7rem);color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+#proj-pct-big{font-size:clamp(.75rem,1.5vw,1.2rem);font-weight:800;color:#60bfff;letter-spacing:-.02em;transition:all .4s}
+/* Sol katılan listesi */
+#proj-att-list-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;margin-top:10px;min-height:0}
+#proj-att-list-header{font-size:.6rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;flex-shrink:0}
+#proj-att-list{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.proj-att-row{display:flex;align-items:center;gap:7px;padding:5px 8px;background:rgba(255,255,255,.06);border-radius:8px;animation:feedIn .35s ease;flex-shrink:0}
+.proj-att-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;flex-shrink:0}
+.proj-att-name{font-size:.78rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.proj-att-time{font-size:.6rem;color:rgba(255,255,255,.4);flex-shrink:0}
 #proj-ring-arc{transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1),stroke .6s}
 .proj-stat-row{display:flex;justify-content:space-between;gap:8px}
-.proj-stat-box{flex:1;background:rgba(255,255,255,.07);border-radius:12px;padding:12px 8px;text-align:center;border:1px solid rgba(255,255,255,.1)}
-.proj-stat-box .psb-val{font-size:clamp(1.2rem,2.5vw,1.9rem);font-weight:900;color:#fff;font-variant-numeric:tabular-nums;line-height:1}
-.proj-stat-box .psb-lbl{font-size:.62rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
+.proj-stat-box{flex:1;background:rgba(255,255,255,.07);border-radius:10px;padding:8px 6px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.proj-stat-box .psb-val{font-size:clamp(1rem,2vw,1.5rem);font-weight:900;color:#fff;font-variant-numeric:tabular-nums;line-height:1}
+.proj-stat-box .psb-lbl{font-size:.55rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
 .proj-stat-box.green .psb-val{color:#4ade80}
 .proj-stat-box.red .psb-val{color:#f87171}
 #proj-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative}
@@ -2677,36 +2686,43 @@ input:focus,select:focus,textarea:focus{
 <div id="proj-fullscreen">
   <button id="proj-close-btn" onclick="closeProjFullscreen()" title="Kapat">✕</button>
   <div id="proj-grid">
-    <!-- SOL SÜTUN: Ders bilgisi + istatistik -->
+    <!-- SOL SÜTUN: Ders bilgisi + istatistik + öğrenci listesi -->
     <div id="proj-left">
-      <div id="proj-course-name">—</div>
-      <div id="proj-date-info">—</div>
-      <div id="proj-ring-area">
-        <svg id="proj-ring-svg" viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16"/>
-          <circle id="proj-ring-arc" cx="100" cy="100" r="86" fill="none" stroke="#4ade80" stroke-width="16"
-            stroke-dasharray="540.35" stroke-dashoffset="540.35" stroke-linecap="round"
-            transform="rotate(-90 100 100)"/>
-        </svg>
-        <div id="proj-ring-center">
-          <div id="proj-cnt-big">0</div>
-          <div id="proj-cnt-label">katılan</div>
-          <div id="proj-pct-big">%0</div>
+      <div id="proj-left-top">
+        <div id="proj-course-name">—</div>
+        <div id="proj-date-info">—</div>
+        <div id="proj-ring-area">
+          <svg id="proj-ring-svg" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16"/>
+            <circle id="proj-ring-arc" cx="100" cy="100" r="86" fill="none" stroke="#4ade80" stroke-width="16"
+              stroke-dasharray="540.35" stroke-dashoffset="540.35" stroke-linecap="round"
+              transform="rotate(-90 100 100)"/>
+          </svg>
+          <div id="proj-ring-center">
+            <div id="proj-cnt-big">0</div>
+            <div id="proj-cnt-label">katılan</div>
+            <div id="proj-pct-big">%0</div>
+          </div>
+        </div>
+        <div class="proj-stat-row">
+          <div class="proj-stat-box green">
+            <div class="psb-val" id="proj-stat-present">0</div>
+            <div class="psb-lbl">Katılan</div>
+          </div>
+          <div class="proj-stat-box red">
+            <div class="psb-val" id="proj-stat-absent">0</div>
+            <div class="psb-lbl">Devamsız</div>
+          </div>
+          <div class="proj-stat-box">
+            <div class="psb-val" id="proj-stat-total">0</div>
+            <div class="psb-lbl">Toplam</div>
+          </div>
         </div>
       </div>
-      <div class="proj-stat-row">
-        <div class="proj-stat-box green">
-          <div class="psb-val" id="proj-stat-present">0</div>
-          <div class="psb-lbl">Katılan</div>
-        </div>
-        <div class="proj-stat-box red">
-          <div class="psb-val" id="proj-stat-absent">0</div>
-          <div class="psb-lbl">Devamsız</div>
-        </div>
-        <div class="proj-stat-box">
-          <div class="psb-val" id="proj-stat-total">0</div>
-          <div class="psb-lbl">Toplam</div>
-        </div>
+      <!-- Katılan öğrenci listesi — öğrenciler kendi ismini görsün -->
+      <div id="proj-att-list-wrap">
+        <div id="proj-att-list-header">Katılan Öğrenciler</div>
+        <div id="proj-att-list"></div>
       </div>
     </div>
     <!-- ORTA SÜTUN: Büyük QR kod + PIN -->
@@ -2807,6 +2823,52 @@ input:focus,select:focus,textarea:focus{
 
 <!-- ═══ TOAST CONTAINER ═══ -->
 <div id="toast-container"></div>
+
+<!-- ── YOKLAMA BİTİŞ İNCELEME MODALİ ── -->
+<div id="review-modal" onclick="if(event.target===this)closeReviewModal()" style="display:none;position:fixed;inset:0;z-index:2500;background:rgba(0,20,60,.65);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:var(--bg2);border-radius:18px;max-width:640px;width:100%;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden">
+    <!-- Header -->
+    <div style="background:var(--pau-288c);padding:20px 24px 16px;color:#fff">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <span style="font-size:22px">📋</span>
+        <h2 style="margin:0;font-size:1.15rem;font-weight:700">Yoklama İnceleme &amp; Onay</h2>
+      </div>
+      <div id="rv-meta" style="font-size:.82rem;opacity:.82;line-height:1.6"></div>
+    </div>
+    <!-- Stats row -->
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--border)">
+      <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--border)">
+        <div id="rv-cnt" style="font-size:1.6rem;font-weight:800;color:var(--pau-285c)">0</div>
+        <div style="font-size:.75rem;color:var(--fg2);margin-top:2px">Katılan</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--border)">
+        <div id="rv-total" style="font-size:1.6rem;font-weight:800;color:var(--fg2)">0</div>
+        <div style="font-size:.75rem;color:var(--fg2);margin-top:2px">Kayıtlı</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:12px 8px">
+        <div id="rv-pct" style="font-size:1.6rem;font-weight:800;color:var(--ok)">—</div>
+        <div style="font-size:.75rem;color:var(--fg2);margin-top:2px">Devam %</div>
+      </div>
+    </div>
+    <!-- Manuel ekle -->
+    <div style="padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border)">
+      <div style="font-size:.78rem;font-weight:600;color:var(--fg2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Öğrenci Ekle</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input id="rv-no" type="text" placeholder="Öğrenci No" style="flex:0 0 130px;padding:7px 10px;border:1px solid var(--border2);border-radius:8px;font-size:.85rem;background:var(--bg2);color:var(--fg)">
+        <input id="rv-name" type="text" placeholder="Ad Soyad (boş bırakılabilir)" style="flex:1;min-width:160px;padding:7px 10px;border:1px solid var(--border2);border-radius:8px;font-size:.85rem;background:var(--bg2);color:var(--fg)">
+        <button onclick="reviewAdd()" style="padding:7px 16px;background:var(--pau-285c);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap">+ Ekle</button>
+      </div>
+    </div>
+    <!-- Liste -->
+    <div id="rv-list" style="max-height:340px;overflow-y:auto;padding:8px 0"></div>
+    <!-- Eylemler -->
+    <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+      <button onclick="reviewDownload()" style="padding:9px 18px;background:var(--bg3);color:var(--fg);border:1px solid var(--border2);border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer">⬇️ İndir (CSV)</button>
+      <button onclick="reviewSendEmail()" id="rv-mail-btn" style="padding:9px 18px;background:var(--pau-285c);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer">📩 Mail Gönder</button>
+      <button onclick="closeReviewModal()" style="padding:9px 18px;background:var(--bg3);color:var(--fg2);border:1px solid var(--border);border-radius:10px;font-size:.88rem;cursor:pointer">Kapat</button>
+    </div>
+  </div>
+</div>
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -8598,20 +8660,126 @@ async function snapSession(){
 async function closeSession(){
   const sess=activeSessions.find(s=>s.code===curActiveCode);
   if(!sess)return;
-  showConfirm('🛑','Tamamen Bitir','Oturumu kapatmak istiyor musunuz? Yoklama e-posta ile gönderilecek ve CSV indirilecek.','Evet, Kapat',async()=>{
+  showConfirm('🛑','Tamamen Bitir','Oturumu kapatmak istiyor musunuz? Yoklama listesini inceleyip onaylayabilirsiniz.','Evet, Kapat',async()=>{
     const btn=document.getElementById('close-btn');
     btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
     try{
       const resp=await fetch(FB_CFG.databaseURL+'/sessions/'+curActiveCode+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:false,closedAt:Date.now()})});
       if(!resp.ok)throw new Error('HTTP '+resp.status);
       _auditLog(curActiveCode,'session_closed');
-      await sendSessionEmail(sess);
-      try{await doDownload(csvRows(sess,attendees),csvFn(sess));}catch{}
+      // Anlık yoklama kopyasını review modalına aç — mail/indirme hoca onayından sonra
+      openReviewModal(sess, JSON.parse(JSON.stringify(attendees||{})));
       nav('session');
     }catch(e){showToast('❌','Hata',e.message,'error',4000);}
     finally{btn.innerHTML='🛑 Tamamen Bitir';btn.disabled=false;}
   });
-  return; // actual work done inside confirm callback
+  return;
+}
+
+/* ── YOKLAMA İNCELEME MODALİ ── */
+let _rvSess=null, _rvAtt={};
+
+function openReviewModal(sess, att){
+  _rvSess=sess;
+  // Sadece gerçek katılanlar (groupStart değil, absent değil)
+  _rvAtt={};
+  Object.entries(att).forEach(([no,r])=>{
+    if(!r.absent&&!r.groupStart) _rvAtt[no]=r;
+  });
+  // Meta bilgi
+  const metaEl=document.getElementById('rv-meta');
+  if(metaEl){
+    const course=sess.courseId&&courses[sess.courseId]?courses[sess.courseId]:null;
+    metaEl.innerHTML=`<span>${esc(sess.courseName||course?.name||sess.name||'—')}</span> &nbsp;·&nbsp; <span>${dayN(sess.date)} ${fmtDate(sess.date)}</span>${sess.time?' · '+esc(sess.time):''}`;
+  }
+  _renderReviewList();
+  const modal=document.getElementById('review-modal');
+  modal.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function closeReviewModal(){
+  document.getElementById('review-modal').style.display='none';
+  document.body.style.overflow='';
+  _rvSess=null; _rvAtt={};
+}
+
+function _snameRv(a){const n=a.studentName;if(!n)return'—';if(typeof n==='string')return n;if(typeof n==='object')return n.name||n.ad||n.displayName||Object.values(n).filter(v=>typeof v==='string'&&v).join(' ')||'—';return String(n);}
+
+function _renderReviewList(){
+  const rows=Object.values(_rvAtt).sort((a,b)=>(a.time||0)-(b.time||0));
+  // Stats
+  const total=Object.keys(courseStudents).length||0;
+  const cnt=rows.length;
+  document.getElementById('rv-cnt').textContent=cnt;
+  document.getElementById('rv-total').textContent=total||'—';
+  document.getElementById('rv-pct').textContent=total?Math.round(cnt/total*100)+'%':'—';
+  // Liste
+  const ul=document.getElementById('rv-list');
+  if(!rows.length){ul.innerHTML='<div style="text-align:center;padding:24px;color:var(--fg3);font-size:.88rem">Henüz katılan öğrenci yok</div>';return;}
+  ul.innerHTML=rows.map((a,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);${i%2===0?'background:var(--bg3)':''}">
+      <span style="min-width:22px;font-size:.75rem;color:var(--fg3);font-weight:600">${i+1}</span>
+      <span style="flex:1;font-size:.88rem;color:var(--fg);font-weight:500">${esc(_snameRv(a))}</span>
+      <span style="font-size:.78rem;color:var(--fg2);margin-right:4px">${esc(a.studentNo||'')}</span>
+      <span style="font-size:.72rem;color:var(--fg3)">${a.timeStr||''}</span>
+      ${a.manual?'<span style="font-size:.68rem;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 5px">Manuel</span>':''}
+      <button onclick="reviewRemove('${esc(a.studentNo||'')}','${esc(_snameRv(a))}')" title="Listeden çıkar" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:2px 4px;color:#dc2626;opacity:.7;line-height:1">✕</button>
+    </div>`).join('');
+}
+
+function reviewRemove(no, name){
+  if(!no||!_rvAtt[no])return;
+  delete _rvAtt[no];
+  _renderReviewList();
+  showToast('🗑️','Çıkarıldı',`${name} listeden çıkarıldı.`,'warn',2500);
+}
+
+function reviewAdd(){
+  const noEl=document.getElementById('rv-no');
+  const nmEl=document.getElementById('rv-name');
+  const no=(noEl?.value||'').trim();
+  const name=(nmEl?.value||'').trim()||lookupName(no)||no;
+  if(!no){showToast('⚠️','Eksik','Öğrenci numarası gerekli.','warn',2500);return;}
+  if(_rvAtt[no]){showToast('ℹ️','Zaten Var','Bu öğrenci listede.','info',2000);return;}
+  _rvAtt[no]={studentNo:no,studentName:name,time:Date.now(),timeStr:new Date().toTimeString().slice(0,5),manual:true,manualBy:curUser?.email||''};
+  if(noEl)noEl.value='';if(nmEl)nmEl.value='';
+  _renderReviewList();
+  showToast('✅','Eklendi',`${name} listeye eklendi.`,'ok',2500);
+}
+
+async function reviewSendEmail(){
+  if(!_rvSess){return;}
+  const btn=document.getElementById('rv-mail-btn');
+  if(btn){btn.innerHTML='<span class="spin"></span> Gönderiliyor…';btn.disabled=true;}
+  try{
+    const sess={..._rvSess, attendance:_rvAtt};
+    // _rvAtt zaten groupStart filtreli — sendSessionEmail de filtreler ama zarar vermez
+    await sendSessionEmail(sess);
+    showToast('📩','Mail Gönderildi','Yoklama raporu ilgili kişilere gönderildi.','ok',5000);
+  }catch(e){
+    showToast('❌','Hata',e.message,'err',4000);
+  }finally{
+    if(btn){btn.innerHTML='📩 Mail Gönder';btn.disabled=false;}
+  }
+}
+
+async function reviewDownload(){
+  if(!_rvSess)return;
+  // _rvAtt ile CSV oluştur — groupStart filtreli
+  const att=_rvAtt;
+  const rows=Object.values(att).sort((a,b)=>(a.time||0)-(b.time||0));
+  const s=_rvSess;
+  const course=s.courseId&&courses[s.courseId]?courses[s.courseId]:null;
+  let c=`"PAÜ Tıp Fakültesi — ${s.name||''}"\n"${dayN(s.date)} ${fmtDate(s.date)} ${s.time||''} — Hoca: ${s.profName||''}"\n\n`;
+  c+='"No","Öğrenci No","Ad Soyad","Saat","Tür"\n';
+  rows.forEach((a,i)=>{
+    const nm=_snameRv(a);
+    c+=`${i+1},"${a.studentNo||''}","${nm}","${a.timeStr||''}","${a.manual?'Manuel':'QR'}"\n`;
+  });
+  const cl=x=>(x||'').replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ ]/g,'').replace(/\s+/g,'_');
+  const fn=`Yoklama_${cl(s.name)}_${(s.date||'').replace(/-/g,'')}.csv`;
+  await doDownload(c,fn);
 }
 
 /* ── SYSTEM PIN MANAGEMENT ── */
@@ -8681,7 +8849,9 @@ async function sendSessionEmail(sess){
   const _sname=a=>{const n=a.studentName;if(!n)return'—';if(typeof n==='string')return n;if(typeof n==='object')return n.name||n.ad||n.displayName||Object.values(n).filter(v=>typeof v==='string'&&v).join(' ')||'—';return String(n);};
   const list=rows.map((a,i)=>`${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n');
   // Task-based sorumlu lookup
-  const task=sess.taskId&&tasks[sess.taskId]?tasks[sess.taskId]:null;
+  // Task yüklü değilse Firebase'den çek
+  let task=sess.taskId&&tasks[sess.taskId]?tasks[sess.taskId]:null;
+  if(!task&&sess.taskId){try{task=await fbGet('/tasks/'+sess.taskId);}catch{}}
   const sorumluEmails=task?(task.sorumluEmails&&task.sorumluEmails.length?task.sorumluEmails:[task.sorumluEmail]).filter(Boolean):[];
   const findProf=e=>Object.values(professors).find(p=>p.email===e)||null;
   const sorumluFullNames=sorumluEmails.map(e=>profFullName(findProf(e))||e).filter(Boolean);
@@ -11219,7 +11389,8 @@ async function validateForScan(){
         if(rosterName){const rn=_normName(rosterName);const ni=_normName(name);const iw=ni.split(' ').filter(Boolean);const isTr=/^\d{2}270[^8]\d{2}$/.test(no);if(isTr){if(ni!==rn){setMsg('stmsg','alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}}else{const mt=iw.filter(w=>rn.includes(w)).length;if(!iw.length||mt/iw.length<0.75){setMsg('stmsg','alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}}}
       }
     }
-    if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
+    const _existRec=await fbGet('/sessions/'+code+'/attendance/'+no);
+    if(_existRec!==null&&!_existRec.groupStart){setMsg('stmsg','alwrn','Bu oturum için zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
     if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg('stmsg','alwrn','Bu cihazdan bu oturum için zaten yoklama alındı.');return;}
     if(sess.locLat){
@@ -11411,7 +11582,8 @@ async function submitAtt2(){
         if(rosterName&&!name){/* name zaten roster'dan alındı */}
       }
     }
-    if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
+    const _existRec2=await fbGet('/sessions/'+code+'/attendance/'+no);
+    if(_existRec2!==null&&!_existRec2.groupStart){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
     const dvId=getDeviceId();
     if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
     // IP bazlı duplicate check — önce IP'yi çek, sonra kontrol et
@@ -12342,6 +12514,21 @@ async function _updateProjPin(){
     if(pinEl)pinEl.textContent=pin;
     if(vcEl)vcEl.textContent=vc;
   }catch(e){}
+  // QR zaman halkası — eski QR ekranı gibi zaman doğrulama rengi
+  const ringArc=document.getElementById('proj-qr-ring-arc1');
+  if(ringArc){
+    const winSec=QR_WIN_MS/1000;
+    const nowSec2=Math.floor(Date.now()/1000);
+    const rem=winSec-(nowSec2%winSec);
+    const frac=rem/winSec;
+    const circ=1068.14; // 2π×r170
+    ringArc.style.animation='none';
+    ringArc.style.strokeDasharray=circ;
+    ringArc.style.strokeDashoffset=(circ*(1-frac)).toFixed(2);
+    ringArc.style.stroke=frac>0.5?'#0072CE':frac>0.25?'#F59E0B':'#EF4444';
+    ringArc.style.transition='stroke-dashoffset .95s linear,stroke .5s';
+    ringArc.style.filter=`drop-shadow(0 0 10px ${frac>0.5?'#0072CE':frac>0.25?'#F59E0B':'#EF4444'})`;
+  }
 }
 
 function closeProjFullscreen(){
@@ -12377,7 +12564,35 @@ function updateProjFs(){
   if(spEl)spEl.textContent=present;
   if(saEl)saEl.textContent=absent;
   if(stEl)stEl.textContent=total||'—';
+  _updateProjAttList();
   _updateProjFeed();
+}
+
+function _updateProjAttList(){
+  const listEl=document.getElementById('proj-att-list');
+  if(!listEl)return;
+  const rows=Object.values(attendees||{})
+    .filter(a=>!a.absent&&!a.groupStart)
+    .sort((a,b)=>{
+      const na=typeof a.studentName==='string'?a.studentName:(a.studentName?.name||a.studentNo||'');
+      const nb=typeof b.studentName==='string'?b.studentName:(b.studentName?.name||b.studentNo||'');
+      return na.localeCompare(nb,'tr');
+    });
+  // Sadece değişimi güncelle
+  const wrap=listEl.parentElement;
+  if(!rows.length){listEl.innerHTML='<div style="font-size:.72rem;color:rgba(255,255,255,.25);padding:8px 4px">Henüz katılan yok</div>';return;}
+  // Kaç satır sığar hesapla (her satır ~34px)
+  const availH=(wrap?.clientHeight||300)-30;
+  const maxRows=Math.max(4,Math.floor(availH/34));
+  const shown=rows.slice(-maxRows); // en son katılanlar altta
+  listEl.innerHTML=shown.map(a=>{
+    const nm=typeof a.studentName==='string'?a.studentName:(a.studentName?.name||a.studentName?.ad||a.studentNo||'—');
+    return`<div class="proj-att-row">
+      <div class="proj-att-av" style="background:${_avBg(a.studentNo||nm)}">${_initials(nm)}</div>
+      <div class="proj-att-name">${esc(nm)}</div>
+      <div class="proj-att-time">${a.timeStr||''}</div>
+    </div>`;
+  }).join('');
 }
 
 function _updateProjFeed(){
