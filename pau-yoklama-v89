@@ -3628,6 +3628,52 @@ input:focus,select:focus,textarea:focus{
     </div>
   </div>
 
+  <!-- Manuel Ders / Task Ekle -->
+  <div class="card" style="margin-top:12px" id="manual-task-card">
+    <div class="card-title">✏️ Manuel Ders / Task Ekle</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="form-row" style="margin:0">
+        <label>Dönem</label>
+        <select id="mt-donem" onchange="_onMtDonemChange()" style="width:100%">
+          <option value="">— Dönem seç —</option>
+          <option value="Dönem 1">Dönem 1</option>
+          <option value="Dönem 2">Dönem 2</option>
+          <option value="Dönem 3">Dönem 3</option>
+          <option value="Dönem 4">Dönem 4</option>
+          <option value="Dönem 5">Dönem 5</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0" id="mt-blok-wrap">
+        <label>Blok</label>
+        <select id="mt-blok" onchange="_onMtBlokChange()" style="width:100%">
+          <option value="">— Önce dönem seçin —</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0;display:none" id="mt-modul-wrap">
+        <label>Modül</label>
+        <input id="mt-modul" placeholder="Modül adı">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>Task Adı / No</label>
+        <input id="mt-name" placeholder="Task 3">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>Sorumlu Hoca(lar)</label>
+        <div style="border:1px solid var(--border2);border-radius:var(--rad-xs);padding:6px 8px;background:var(--bg2);display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:38px">
+          <div id="mt-sorumlu-chips" style="display:contents"></div>
+          <select id="mt-sorumlu-pick" onchange="addMtSorumluChip(this)" style="border:none;background:transparent;color:var(--fg2);font-size:.82rem;padding:0;flex:1;min-width:120px;outline:none;cursor:pointer">
+            <option value="">+ Hoca seç…</option>
+          </select>
+        </div>
+      </div>
+      <div id="mt-err"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn bg bsm" onclick="_mtReset()">Temizle</button>
+        <button class="btn bp" onclick="addManualTask()">➕ Ekle</button>
+      </div>
+    </div>
+  </div>
+
   </div><!-- /stpanel-program -->
   <!-- ── LİSTELER PANELİ (admin only) ── -->
   <div id="stpanel-listeler" style="display:none">
@@ -4592,6 +4638,7 @@ function switchStTab(tab){
     if(b)b.classList.toggle('active',t===tab);
   });
   if(tab==='task'){renderTaskPanel();renderTaskMgmt();loadTaskSorumluCard();}
+  if(tab==='program'){_populateMtSorumluSelect();}
   try{localStorage.setItem('pau_st_tab',tab);}catch{}
 }
 
@@ -11944,6 +11991,119 @@ async function renderStats(){
     }
     barWrap.innerHTML=`<div style="margin-top:16px"><h3 style="font-size:.9rem;margin-bottom:8px;color:var(--fg2)">Oturum bazlı katılım</h3>${labels.map((l,i)=>{const v=data[i];const c=v>=80?'var(--ok)':v>=50?'var(--warn,#f59e0b)':'var(--err)';return`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:2px"><span>${l}</span><span style="color:${c};font-weight:700">%${v}</span></div><div style="background:var(--bg2);border-radius:4px;height:10px;overflow:hidden"><div style="width:${v}%;height:100%;background:${c};border-radius:4px;transition:width .5s"></div></div></div>`;}).join('')}</div>`;
   }catch(e){console.error('renderStats',e);barWrap.innerHTML='<div class="empty" style="color:var(--err)">İstatistik yüklenemedi.</div>';}
+}
+
+/* ── Manuel Task — Program sekmesi ── */
+let selectedMtSorumluEmails=[];
+function _onMtDonemChange(){
+  const donem=document.getElementById('mt-donem').value;
+  const blokSel=document.getElementById('mt-blok');
+  const modulWrap=document.getElementById('mt-modul-wrap');
+  const modulEl=document.getElementById('mt-modul');
+  if(modulEl)modulEl.value='';
+  if(modulWrap)modulWrap.style.display='none';
+  blokSel.innerHTML='<option value="">— Blok seç —</option>';
+  if(!donem)return;
+  const bloklar=NT_BLOK_MAP[donem]||[];
+  if(bloklar.length){
+    bloklar.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;blokSel.appendChild(o);});
+  } else {
+    const o=document.createElement('option');o.value='';o.textContent='— (Blok bilgisi yakında eklenecek) —';blokSel.appendChild(o);
+  }
+}
+function _onMtBlokChange(){
+  const donem=document.getElementById('mt-donem').value;
+  const blok=document.getElementById('mt-blok').value;
+  const modulWrap=document.getElementById('mt-modul-wrap');
+  const erken=['Dönem 1','Dönem 2','Dönem 3'].includes(donem);
+  if(modulWrap)modulWrap.style.display=(erken&&blok)?'block':'none';
+}
+function _populateMtSorumluSelect(){
+  const sel=document.getElementById('mt-sorumlu-pick');
+  if(!sel)return;
+  sel.innerHTML='<option value="">+ Hoca seç…</option>';
+  const byDept={};
+  const _US={'PROFESÖR':'Prof. Dr.','DOÇENT':'Doç. Dr.','DOKTOR ÖĞRETİM ÜYESİ':'Dr. Öğr. Üyesi','UZM.DR.':'Uzm. Dr.','ÖĞRETİM GÖREVLİSİ':'Öğr. Gör.','ARŞ. GÖR. DR.':'Arş. Gör. Dr.','ARŞ. GÖR.':'Arş. Gör.'};
+  const _score=p=>(p.dept?2:0)+(p.unvan?2:0)+(p.bolum?1:0)+((p.name&&p.name!==p.name.toUpperCase())?1:0);
+  const dedupByEmail={};
+  Object.entries(professors).forEach(([uid,p])=>{
+    const em=(p.email||uid).toLowerCase();
+    if(!dedupByEmail[em]||_score(p)>_score(dedupByEmail[em][1]))dedupByEmail[em]=[uid,p];
+  });
+  Object.values(dedupByEmail).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr')).forEach(([uid,p])=>{
+    const email=p.email||uid;
+    if(selectedMtSorumluEmails.includes(email))return;
+    const dept=p.dept||p.bolum||'⚠️ ABD Girilmemiş';
+    if(!byDept[dept])byDept[dept]=[];
+    byDept[dept].push({email,p});
+  });
+  Object.keys(byDept).sort((a,b)=>a==='⚠️ ABD Girilmemiş'?1:b==='⚠️ ABD Girilmemiş'?-1:a.localeCompare(b,'tr')).forEach(dept=>{
+    const grp=document.createElement('optgroup');grp.label=dept;
+    byDept[dept].forEach(({email,p})=>{
+      const o=document.createElement('option');o.value=email;
+      const unvanPfx=p.unvan?(_US[p.unvan]||p.unvan)+' ':'';
+      o.textContent=unvanPfx+(p.name||email);grp.appendChild(o);
+    });
+    sel.appendChild(grp);
+  });
+}
+function _renderMtSorumluChips(){
+  const wrap=document.getElementById('mt-sorumlu-chips');
+  if(!wrap)return;
+  const _US2={'PROFESÖR':'Prof. Dr.','DOÇENT':'Doç. Dr.','DOKTOR ÖĞRETİM ÜYESİ':'Dr. Öğr. Üyesi','UZM.DR.':'Uzm. Dr.','ÖĞRETİM GÖREVLİSİ':'Öğr. Gör.','ARŞ. GÖR. DR.':'Arş. Gör. Dr.','ARŞ. GÖR.':'Arş. Gör.'};
+  const profLookup={};
+  Object.entries(professors).forEach(([uid,p])=>{
+    const label=((_US2[p.unvan]||'')+' '+(p.name||'')).trim()||p.email||uid;
+    if(p.email)profLookup[p.email]=label;
+    profLookup[uid]=label;
+  });
+  wrap.innerHTML=selectedMtSorumluEmails.map(key=>`<span style="display:inline-flex;align-items:center;gap:4px;background:var(--pau-285c);color:#fff;padding:3px 10px 3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;white-space:nowrap">${esc(profLookup[key]||key)}<button onclick="removeMtSorumluChip(this.dataset.e)" data-e="${esc(key)}" style="background:none;border:none;color:rgba(255,255,255,.75);cursor:pointer;font-size:.9rem;line-height:1;padding:0 0 0 4px;margin:0">✕</button></span>`).join('');
+  _populateMtSorumluSelect();
+}
+function addMtSorumluChip(sel){
+  const email=sel.value;
+  if(!email||selectedMtSorumluEmails.includes(email)){sel.value='';return;}
+  selectedMtSorumluEmails.push(email);
+  sel.value='';
+  _renderMtSorumluChips();
+}
+function removeMtSorumluChip(email){
+  selectedMtSorumluEmails=selectedMtSorumluEmails.filter(e=>e!==email);
+  _renderMtSorumluChips();
+}
+function _mtReset(){
+  selectedMtSorumluEmails=[];
+  ['mt-donem','mt-blok','mt-modul','mt-name'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const mw=document.getElementById('mt-modul-wrap');if(mw)mw.style.display='none';
+  _renderMtSorumluChips();
+  const errEl=document.getElementById('mt-err');if(errEl)errEl.innerHTML='';
+}
+async function addManualTask(){
+  const donem=(document.getElementById('mt-donem')?.value||'').trim();
+  const blok=(document.getElementById('mt-blok')?.value||'').trim();
+  const modul=(document.getElementById('mt-modul')?.value||'').trim();
+  const name=(document.getElementById('mt-name')?.value||'').trim();
+  const errEl=document.getElementById('mt-err');
+  if(errEl)errEl.innerHTML='';
+  if(!donem){if(errEl)errEl.innerHTML='<div class="al alerr">Dönem seçimi zorunlu.</div>';return;}
+  if(!blok){if(errEl)errEl.innerHTML='<div class="al alerr">Blok seçimi zorunlu.</div>';return;}
+  if(!name){if(errEl)errEl.innerHTML='<div class="al alerr">Task adı zorunlu.</div>';return;}
+  const id='task_'+Date.now();
+  const sorumluEmail=selectedMtSorumluEmails[0]||'';
+  const data={name,blokName:blok,donem,modul:modul||null,sorumluEmail,sorumluEmails:selectedMtSorumluEmails.length?selectedMtSorumluEmails:[],createdAt:Date.now()};
+  try{
+    await fbPut('/tasks/'+id,data);
+    tasks[id]=data;
+    if(isAdmin)myTasks=Object.entries(tasks).map(([i,t])=>({id:i,...t}));
+    _fillTaskSelect();
+    renderTaskPanel();
+    showToast('✅','Task eklendi',data.name,'ok');
+    _mtReset();
+  }catch(e){if(errEl)errEl.innerHTML='<div class="al alerr">Hata: '+esc(String(e))+'</div>';}
+}
+/* ── Hoca seçicisini Program sekmesi açıldığında doldur ── */
+function _onShowProgramPanel(){
+  _populateMtSorumluSelect();
 }
 </script>
 
