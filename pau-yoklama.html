@@ -8560,7 +8560,9 @@ async function createSession(){
       const grpNames=[..._selGroups].map(k=>_grpData[k]?.name||k).filter(Boolean);
       const stuToAdd=_getStuMap(); // ekip filtresi aktifse otomatik filtreler
       for(const [no,sname] of Object.entries(stuToAdd)){
-        const entry={studentNo:no,studentName:sname,time:t2,timeStr:ts2,manual:true};
+        // sname string veya object olabilir — güvenli string'e çevir
+        const snameStr=typeof sname==='string'?sname:(sname?.name||sname?.ad||sname?.displayName||String(sname||''));
+        const entry={studentNo:no,studentName:snameStr,time:t2,timeStr:ts2,manual:true,groupStart:true};
         await fbPut('/sessions/'+code+'/attendance/'+no,entry);
         attendees[no]=entry;
       }
@@ -8673,16 +8675,20 @@ async function callScriptEmail(payload){
 async function sendSessionEmail(sess){
   if(!emailCfg.scriptUrl)return;
   const att=sess.attendance||attendees||{};
-  const rows=Object.values(att).filter(a=>!a.absent).sort((a,b)=>(a.time||0)-(b.time||0));
-  const list=rows.map((a,i)=>`${i+1}. ${a.studentName||'—'} (${a.studentNo||''})`).join('\n');
+  // groupStart:true olanlar yoklamayı henüz yapmamış — email sayısına dahil etme
+  const rows=Object.values(att).filter(a=>!a.absent&&!a.groupStart).sort((a,b)=>(a.time||0)-(b.time||0));
+  // Öğrenci adını güvenli string'e çeviren yardımcı
+  const _sname=a=>{const n=a.studentName;if(!n)return'—';if(typeof n==='string')return n;if(typeof n==='object')return n.name||n.ad||n.displayName||Object.values(n).filter(v=>typeof v==='string'&&v).join(' ')||'—';return String(n);};
+  const list=rows.map((a,i)=>`${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n');
   // Task-based sorumlu lookup
   const task=sess.taskId&&tasks[sess.taskId]?tasks[sess.taskId]:null;
   const sorumluEmails=task?(task.sorumluEmails&&task.sorumluEmails.length?task.sorumluEmails:[task.sorumluEmail]).filter(Boolean):[];
   const findProf=e=>Object.values(professors).find(p=>p.email===e)||null;
   const sorumluFullNames=sorumluEmails.map(e=>profFullName(findProf(e))||e).filter(Boolean);
   const course=sess.courseId&&courses[sess.courseId]?courses[sess.courseId]:null;
-  // Dersi açan öğretim üyesinin ünvanlı adı
-  const openingProf=sess.profUid&&professors[sess.profUid]?professors[sess.profUid]:null;
+  // Dersi açan öğretim üyesinin ünvanlı adı — uid ile bulamazsa email ile ara
+  const openingProf=sess.profUid&&professors[sess.profUid]?professors[sess.profUid]
+    :(sess.profEmail?Object.values(professors).find(p=>p.email===sess.profEmail):null)||null;
   const openingProfFull=openingProf?profFullName(openingProf):(sess.profName||sess.profEmail||'—');
   const subject=`Yoklama Raporu — ${sess.name||''} (${dayN(sess.date)} ${fmtDate(sess.date)})`;
   const taskLine=task?`Görev     : ${task.donem||''}${task.blokName?' · '+task.blokName:''}${task.name?' · '+task.name:''}`:null;
@@ -8716,7 +8722,7 @@ ${list||'—'}`;
   const excelRows=rows.map((a,i)=>({
     sira:i+1,
     no:a.studentNo||'',
-    ad:a.studentName||'',
+    ad:_sname(a),
     saat:a.time?new Date(a.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'-'
   }));
   try{
@@ -12295,7 +12301,8 @@ function openProjFullscreen(){
   if(curActiveCode) captureSessLocation(curActiveCode).then(loc=>{
     if(loc){const b=document.getElementById('proj-loc-badge');if(b)b.textContent='📍 Konum alındı (±'+loc.acc+'m)';}
   });
-  _projFeedSeen=new Set(Object.keys(attendees||{}).filter(k=>{const r=attendees[k];return r&&!r.absent;}));
+  // groupStart olanları "görüldü" listesine alma — gerçek yoklama yapınca feed'e girsin
+  _projFeedSeen=new Set(Object.keys(attendees||{}).filter(k=>{const r=attendees[k];return r&&!r.absent&&!r.groupStart;}));
   el.classList.add('open');
   const sess=activeSessions.find(s=>s.code===curActiveCode);
   const cname=document.getElementById('proj-course-name');
@@ -12317,7 +12324,7 @@ function _renderProjQr(){
   if(!wrap||!curActiveCode)return;
   wrap.innerHTML='';
   // Size: use available space — roughly 42vh capped at 400px
-  const sz=Math.min(480,Math.max(260,Math.round(window.innerHeight*0.50)));
+  const sz=Math.min(360,Math.max(200,Math.round(window.innerHeight*0.38)));
   try{new QRCode(wrap,{text:_qrUrl(curActiveCode),width:sz,height:sz,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
 }
 
@@ -12347,7 +12354,8 @@ function closeProjFullscreen(){
 
 function updateProjFs(){
   if(!projFsOpen)return;
-  const present=Object.values(attendees||{}).filter(a=>!a.absent).length;
+  // groupStart:true = grup önyükleme, gerçek yoklama değil — sayıma dahil etme
+  const present=Object.values(attendees||{}).filter(a=>!a.absent&&!a.groupStart).length;
   const absent=Object.values(attendees||{}).filter(a=>a.absent).length;
   const total=Object.keys(courseStudents).length;
   const arc=document.getElementById('proj-ring-arc');
