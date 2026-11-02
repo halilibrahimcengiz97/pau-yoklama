@@ -3684,6 +3684,12 @@ input:focus,select:focus,textarea:focus{
         <p class="hint" style="margin-top:4px">Her dönem için grup oluşturun (A Grubu, A1, B2 gibi). Dönem 4–5'te grupları blok'lara atayın; rotasyon sırasında atamayı değiştirmeniz yeterli.</p>
       </div>
     </div>
+    <!-- Tıp / Tıp Dışı modu -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center">
+      <span style="font-size:.75rem;font-weight:700;color:var(--fg3);text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Fakülte türü:</span>
+      <button id="dl-mode-tip" class="btn bp bsm" onclick="setDlMode('tip')" style="min-width:80px">🏥 Tıp</button>
+      <button id="dl-mode-tipdisi" class="btn bg bsm" onclick="setDlMode('tipdisi')" style="min-width:80px">📚 Tıp Dışı</button>
+    </div>
     <div id="dl-tab-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
     <div id="dl-tab-content"></div>
   </div>
