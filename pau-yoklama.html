@@ -3680,7 +3680,10 @@ input:focus,select:focus,textarea:focus{
   <div class="card" id="courses-list-card">
     <div class="sec-hd">
       <h2>📚 Dersler</h2>
-      <button class="btn bp bsm" onclick="showNewCourse()">+ Yeni Ders</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bsm" style="background:linear-gradient(135deg,#003865,#0072CE);color:#fff;font-weight:700;border:none" onclick="showBlokQuick()">🚀 Blok Dönem Başlat</button>
+        <button class="btn bp bsm" onclick="showNewCourse()">+ Yeni Ders</button>
+      </div>
     </div>
     <ul id="clist" style="list-style:none"></ul>
   </div>
@@ -3706,6 +3709,52 @@ input:focus,select:focus,textarea:focus{
     </div>
     <div id="course-err" style="margin-top:6px"></div>
   </div>
+  <!-- Blok Dönem Quick Start -->
+  <div class="card" id="blok-quick-card" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="font-size:1.3rem">🚀</div>
+      <div>
+        <div style="font-weight:800;font-size:1rem;color:var(--fg)">Blok Dönem Oturumu Başlat</div>
+        <div style="font-size:.74rem;color:var(--fg2)">Dönem ve bloğu seçin, sistem kodu oluşturur</div>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row" style="margin:0">
+        <label>Dönem *</label>
+        <select id="bq-donem" onchange="_bqOnDonem()">
+          <option value="">— Dönem seçin —</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0" id="bq-blok-row">
+        <label>Blok</label>
+        <select id="bq-blok">
+          <option value="">— Blok seçin —</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" id="bq-modul-row" style="display:none;margin-top:8px">
+      <label>Modül / Konu</label>
+      <input id="bq-modul" placeholder="örn. Kardiyovasküler Sistem">
+    </div>
+    <div class="form-grid" style="margin-top:8px">
+      <div class="form-row" style="margin:0">
+        <label>Ders (isteğe bağlı)</label>
+        <select id="bq-course">
+          <option value="">— Ders seçin —</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>Tarih</label>
+        <input type="date" id="bq-date">
+      </div>
+    </div>
+    <div id="bq-err" style="display:none;color:#dc2626;margin-top:6px;font-size:.84rem;padding:6px 10px;background:rgba(220,38,38,.08);border-radius:8px"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn bsm" id="bq-start-btn" style="background:linear-gradient(135deg,#003865,#0072CE);color:#fff;font-weight:700;border:none;padding:10px 20px" onclick="quickBlokStart()">▶ Oturumu Başlat</button>
+      <button class="btn bg bsm" onclick="hideBlokQuick()">İptal</button>
+    </div>
+  </div>
+
   <!-- Course detail -->
   <div class="card" id="course-detail" style="display:none">
     <div class="sec-hd">
@@ -4081,7 +4130,7 @@ input:focus,select:focus,textarea:focus{
         </div>
       </div>
       <div class="form-row" style="margin:0">
-        <label>Sorumlu Hoca(lar)</label>
+        <label>Ders Anlatacak Öğretim Üyesi</label>
         <div style="border:1px solid var(--border2);border-radius:var(--rad-xs);padding:6px 8px;background:var(--bg2);display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:38px">
           <div id="mt-sorumlu-chips" style="display:contents"></div>
           <select id="mt-sorumlu-pick" onchange="addMtSorumluChip(this)" style="border:none;background:transparent;color:var(--fg2);font-size:.82rem;padding:0;flex:1;min-width:120px;outline:none;cursor:pointer">
@@ -5432,6 +5481,18 @@ const NT_BLOK_MAP={
   'Dönem 2':['1. Blok','2. Blok','3. Blok','4. Blok'],
   'Dönem 3':['1. Blok','2. Blok','3. Blok','4. Blok'],
 };
+// ── PEDİATRİ BLOĞU — Sabit task listesi (sıraya göre) ──
+const PRESET_PEDIATRI_TASKS=[
+  {name:'Yenidoğan',sorumluNames:['Özmert M.A. ÖZDEMİR']},
+  {name:'Yenidoğan Sorunları',sorumluNames:['Ece KOYUNCU']},
+  {name:'Çocukluk Çağı Enfeksiyon Hastalıkları ve Çocukluk Çağı Onkoloji Hastalıklar',sorumluNames:['Dicle Şener OKUR','Selin YAKARIŞIK']},
+  {name:'Çocukluk Çağı Kardiyolojik Hastalıklar',sorumluNames:['Münevver YILMAZ']},
+  {name:'Çocukluk Çağı Alerji ve Solunum Yolu Hastalıkları',sorumluNames:['Ebru ARIK YILMAZ']},
+  {name:'Çocukluk Çağı GIS Hastalıkları',sorumluNames:['Nergül ÇÖRDÜK']},
+  {name:'Çocukluk Çağı Böbrek Hastalıkları',sorumluNames:['Tülay BECERİR']},
+  {name:'Çocukluk Çağı Endokrin Hastalıklar',sorumluNames:['Selda Ayça ALTINCIK']},
+  {name:'Çocukluk Çağı Nörolojik Hastalıkları',sorumluNames:['Olcay GÜNGÖR']},
+];
 function _onNtDonemChange(){
   const donem=document.getElementById('nt-donem').value;
   const blokSel=document.getElementById('nt-blok');
@@ -9933,6 +9994,141 @@ function populateCourseSelect(){
   sel.innerHTML='<option value="">— Ders seçin —</option>'+sorted.map(([id,c])=>`<option value="${esc(id)}">${esc(c.code?c.code+' · ':'')}${esc(c.name)}${c.dept?' ('+esc(c.dept)+')':''}</option>`).join('');
   if(cur)sel.value=cur;
 }
+/* ── BLOK DÖNEM QUICK-START ── */
+function showBlokQuick(){
+  // Kapat diğer form kartları
+  document.getElementById('new-course-card').style.display='none';
+  // Dönem listesini doldur
+  const sel=document.getElementById('bq-donem');
+  if(!sel)return;
+  const FIXED=['Dönem 1','Dönem 2','Dönem 3','Dönem 4','Dönem 5'];
+  const taskDonems=Object.values(tasks).map(t=>t.donem||'').filter(Boolean);
+  const donems=[...new Set([...FIXED,...taskDonems])].sort((a,b)=>a.localeCompare(b,'tr'));
+  sel.innerHTML='<option value="">— Dönem seçin —</option>'+donems.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
+  // Bugünün tarihi
+  const dateEl=document.getElementById('bq-date');
+  if(dateEl)dateEl.value=new Date().toISOString().slice(0,10);
+  // Ders listesi
+  const courseEl=document.getElementById('bq-course');
+  if(courseEl){
+    const ce=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
+    courseEl.innerHTML='<option value="">— Ders seçin —</option>'+ce.map(([id,c])=>`<option value="${esc(id)}">${esc(c.name)}</option>`).join('');
+  }
+  // Blok / modül satırlarını sıfırla
+  const bqBlokRow=document.getElementById('bq-blok-row');
+  const bqModulRow=document.getElementById('bq-modul-row');
+  if(bqBlokRow)bqBlokRow.style.display='none';
+  if(bqModulRow)bqModulRow.style.display='none';
+  const errEl=document.getElementById('bq-err');if(errEl)errEl.style.display='none';
+  document.getElementById('blok-quick-card').style.display='block';
+  // Ekrana kaydır
+  document.getElementById('blok-quick-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function hideBlokQuick(){
+  const c=document.getElementById('blok-quick-card');if(c)c.style.display='none';
+}
+function _bqOnDonem(){
+  const donem=(document.getElementById('bq-donem')?.value||'').trim();
+  const blokRow=document.getElementById('bq-blok-row');
+  const blokSel=document.getElementById('bq-blok');
+  const modulRow=document.getElementById('bq-modul-row');
+  const modulInput=document.getElementById('bq-modul');
+  if(!donem){
+    if(blokRow)blokRow.style.display='none';
+    if(modulRow)modulRow.style.display='none';
+    return;
+  }
+  const dn=parseInt((donem.match(/\d+/)||['0'])[0]);
+  if(dn>=1&&dn<=3){
+    // D1-D3: modül metin alanı
+    if(modulRow)modulRow.style.display='block';
+    if(blokRow)blokRow.style.display='none';
+    if(blokSel)blokSel.innerHTML='<option value="">— Blok seçin —</option>';
+  } else {
+    // D4-D5: blok açılır listesi
+    if(modulRow){modulRow.style.display='none';if(modulInput)modulInput.value='';}
+    const bloks=[...new Set(Object.values(tasks).filter(t=>t.donem===donem).map(t=>t.blokName||'').filter(Boolean))].sort((a,b)=>a.localeCompare(b,'tr'));
+    if(blokSel)blokSel.innerHTML='<option value="">— Blok seçin —</option>'+bloks.map(b=>`<option value="${esc(b)}">${esc(b)}</option>`).join('');
+    if(blokRow)blokRow.style.display='block';
+  }
+}
+async function quickBlokStart(){
+  if(!curUser){alert('Lütfen önce giriş yapın.');return;}
+  const donem=(document.getElementById('bq-donem')?.value||'').trim();
+  const blok=(document.getElementById('bq-blok')?.value||'').trim();
+  const modul=(document.getElementById('bq-modul')?.value||'').trim();
+  const cid=(document.getElementById('bq-course')?.value||'').trim();
+  const date=document.getElementById('bq-date')?.value||new Date().toISOString().slice(0,10);
+  const errEl=document.getElementById('bq-err');
+  if(!donem){if(errEl){errEl.textContent='⚠ Dönem seçimi zorunludur.';errEl.style.display='block';}return;}
+  errEl.style.display='none';
+  const btn=document.getElementById('bq-start-btn');
+  if(btn){btn.innerHTML='<span class="spin"></span> Başlatılıyor…';btn.disabled=true;}
+  try{
+    const code=genCode();
+    const dn=parseInt((donem.match(/\d+/)||['0'])[0]);
+    const course=cid&&courses[cid]?courses[cid]:null;
+    const now=new Date();
+    const time=now.toTimeString().slice(0,5);
+    let sessionName='';
+    if(dn>=1&&dn<=3){
+      sessionName=(course?.name?course.name+' — ':'')+donem+(modul?' — '+modul:'')+' — '+dayN(date);
+    } else {
+      sessionName=(course?.name?course.name+' — ':'')+donem+(blok?' · '+blok:'')+' — '+dayN(date);
+    }
+    const taskLabel=dn>3&&blok?`${donem} · ${blok}`:dn<=3&&modul?`${donem} · ${modul}`:donem||null;
+    const sess={
+      code,
+      name:sessionName,
+      date,time,
+      courseId:cid||null,
+      courseName:course?.name||null,
+      donem:donem||null,
+      modulName:dn<=3?(modul||null):null,
+      blokName:dn>3?(blok||null):null,
+      taskId:null,
+      taskName:taskLabel,
+      termId:curTerm||null,
+      createdAt:Date.now(),active:true,
+      pinRequired:true,
+      idRequired:false,
+      duration:null,closesAt:null,
+      attDuration:null,attClosesAt:null,
+      profUid:curUser.uid,
+      profEmail:curUser.email,
+      profName:curUser.displayName||curUser.email,
+      faculty:curUserFaculty||'tip',
+      emailSent:false,
+      profEmailNotify:true
+    };
+    const dbUrl=FB_CFG.databaseURL+'/sessions/'+code+'.json';
+    const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sess,attendance:{}})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    _auditLog(code,'session_created');
+    hideBlokQuick();
+    curActiveCode=code;
+    profListeners[code]=true;
+    nav('active');
+    updateActiveHeader(sess);
+    attendees={};
+    document.getElementById('att-list').innerHTML='';
+    renderQr(code);
+    updatePin();
+    if(pinTimer)clearInterval(pinTimer);
+    lastPinSlot=-1;pinTimer=setInterval(updatePin,1000);
+    document.getElementById('act-cdown').style.display='none';
+    if(attCdownTimer)clearInterval(attCdownTimer);
+    const ae=document.getElementById('act-att-cdown');if(ae)ae.style.display='none';
+    listenAtt(code);
+    setTimeout(()=>openProjFullscreen(),400);
+  }catch(e){
+    if(errEl){errEl.textContent='❌ Hata: '+e.message;errEl.style.display='block';}
+  }finally{
+    if(btn){btn.innerHTML='▶ Oturumu Başlat';btn.disabled=false;}
+  }
+}
+/* ── /BLOK DÖNEM QUICK-START ── */
+
 function renderCourses(){
   const list=document.getElementById('clist');if(!list)return;
   const entries=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
@@ -9951,6 +10147,7 @@ function renderCourses(){
   }).join('');
 }
 async function showNewCourse(){
+  hideBlokQuick();
   document.getElementById('new-course-card').style.display='block';
   try{
     const r=await fetch(FB_CFG.databaseURL+'/professors.json');
@@ -12864,6 +13061,22 @@ async function _onMtDonemChange(){
     }
   }catch(e){if(ekipSel)ekipSel.innerHTML='<option value="">— Grup yüklenemedi —</option>';}
 }
+function _findProfEmailsByNames(nameList){
+  const tr=s=>(s||'').toUpperCase().replace(/İ/g,'I').replace(/Ş/g,'S').replace(/Ğ/g,'G').replace(/Ü/g,'U').replace(/Ö/g,'O').replace(/Ç/g,'C').replace(/[^A-Z\s]/g,'');
+  const emails=[];
+  nameList.forEach(searchName=>{
+    const searchWords=tr(searchName).split(/\s+/).filter(w=>w.length>=3);
+    let bestScore=0,bestEmail=null;
+    Object.values(professors||{}).forEach(p=>{
+      if(!p.email||!p.name)return;
+      const profWords=tr(p.name).split(/\s+/).filter(Boolean);
+      const score=searchWords.filter(w=>profWords.some(pw=>pw===w||pw.includes(w)||w.includes(pw))).length;
+      if(score>bestScore){bestScore=score;bestEmail=p.email;}
+    });
+    if(bestEmail&&bestScore>=2&&!emails.includes(bestEmail))emails.push(bestEmail);
+  });
+  return emails;
+}
 function _onMtBlokChange(){
   const donem=document.getElementById('mt-donem').value;
   const blok=document.getElementById('mt-blok').value;
@@ -12876,8 +13089,19 @@ function _onMtBlokChange(){
   if(!taskSel)return;
   taskSel.innerHTML='<option value="">— Task seç —</option>';
   if(!blok)return;
-  // Mevcut task'ları filtrele
-  const mevcutTasks=Object.entries(tasks||{}).filter(([,t])=>t.donem===donem&&t.blokName===blok);
+  const isPediatri=(donem==='Dönem 4'&&blok==='Pediatri Bloğu');
+  const presetNames=isPediatri?new Set(PRESET_PEDIATRI_TASKS.map(p=>p.name)):new Set();
+  // Preset'e girmeyen mevcut task'lar
+  const mevcutTasks=Object.entries(tasks||{}).filter(([,t])=>t.donem===donem&&t.blokName===blok&&!presetNames.has(t.name));
+  if(isPediatri){
+    PRESET_PEDIATRI_TASKS.forEach((pt,idx)=>{
+      const existing=Object.entries(tasks||{}).find(([,t])=>t.donem===donem&&t.blokName===blok&&t.name===pt.name);
+      const o=document.createElement('option');
+      o.value=existing?existing[0]:'__preset_pediatri_'+idx;
+      o.textContent=pt.name+' ('+pt.sorumluNames.join(', ')+')';
+      taskSel.appendChild(o);
+    });
+  }
   mevcutTasks.sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr')).forEach(([tid,t])=>{
     const o=document.createElement('option');
     o.value=tid;
@@ -12900,6 +13124,17 @@ function _onMtTaskSelChange(){
   } else {
     nameWrap.style.display='none';
     if(nameEl)nameEl.value='';
+  }
+  // Preset Pediatri task seçildiyse sorumluyu otomatik doldur
+  if(sel.value.startsWith('__preset_pediatri_')){
+    const idx=parseInt(sel.value.replace('__preset_pediatri_',''),10);
+    const pt=PRESET_PEDIATRI_TASKS[idx];
+    if(pt){
+      const emails=_findProfEmailsByNames(pt.sorumluNames);
+      selectedMtSorumluEmails=[...emails];
+      _renderMtSorumluChips();
+      _populateMtSorumluSelect();
+    }
   }
 }
 async function _onMtEkipChange(){
@@ -13029,6 +13264,12 @@ async function addManualTask(){
     name=(document.getElementById('mt-name')?.value||'').trim();
     if(!name){if(errEl)errEl.innerHTML='<div class="al alerr">Yeni task adı zorunlu.</div>';return;}
     taskId='task_'+Date.now();
+  } else if(taskSelVal.startsWith('__preset_pediatri_')){
+    const idx=parseInt(taskSelVal.replace('__preset_pediatri_',''),10);
+    const pt=PRESET_PEDIATRI_TASKS[idx];
+    if(!pt){if(errEl)errEl.innerHTML='<div class="al alerr">Geçersiz preset task.</div>';return;}
+    name=pt.name;
+    taskId='task_'+Date.now();
   } else {
     taskId=taskSelVal;
     name=tasks[taskId]?.name||taskSelVal;
@@ -13046,6 +13287,29 @@ async function addManualTask(){
     _fillTaskSelect();
     renderTaskPanel();
     showToast('✅','Task eklendi',data.name,'ok');
+    // ── E-POSTA BİLDİRİMLERİ ──
+    if(emailCfg&&emailCfg.scriptUrl){
+      const _findProfByEmail=e=>Object.values(professors||{}).find(p=>p.email===e)||null;
+      const taskLabel=`${data.donem||''}${data.blokName?' · '+data.blokName:''}${data.name?' · '+data.name:''}`;
+      // 1) Task Sorumlusu'na mail
+      if(data.sorumluEmails&&data.sorumluEmails.length){
+        const sorumluNames=data.sorumluEmails.map(e=>profFullName(_findProfByEmail(e))||e).join(', ');
+        try{await callScriptEmail({
+          recipients:data.sorumluEmails,
+          subject:`PAÜ Tıp — Yeni Task Ataması: ${data.name||''}`,
+          body:`PAÜ Tıp Fakültesi — Task Atama Bildirimi\n\nMerhaba,\n\nAşağıdaki task için Sorumlu Hoca olarak atandınız:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi`
+        });}catch(mailErr){console.warn('Task sorumlu mail err',mailErr);}
+      }
+      // 2) Ders Anlatacak Öğretim Üyesi'ne mail
+      const dersHocaEmails=selectedMtSorumluEmails.filter(Boolean);
+      if(dersHocaEmails.length){
+        try{await callScriptEmail({
+          recipients:dersHocaEmails,
+          subject:`PAÜ Tıp — Ders Görevlendirmesi: ${data.name||''}`,
+          body:`PAÜ Tıp Fakültesi — Ders Görevlendirme Bildirimi\n\nMerhaba,\n\nAşağıdaki task kapsamında Ders Anlatacak Öğretim Üyesi olarak görevlendirildiniz:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi`
+        });}catch(mailErr){console.warn('Ders hoca mail err',mailErr);}
+      }
+    }
     _mtReset();
   }catch(e){if(errEl)errEl.innerHTML='<div class="al alerr">Hata: '+esc(String(e))+'</div>';}
 }
