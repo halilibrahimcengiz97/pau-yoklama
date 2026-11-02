@@ -2745,6 +2745,12 @@ input:focus,select:focus,textarea:focus{
     <!-- SAĞ SÜTUN: Canlı katılım akışı -->
     <div id="proj-right">
       <div id="proj-right-header">Canlı Katılım</div>
+      <div id="proj-loc-badge" style="font-size:.64rem;color:rgba(255,255,255,.35);margin:-6px 0 10px 0;padding:5px 8px;background:rgba(255,255,255,.05);border-radius:8px;line-height:1.4">📍 Konum bekleniyor…</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-size:.6rem;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#4ade80" stroke-width="2"/></svg>Konum+Saat ✓</span>
+        <span style="font-size:.6rem;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#facc15" stroke-width="2"/></svg>Saat ✓</span>
+        <span style="font-size:.6rem;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#fb923c" stroke-width="2"/></svg>Şüpheli</span>
+      </div>
       <div id="proj-feed">
         <ul id="proj-feed-list"></ul>
       </div>
@@ -4382,6 +4388,71 @@ const fbDel=async p=>{const r=await fetch(FB+p+'.json',{method:'DELETE'});if(!r.
 const _polls={};
 function _poll(key,ms,fn){if(_polls[key])clearInterval(_polls[key]);fn();_polls[key]=setInterval(fn,ms);}
 function _stopPoll(key){if(_polls[key]){clearInterval(_polls[key]);delete _polls[key];}}
+
+/* ── KONUM DOĞRULAMA ─────────────────────────────────────── */
+// Haversine formülüyle iki GPS noktası arasındaki mesafe (metre)
+function haversineM(lat1,lng1,lat2,lng2){
+  const R=6371000,r=Math.PI/180;
+  const dLat=(lat2-lat1)*r, dLng=(lng2-lng1)*r;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// GPS al (Promise; null döner erişim yoksa)
+function getGPS(timeout=8000){
+  return new Promise(res=>{
+    if(!navigator.geolocation){res(null);return;}
+    navigator.geolocation.getCurrentPosition(
+      p=>res({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)}),
+      ()=>res(null),
+      {enableHighAccuracy:true,timeout,maximumAge:0}
+    );
+  });
+}
+
+// Öğrenci kaydının durum kodu:
+//  'present_ok'  → konum ✅ & saat ✅  → yeşil
+//  'present_time'→ saat ✅ ama konum yok/reddedildi → sarı
+//  'present_far' → saat ✅ ama konum uzak → turuncu (şüpheli)
+//  'absent'      → yok yoklama
+const LOC_THRESH_M = 300; // sınıftan max 300 metre
+function attVerifyStatus(rec, sessLoc, sessStart, sessEnd){
+  if(!rec||rec.absent) return 'absent';
+  const ts = rec.time||0;
+  // Saat kontrolü: oturum başlangıcından en fazla 30 dk sonrasına kadar kabul
+  const timeOk = !sessStart || (ts >= (sessStart - 300000) && ts <= ((sessEnd||sessStart+7200000) + 300000));
+  if(!sessLoc||!rec.lat||!rec.lng){
+    return timeOk ? 'present_time' : 'present_noloc';
+  }
+  const dist = haversineM(rec.lat,rec.lng,sessLoc.lat,sessLoc.lng);
+  rec._distM = Math.round(dist); // önbellek
+  if(dist<=LOC_THRESH_M) return timeOk ? 'present_ok' : 'present_time';
+  return 'present_far';
+}
+
+// Durum → renk / ikon
+function statusStyle(s){
+  if(s==='present_ok')   return {color:'#4ade80',icon:'✅',label:'Konum+Saat ✓'};
+  if(s==='present_time') return {color:'#facc15',icon:'🟡',label:'Saat ✓ / Konum yok'};
+  if(s==='present_far')  return {color:'#fb923c',icon:'⚠️',label:'Şüpheli konum'};
+  if(s==='absent')       return {color:'#f87171',icon:'❌',label:'Devamsız'};
+  return {color:'#94a3b8',icon:'⬜',label:'Belirsiz'};
+}
+
+// Oturuma ait konum bilgisi önbelleği { code → {lat,lng,acc} }
+const _sessLocCache={};
+
+// Admin projektsiyon / oturum başlatınca çağrılır
+async function captureSessLocation(code){
+  if(_sessLocCache[code]) return _sessLocCache[code];
+  const loc=await getGPS(10000);
+  if(loc){
+    _sessLocCache[code]=loc;
+    await fbPut('/sessions/'+code+'/location',loc);
+  }
+  return loc||null;
+}
+/* ── /KONUM DOĞRULAMA ────────────────────────────────────── */
 
 async function computePin(code,off=0){
   const slot=Math.floor(Date.now()/20000)+off; // 20-second slots
@@ -8707,6 +8778,29 @@ function renderAtt(code){
   const canEdit=isAdmin||curUser?.uid===activeSessions.find(s=>s.code===code)?.profUid;
   const stuKeys=Object.keys(courseStudents);
   const ul=document.getElementById('att-list');
+  // Konum doğrulama yardımcıları
+  const sessObj=activeSessions.find(s=>s.code===code)||{};
+  const sessLoc=_sessLocCache[code]||sessObj.location||null;
+  const sessStart=sessObj.startTime||0, sessEnd=sessObj.endTime||0;
+  // Mini halka SVG: c=color, pct=0..1
+  function miniRing(c,pct){
+    const r=8,circ=2*Math.PI*r;
+    const dash=pct*circ, gap=circ-dash;
+    return `<svg width="20" height="20" viewBox="0 0 20 20" style="flex-shrink:0" title="">
+      <circle cx="10" cy="10" r="${r}" fill="none" stroke="rgba(128,128,128,.2)" stroke-width="3"/>
+      <circle cx="10" cy="10" r="${r}" fill="none" stroke="${c}" stroke-width="3"
+        stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-linecap="round"
+        transform="rotate(-90 10 10)"/>
+    </svg>`;
+  }
+  function verifyBadge(rec){
+    const vst=attVerifyStatus(rec,sessLoc,sessStart,sessEnd);
+    const vs=statusStyle(vst);
+    const pct=vst==='present_ok'?1:vst==='present_time'?0.75:vst==='present_far'?0.5:0;
+    const distTxt=(rec&&rec._distM!=null&&vst==='present_far')?' '+rec._distM+'m':'';
+    return `<span title="${vs.label}${distTxt}" style="display:inline-flex;align-items:center;gap:2px;font-size:.62rem;color:${vs.color}">
+      ${miniRing(vs.color,pct)}</span>`;
+  }
 
   if(attTab==='all'&&stuKeys.length>0){
     // Full roster: tüm öğrenciler, VAR/YOK durumu
@@ -8737,6 +8831,7 @@ function renderAtt(code){
       const warnIco=stuFlags.length>0?`<span class="stu-warn-ico${stuFlags.length>=2?' high':''}" title="Şüpheli: ${stuFlags.join(', ')}">!</span>`:'';
       return`<li class="lrow" style="${!isPresent?'opacity:.7':''}">
         <span style="font-size:1.1rem;font-weight:700;color:${color};width:22px;text-align:center;flex-shrink:0">${icon}</span>
+        ${isPresent?verifyBadge(item.rec):''}
         <div class="lname">
           <div class="n">${esc(item.name)}${absBadge}${warnIco}</div>
           <div class="m">${esc(item.no)}${timeLabel}${isExcused?' · <span style="color:var(--warn,#f59e0b);font-size:.72rem">Mazeret</span>':''}</div>
@@ -8754,16 +8849,22 @@ function renderAtt(code){
     // Sadece gelenler (absent:true olanları gösterme)
     const rows=Object.values(attendees).filter(a=>!a.absent).sort((a,b)=>(a.time||0)-(b.time||0));
     ul.innerHTML=rows.length
-      ?rows.map((a,i)=>`<li class="lrow">
+      ?rows.map((a,i)=>{
+          const vst=attVerifyStatus(a,sessLoc,sessStart,sessEnd);
+          const vs=statusStyle(vst);
+          const pct=vst==='present_ok'?1:vst==='present_time'?0.75:vst==='present_far'?0.5:0;
+          const distTxt=(a._distM!=null&&vst==='present_far')?` · ${a._distM}m`:'';
+          return`<li class="lrow" style="border-left:3px solid ${vs.color}">
+          ${(()=>{const r=8,circ=2*Math.PI*r,dash=pct*circ,gap=circ-dash;return`<svg width="22" height="22" viewBox="0 0 22 22" style="flex-shrink:0" title="${vs.label}${distTxt}"><circle cx="11" cy="11" r="${r}" fill="none" stroke="rgba(128,128,128,.2)" stroke-width="3"/><circle cx="11" cy="11" r="${r}" fill="none" stroke="${vs.color}" stroke-width="3" stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-linecap="round" transform="rotate(-90 11 11)"/></svg>`;})()}
           <div class="av" style="background:${_avBg(a.studentNo||a.studentName)}">${_initials(a.studentName)}</div>
-          <div class="lname"><div class="n">${esc(a.studentName||'—')}</div><div class="m">${esc(a.studentNo||'')}${a.ip?` · <span style="font-family:monospace;font-size:.68rem;opacity:.75">IP: ${esc(a.ip)}</span>`:''}${a.lat?` · <span style="font-size:.68rem;opacity:.65" title="${a.lat.toFixed(5)},${a.lng.toFixed(5)}">📍±${a.locAcc||'?'}m</span>`:''}</div></div>
+          <div class="lname"><div class="n">${esc(a.studentName||'—')}</div><div class="m">${esc(a.studentNo||'')}${a.ip?` · <span style="font-family:monospace;font-size:.68rem;opacity:.75">IP: ${esc(a.ip)}</span>`:''}${a.lat?` · <span style="font-size:.68rem;opacity:.65;color:${vs.color}" title="${a.lat.toFixed(5)},${a.lng.toFixed(5)}">${vs.icon}${distTxt?distTxt:''}±${a.locAcc||'?'}m</span>`:' · <span style="font-size:.68rem;opacity:.5">📍 Konum yok</span>'}</div></div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
             <span class="ltime">${a.timeStr||''}</span>
             ${a.manual?`<span class="bdg bwrn" style="font-size:.6rem" title="${esc((_MA_REASON_LABELS[a.manualReason]||'Manuel')+(a.manualNote?' — '+a.manualNote:''))}">${_MA_REASON_LABELS[a.manualReason]||'📝 Manuel'}</span>`:''}
             ${a.idVerified?'<span class="bdg bacc" style="font-size:.6rem">🪪</span>':''}
           </div>
           ${canEdit?`<button class="btn bd bsm" onclick="delAtt(${attrJ(code)},${attrJ(a.studentNo)})">✕</button>`:''}
-        </li>`).join('')
+        </li>`;}).join('')
       :'<li class="empty">Henüz yoklama yok.</li>';
   }
   checkAttAnomaly(code);
@@ -12177,6 +12278,10 @@ function openProjFullscreen(){
   const el=document.getElementById('proj-fullscreen');
   if(!el)return;
   projFsOpen=true;
+  // Sınıf konumunu kaydet (arka planda)
+  if(curActiveCode) captureSessLocation(curActiveCode).then(loc=>{
+    if(loc){const b=document.getElementById('proj-loc-badge');if(b)b.textContent='📍 Konum alındı (±'+loc.acc+'m)';}
+  });
   _projFeedSeen=new Set(Object.keys(attendees||{}).filter(k=>{const r=attendees[k];return r&&!r.absent;}));
   el.classList.add('open');
   const sess=activeSessions.find(s=>s.code===curActiveCode);
@@ -12258,11 +12363,29 @@ function _updateProjFeed(){
   const newOnes=Object.values(attendees||{}).filter(a=>!a.absent&&!_projFeedSeen.has(a.studentNo));
   newOnes.forEach(a=>_projFeedSeen.add(a.studentNo));
   if(!newOnes.length)return;
+  const sessObj=activeSessions.find(s=>s.code===curActiveCode)||{};
+  const sessLoc=_sessLocCache[curActiveCode]||null;
+  const sessStart=sessObj.startTime||0;
+  const sessEnd=sessObj.endTime||0;
   newOnes.forEach(a=>{
     const _pfSn=a.studentName;const _pfName=typeof _pfSn==='string'?_pfSn:(_pfSn?.name||'');
+    const vst=attVerifyStatus(a,sessLoc,sessStart,sessEnd);
+    const vs=statusStyle(vst);
+    const distTxt=(a._distM!=null&&vst==='present_far')?` · ${a._distM}m`:'';
     const li=document.createElement('li');
     li.className='proj-feed-item';
-    li.innerHTML=`<div class="pf-av" style="background:${_avBg(a.studentNo||_pfName)}">${_initials(_pfName)}</div><div style="overflow:hidden;flex:1;min-width:0"><div class="pf-name">${esc(_pfName||'—')}</div><div class="pf-no">${esc(a.studentNo||'')}</div></div><span class="pf-time">${a.timeStr||''}</span>`;
+    li.style.borderLeft=`3px solid ${vs.color}`;
+    li.innerHTML=`<div class="pf-av" style="background:${_avBg(a.studentNo||_pfName)}">${_initials(_pfName)}</div>`+
+      `<div style="overflow:hidden;flex:1;min-width:0">`+
+        `<div class="pf-name">${esc(_pfName||'—')}</div>`+
+        `<div class="pf-no" style="display:flex;align-items:center;gap:5px">${esc(a.studentNo||'')}`+
+          `<span style="font-size:.68rem;color:${vs.color};font-weight:600">${vs.icon} ${vs.label}${distTxt}</span>`+
+        `</div>`+
+      `</div>`+
+      `<div style="display:flex;flex-direction:column;align-items:center;gap:3px">`+
+        `<svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="2.5"/><circle cx="9" cy="9" r="8" fill="none" stroke="${vs.color}" stroke-width="2.5" stroke-dasharray="${vst==='absent'?'0':'50.3'}" stroke-dashoffset="${vst==='present_far'?'25':vst==='present_time'?'12':'0'}" stroke-linecap="round" transform="rotate(-90 9 9)"/></svg>`+
+        `<span style="font-size:.62rem;color:rgba(255,255,255,.45)">${a.timeStr||''}</span>`+
+      `</div>`;
     feedList.prepend(li);
     while(feedList.children.length>15)feedList.removeChild(feedList.lastChild);
   });
