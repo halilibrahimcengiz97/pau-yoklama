@@ -28,9 +28,9 @@
   --pau-navy-lt:var(--pau-285c);
 
   /* Arkaplan */
-  --bg:#EEF2F8;
+  --bg:#E8EFF8;
   --bg2:#ffffff;
-  --bg3:#F7F9FC;
+  --bg3:#F0F5FC;
   --bg-card:#ffffff;
 
   /* Metin */
@@ -52,10 +52,10 @@
   --shadow-lg:0 8px 40px rgba(0,48,135,.16);
 
   /* Radyüsler */
-  --rad:14px;--rad-sm:10px;--rad-xs:7px;
+  --rad:20px;--rad-sm:14px;--rad-xs:10px;
 
   /* Layout */
-  --nav-h:66px;--top-h:60px;
+  --nav-h:72px;--top-h:62px;
 
   /* Aksan (bileşenler için) */
   --accent:var(--pau-navy);
@@ -105,6 +105,22 @@ body{
   padding-left:max(0px,env(safe-area-inset-left,0px));
   padding-right:max(0px,env(safe-area-inset-right,0px));
   overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 0% 0%,rgba(0,56,101,.06) 0%,transparent 60%),
+    radial-gradient(ellipse at 100% 100%,rgba(0,114,206,.05) 0%,transparent 60%);
+  background-attachment:fixed;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body{
+    background-image:
+      radial-gradient(ellipse at 0% 0%,rgba(0,56,180,.12) 0%,transparent 60%),
+      radial-gradient(ellipse at 100% 100%,rgba(0,114,206,.10) 0%,transparent 60%);
+  }
+}
+:root[data-theme="dark"] body{
+  background-image:
+    radial-gradient(ellipse at 0% 0%,rgba(0,56,180,.12) 0%,transparent 60%),
+    radial-gradient(ellipse at 100% 100%,rgba(0,114,206,.10) 0%,transparent 60%);
 }
 body::before{
   content:"";position:fixed;inset:0 0 auto;
@@ -116,12 +132,20 @@ body::before{
 /* ── ÜST BAR — PAÜ KİMLİK ŞERİDİ ── */
 .topbar{
   position:sticky;top:env(safe-area-inset-top,0px);z-index:50;
-  background:linear-gradient(90deg,var(--pau-288c-dk) 0%,var(--pau-288c) 45%,var(--pau-285c) 100%);
-  border-bottom:3px solid var(--pau-gold);
+  background:linear-gradient(100deg,var(--pau-288c-dk) 0%,var(--pau-288c) 50%,#004fa8 100%);
+  border-bottom:2.5px solid var(--pau-gold);
   height:var(--top-h);display:flex;align-items:center;
   padding:0 max(16px,env(safe-area-inset-left,0px)) 0 max(16px,env(safe-area-inset-right,0px));
   gap:12px;
-  box-shadow:0 4px 20px rgba(0,24,80,.35);
+  box-shadow:0 6px 24px rgba(0,24,80,.40);
+  backdrop-filter:blur(4px);
+}
+.topbar::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle at 85% 50%,rgba(200,151,58,.10) 0%,transparent 50%),
+    radial-gradient(circle at 15% 50%,rgba(255,255,255,.04) 0%,transparent 40%);
+  pointer-events:none;
 }
 .topbar h1{font-size:.95rem;font-weight:700;flex:1;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
 .topbar .sub{font-size:.62rem;color:rgba(255,255,255,.65);font-weight:400;display:block;margin-top:1px;letter-spacing:.03em}
@@ -140,32 +164,42 @@ body::before{
 .bnav{
   position:fixed;bottom:0;left:0;right:0;z-index:50;
   background:var(--bg2);
-  border-top:2px solid var(--pau-gold);
+  border-top:1.5px solid var(--border);
   display:flex;height:var(--nav-h);
   padding-bottom:env(safe-area-inset-bottom,0px);
-  padding-left:env(safe-area-inset-left,0px);
-  padding-right:env(safe-area-inset-right,0px);
-  box-shadow:0 -2px 16px rgba(0,48,135,.10);
+  padding-left:max(8px,env(safe-area-inset-left,0px));
+  padding-right:max(8px,env(safe-area-inset-right,0px));
+  box-shadow:0 -4px 24px rgba(0,48,135,.12);
+  align-items:stretch;
+  gap:4px;
 }
 .bnav button{
   flex:1;background:none;border:none;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;font-size:.60rem;color:var(--fg3);font-weight:600;transition:color .18s;letter-spacing:.02em;
+  gap:3px;font-size:.60rem;color:var(--fg3);font-weight:600;transition:all .2s;letter-spacing:.02em;
+  border-radius:14px;margin:8px 2px;
 }
-.bnav button.on{color:var(--pau-navy)}
-.bnav button svg,.bnav button .ni{font-size:1.25rem;line-height:1;display:flex;align-items:center;justify-content:center}
-.bnav button .ni svg{width:22px;height:22px;display:block}
+.bnav button.on{color:var(--pau-285c);background:linear-gradient(160deg,rgba(0,114,206,.10),rgba(0,56,101,.08))}
+.bnav button svg,.bnav button .ni{font-size:1.3rem;line-height:1;display:flex;align-items:center;justify-content:center}
+.bnav button .ni svg{width:23px;height:23px;display:block}
 
 /* ── VIEWS ── */
-.view{display:none;padding:20px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:640px;margin:0 auto}
+.view{display:none;padding:24px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:640px;margin:0 auto}
 .view.on{display:block}
 
 /* ── KARTLAR ── */
 .card{
   background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--rad);padding:18px;
-  box-shadow:var(--shadow);margin-bottom:16px;
+  border:1px solid rgba(0,72,180,.10);
+  border-radius:var(--rad);padding:20px;
+  box-shadow:0 4px 20px rgba(0,48,135,.09),0 1px 4px rgba(0,48,135,.06);
+  margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--pau-288c),var(--pau-285c));
+  opacity:.7;
 }
 .card-title{
   font-size:.92rem;font-weight:700;margin-bottom:14px;color:var(--fg);
@@ -173,19 +207,20 @@ body::before{
 }
 
 /* ── FORM ELEMANLARİ ── */
-label{display:block;font-size:.72rem;font-weight:700;color:var(--fg2);margin-bottom:5px;letter-spacing:.03em;text-transform:uppercase}
+label{display:block;font-size:.7rem;font-weight:700;color:var(--fg2);margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase}
 input,select,textarea{
-  width:100%;padding:10px 13px;
+  width:100%;padding:11px 14px;
   border:1.5px solid var(--border2);
-  border-radius:var(--rad-xs);
-  background:var(--bg3);
+  border-radius:10px;
+  background:var(--bg2);
   color:var(--fg);font-size:.9rem;font-family:inherit;outline:none;
-  transition:border-color .18s,box-shadow .18s;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.04);
 }
 input:focus,select:focus,textarea:focus{
-  border-color:var(--pau-navy);
+  border-color:var(--pau-285c);
   background:var(--bg2);
-  box-shadow:0 0 0 3px rgba(0,48,135,.12);
+  box-shadow:0 0 0 3.5px rgba(0,114,206,.14),inset 0 1px 3px rgba(0,0,0,.02);
 }
 textarea{resize:vertical;min-height:80px}
 select option{background:var(--bg2);color:var(--fg)}
@@ -196,24 +231,25 @@ select option{background:var(--bg2);color:var(--fg)}
 /* ── BUTONLAR ── */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  padding:11px 18px;border-radius:var(--rad-xs);border:none;cursor:pointer;
-  font-size:.875rem;font-weight:700;transition:all .18s;font-family:inherit;letter-spacing:.01em;
+  padding:12px 20px;border-radius:12px;border:none;cursor:pointer;
+  font-size:.875rem;font-weight:700;transition:all .2s cubic-bezier(.25,.8,.25,1);font-family:inherit;letter-spacing:.015em;
 }
 .btn:disabled{opacity:.45;cursor:not-allowed}
 /* Primary — PAÜ Navy */
 .bp{
-  background:linear-gradient(135deg,var(--pau-288c),var(--pau-285c));
+  background:linear-gradient(135deg,var(--pau-288c) 0%,var(--pau-285c) 100%);
   color:#fff;
-  box-shadow:0 3px 14px rgba(0,48,135,.35);
+  box-shadow:0 4px 16px rgba(0,72,180,.30),0 1px 0 rgba(255,255,255,.12) inset;
+  letter-spacing:.015em;
 }
 .bp:hover:not(:disabled){
   background:linear-gradient(135deg,var(--pau-285c),var(--pau-285c-lt));
-  box-shadow:0 5px 20px rgba(0,48,135,.50);
-  transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(0,72,180,.45),0 1px 0 rgba(255,255,255,.15) inset;
+  transform:translateY(-2px);
 }
 /* Outline — PAÜ */
-.bo{background:transparent;color:var(--pau-navy);border:1.5px solid var(--pau-navy)}
-.bo:hover:not(:disabled){background:rgba(0,48,135,.07)}
+.bo{background:transparent;color:var(--pau-285c);border:1.5px solid var(--pau-285c)}
+.bo:hover:not(:disabled){background:rgba(0,114,206,.07);border-color:var(--pau-285c)}
 /* Danger */
 .bd{background:var(--err-bg);color:var(--err);border:1.5px solid var(--err-bd)}
 .bd:hover:not(:disabled){background:rgba(248,113,113,.22)}
@@ -232,26 +268,60 @@ select option{background:var(--bg2);color:var(--fg)}
 .btn-excused{padding:4px 10px;background:color-mix(in srgb,var(--pau-gold) 15%,transparent);color:var(--pau-gold);border:1.5px solid var(--pau-gold)}
 .btn-excused.on{background:var(--pau-gold);color:#fff}
 /* ── PROJEKSIYON FULLSCREEN ── */
-#proj-fullscreen{position:fixed;inset:0;z-index:3000;background:linear-gradient(135deg,#001f3d 0%,#003865 50%,#001830 100%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:0;overflow:hidden}
-#proj-fullscreen.open{display:flex}
-#proj-close-btn{position:fixed;top:18px;right:18px;z-index:10;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.1rem;border-radius:50%;width:40px;height:40px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+/* ── PROJ FULLSCREEN 3-COLUMN ── */
+#proj-fullscreen{position:fixed;inset:0;z-index:3000;background:linear-gradient(135deg,#001226 0%,#003865 55%,#001830 100%);display:none;overflow:hidden}
+#proj-fullscreen.open{display:block}
+#proj-close-btn{position:fixed;top:18px;right:18px;z-index:10;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.1rem;border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;backdrop-filter:blur(6px)}
 #proj-close-btn:hover{background:rgba(255,255,255,.28)}
-#proj-course-name{font-size:clamp(1rem,2.5vw,1.6rem);font-weight:700;color:#fff;text-align:center;opacity:.9;letter-spacing:.02em;max-width:80vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 24px}
-#proj-date-info{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:4px;text-align:center;letter-spacing:.04em}
-#proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:clamp(12px,3vh,32px) 0}
-#proj-ring-svg{width:clamp(200px,38vh,340px);height:clamp(200px,38vh,340px)}
-#proj-ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-#proj-cnt-big{font-size:clamp(2.8rem,8vw,5.5rem);font-weight:900;color:#fff;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;transition:all .4s}
-#proj-cnt-label{font-size:clamp(.7rem,1.5vw,1rem);color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-#proj-pct-big{font-size:clamp(1.4rem,3.5vw,2.6rem);font-weight:800;color:#60bfff;letter-spacing:-.02em;transition:all .4s}
+#proj-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr;height:100vh;gap:0}
+#proj-left{display:flex;flex-direction:column;justify-content:center;padding:40px 28px 40px 40px;border-right:1px solid rgba(255,255,255,.07)}
+#proj-course-name{font-size:clamp(.9rem,1.8vw,1.4rem);font-weight:800;color:#fff;letter-spacing:.01em;margin-bottom:6px;line-height:1.3}
+#proj-date-info{font-size:.75rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-bottom:28px}
+#proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:0 0 24px 0}
+#proj-ring-svg{width:clamp(130px,20vh,200px);height:clamp(130px,20vh,200px)}
+#proj-ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+#proj-cnt-big{font-size:clamp(1.8rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;transition:all .4s}
+#proj-cnt-label{font-size:clamp(.55rem,1vw,.8rem);color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+#proj-pct-big{font-size:clamp(.9rem,2vw,1.6rem);font-weight:800;color:#60bfff;letter-spacing:-.02em;transition:all .4s}
 #proj-ring-arc{transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1),stroke .6s}
-#proj-feed{width:min(96vw,560px);max-height:clamp(90px,18vh,160px);overflow:hidden;margin-top:8px}
-#proj-feed-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.proj-feed-item{display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,.08);border-radius:10px;animation:feedIn .4s cubic-bezier(.4,0,.2,1)}
-.proj-feed-item .pf-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0}
-.proj-feed-item .pf-name{font-size:.9rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.proj-feed-item .pf-time{font-size:.72rem;color:rgba(255,255,255,.45);flex-shrink:0;margin-left:auto}
-@keyframes feedIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.proj-stat-row{display:flex;justify-content:space-between;gap:8px}
+.proj-stat-box{flex:1;background:rgba(255,255,255,.07);border-radius:12px;padding:12px 8px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.proj-stat-box .psb-val{font-size:clamp(1.2rem,2.5vw,1.9rem);font-weight:900;color:#fff;font-variant-numeric:tabular-nums;line-height:1}
+.proj-stat-box .psb-lbl{font-size:.62rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
+.proj-stat-box.green .psb-val{color:#4ade80}
+.proj-stat-box.red .psb-val{color:#f87171}
+#proj-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative}
+#proj-center-title{font-size:.72rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.18em;margin-bottom:16px}
+#proj-qr-box{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);border-radius:24px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;backdrop-filter:blur(8px)}
+#proj-qr-ring-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#proj-qr-ring-svg{position:absolute;width:calc(100% + 80px);height:calc(100% + 80px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;overflow:visible}
+.proj-qr-ring-track{fill:none;stroke:rgba(255,255,255,.09);stroke-width:10}
+.proj-qr-ring-arc{fill:none;stroke-width:10;stroke-linecap:round}
+#proj-qr-ring-arc1{stroke:url(#projQrGrad1);stroke-dasharray:220 320;animation:projRingRotate 7s linear infinite}
+#proj-qr-ring-arc2{stroke:rgba(0,114,206,.5);stroke-dasharray:80 460;animation:projRingRotate 11s linear infinite reverse}
+@keyframes projRingRotate{to{transform:rotate(360deg);transform-box:fill-box;transform-origin:center}}
+#proj-qr-wrap{background:#fff;border-radius:14px;padding:10px;display:flex;align-items:center;justify-content:center}
+#proj-qr-inner{display:flex;align-items:center;justify-content:center}
+#proj-pin-area{text-align:center}
+#proj-pin-label{font-size:.62rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.16em;margin-bottom:5px}
+#proj-pin-val{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;letter-spacing:.22em;color:#fff;font-variant-numeric:tabular-nums}
+#proj-pin-timer{font-size:.7rem;color:rgba(255,255,255,.35);margin-top:3px}
+#proj-scan-hint{font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:.06em;margin-top:10px;text-align:center}
+#proj-system-badge{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:5px 14px;white-space:nowrap}
+#proj-system-badge .ps-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:projBlink 1.8s ease-in-out infinite;flex-shrink:0}
+#proj-system-badge span{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.05em}
+@keyframes projBlink{0%,100%{opacity:1}50%{opacity:.3}}
+#proj-right{display:flex;flex-direction:column;padding:40px 40px 40px 28px;border-left:1px solid rgba(255,255,255,.07)}
+#proj-right-header{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.16em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+#proj-right-header::before{content:'';width:7px;height:7px;border-radius:50%;background:#4ade80;animation:projBlink 1.8s ease-in-out infinite;flex-shrink:0}
+#proj-feed{flex:1;overflow:hidden}
+#proj-feed-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.proj-feed-item{display:flex;align-items:center;gap:10px;padding:9px 13px;background:rgba(255,255,255,.07);border-radius:12px;animation:feedIn .4s cubic-bezier(.4,0,.2,1);border:1px solid rgba(255,255,255,.08)}
+.proj-feed-item .pf-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0}
+.proj-feed-item .pf-name{font-size:.9rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.proj-feed-item .pf-no{font-size:.7rem;color:rgba(255,255,255,.42)}
+.proj-feed-item .pf-time{font-size:.68rem;color:rgba(255,255,255,.32);flex-shrink:0;margin-left:auto}
+@keyframes feedIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
 /* ── STATS PAGE ── */
 #view-stats .stat-course-sel{width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--fg);font-size:.88rem;margin-bottom:14px}
 .stat-card{background:var(--bg2);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,56,101,.08)}
@@ -285,17 +355,17 @@ select option{background:var(--bg2);color:var(--fg)}
 .stu-warn-ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;font-size:.6rem;font-weight:700;background:color-mix(in srgb,#f59e0b 20%,transparent);color:#f59e0b;border:1px solid #f59e0b;cursor:help;margin-left:4px;flex-shrink:0;vertical-align:middle}
 .stu-warn-ico.high{background:color-mix(in srgb,var(--err) 20%,transparent);color:var(--err);border-color:var(--err)}
 /* Ghost */
-.bg{background:var(--bg3);color:var(--fg2);border:1.5px solid var(--border)}
-.bg:hover:not(:disabled){background:var(--border);color:var(--fg)}
+.bg{background:var(--bg3);color:var(--fg2);border:1.5px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.bg:hover:not(:disabled){background:var(--border);color:var(--fg);border-color:var(--border2)}
 .bsm{padding:6px 10px;font-size:.75rem}
 .bfull{width:100%}
 
 /* ── ALERTS ── */
-.al{padding:10px 14px;border-radius:var(--rad-xs);font-size:.82rem;line-height:1.5}
-.alok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)}
-.alerr{background:var(--err-bg);color:var(--err);border:1px solid var(--err-bd)}
-.alwrn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)}
-.alinfo{background:var(--info-bg);color:var(--info-fg);border:1px solid var(--info-bd)}
+.al{padding:11px 15px;border-radius:10px;font-size:.82rem;line-height:1.5;border-left-width:3.5px}
+.alok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd);border-left:3.5px solid var(--ok)}
+.alerr{background:var(--err-bg);color:var(--err);border:1px solid var(--err-bd);border-left:3.5px solid var(--err)}
+.alwrn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);border-left:3.5px solid var(--warn)}
+.alinfo{background:var(--info-bg);color:var(--info-fg);border:1px solid var(--info-bd);border-left:3.5px solid var(--info-fg)}
 
 /* ── PIN KUTUSU ── */
 .pin-box{
@@ -394,17 +464,19 @@ select option{background:var(--bg2);color:var(--fg)}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
 
 /* ── SEKSİYON TABLARİ ── */
-.stabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.stabs{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap;background:var(--bg3);padding:4px;border-radius:12px;border:1px solid var(--border)}
 .stab{
-  padding:6px 14px;border-radius:var(--rad-xs);font-size:.78rem;font-weight:600;
-  cursor:pointer;border:1.5px solid var(--border2);
-  background:var(--bg3);color:var(--fg2);font-family:inherit;
-  transition:all .18s;
+  padding:7px 14px;border-radius:9px;font-size:.78rem;font-weight:600;
+  cursor:pointer;border:none;
+  background:transparent;color:var(--fg2);font-family:inherit;
+  transition:all .2s cubic-bezier(.25,.8,.25,1);
+  flex:1;text-align:center;
 }
 .stab.on{
-  background:var(--pau-navy);
-  color:#fff;border-color:var(--pau-navy);
-  box-shadow:0 3px 10px rgba(0,48,135,.30);
+  background:var(--bg2);
+  color:var(--pau-285c);border:none;
+  box-shadow:0 2px 8px rgba(0,48,135,.15),0 0 0 1px rgba(0,114,206,.12);
+  font-weight:700;
 }
 
 /* ── CHART ── */
@@ -435,9 +507,13 @@ select option{background:var(--bg2);color:var(--fg)}
 
 /* ── KURUMSAL BAŞLIK VURGUSU ── */
 .pau-section-title{
-  font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.85rem;
-  color:var(--pau-navy);letter-spacing:.04em;text-transform:uppercase;
-  border-left:3px solid var(--pau-gold);padding-left:10px;margin-bottom:14px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.8rem;
+  color:var(--pau-285c);letter-spacing:.07em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.pau-section-title::before{
+  content:'';display:inline-block;width:14px;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,var(--pau-288c),var(--pau-285c));flex-shrink:0;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -508,22 +584,25 @@ select option{background:var(--bg2);color:var(--fg)}
 
 /* ── FROSTED GLASS ALT NAV ── */
 .bnav{
-  backdrop-filter:blur(16px) saturate(180%)!important;
-  -webkit-backdrop-filter:blur(16px) saturate(180%)!important;
-  background:rgba(255,255,255,.88)!important;
+  backdrop-filter:blur(24px) saturate(200%)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(200%)!important;
+  background:rgba(255,255,255,.95)!important;
+  border-top:1px solid rgba(0,48,135,.10)!important;
+  box-shadow:0 -4px 24px rgba(0,48,135,.10)!important;
 }
 @media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .bnav{background:rgba(10,20,40,.90)!important}
+  :root:not([data-theme="light"]) .bnav{background:rgba(10,20,40,.96)!important;border-top:1px solid rgba(255,255,255,.06)!important}
 }
-:root[data-theme="dark"] .bnav{background:rgba(10,20,40,.90)!important}
+:root[data-theme="dark"] .bnav{background:rgba(10,20,40,.96)!important;border-top:1px solid rgba(255,255,255,.06)!important}
 
-/* ── AKTİF NAV ÜST ÇİZGİSİ ── */
-.bnav button{position:relative;overflow:hidden}
+/* ── AKTİF NAV PILL ── */
+.bnav button{position:relative;overflow:visible}
+.bnav button.on{color:var(--pau-285c)!important}
 .bnav button.on::after{
   content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:28px;height:3px;
+  width:36px;height:3px;
   background:linear-gradient(90deg,var(--pau-288c),var(--pau-285c));
-  border-radius:0 0 4px 4px;
+  border-radius:0 0 6px 6px;
 }
 
 /* ── TOPBAR LOGO SHİMMER ── */
@@ -597,20 +676,21 @@ input:focus,select:focus,textarea:focus{
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 @media(max-width:380px){.stat-grid{grid-template-columns:1fr}}
 .stat-tile{
-  border-radius:var(--rad-sm);padding:14px 14px 12px;
+  border-radius:14px;padding:16px 15px 13px;
   display:flex;flex-direction:column;gap:2px;
   position:relative;overflow:hidden;
-  transition:transform .2s,box-shadow .2s;
+  transition:transform .22s cubic-bezier(.25,.8,.25,1),box-shadow .22s;
+  border:1px solid var(--border);
 }
-.stat-tile:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
 .stat-tile::after{
   content:'';position:absolute;bottom:-10px;right:-10px;
-  width:70px;height:70px;border-radius:50%;opacity:.10;
+  width:80px;height:80px;border-radius:50%;opacity:.10;
 }
 .stat-primary{
-  background:linear-gradient(135deg,var(--pau-288c-dk),var(--pau-288c) 55%,var(--pau-285c));
+  background:linear-gradient(135deg,var(--pau-288c-dk) 0%,var(--pau-288c) 50%,var(--pau-285c) 100%);
   color:#fff;border:none;
-  box-shadow:0 4px 20px rgba(0,48,135,.35);
+  box-shadow:0 6px 24px rgba(0,48,135,.40),0 0 0 1px rgba(255,255,255,.06) inset;
 }
 .stat-primary::after{background:#fff;opacity:.12}
 .stat-ok{background:var(--ok-bg);border:1px solid var(--ok-bd)}
@@ -767,169 +847,262 @@ html{scroll-behavior:smooth}
 .skel-line.medium{width:75%}
 .skel.skel-tile{height:72px;border-radius:var(--rad-sm)}
 
-/* ── QR TAM EKRAN OVERLAY ── */
+/* ── QR TAM EKRAN OVERLAY (v95 yeniden tasarım) ── */
 #qr-fullscreen{
   position:fixed;inset:0;z-index:9999;
-  background:var(--pau-navy);
-  display:grid;
-  grid-template-columns:46% 1fr 1fr;
-  grid-template-rows:1fr;
+  background:#001830;
+  display:flex;flex-direction:column;
   opacity:0;pointer-events:none;
-  transition:opacity .3s ease;
+  transition:opacity .35s ease;
   overflow:hidden;
 }
 #qr-fullscreen.open{opacity:1;pointer-events:auto}
-/* SOL: QR sütunu */
+
+/* Header band */
+#qr-fs-header{
+  background:#002F6C;
+  display:flex;align-items:center;gap:16px;
+  padding:10px 24px;
+  border-bottom:3px solid #0072CE;
+  flex-shrink:0;position:relative;
+  box-shadow:0 4px 20px rgba(0,0,0,.35);
+}
+#qr-fs-logo1,#qr-fs-logo2{
+  height:56px;flex-shrink:0;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));
+}
+#qr-fs-header-title{flex:1;text-align:center;padding:0 10px}
+#qr-fs-hdr-uni{
+  font-size:1.05rem;font-weight:900;color:#fff;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+#qr-fs-hdr-sub{
+  font-size:.65rem;color:rgba(255,255,255,.65);
+  letter-spacing:.04em;margin-top:4px;
+}
+#qr-close-btn{
+  position:absolute;top:50%;right:18px;transform:translateY(-50%);
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+  color:#fff;font-size:1.2rem;width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  backdrop-filter:blur(10px);z-index:10;
+  transition:background .2s;
+}
+#qr-close-btn:hover{background:rgba(255,255,255,.28)}
+
+/* Main two-panel */
+#qr-fs-main{display:flex;flex:1;overflow:hidden}
+
+/* ── LEFT INFO PANEL ── */
 #qr-fs-left{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:8px;padding:20px 12px 16px 20px;
-  border-right:1px solid rgba(255,255,255,.07);
+  width:37%;min-width:300px;max-width:460px;
+  background:#002F6C;
+  border-right:2px solid rgba(0,114,206,.25);
+  display:flex;flex-direction:column;gap:10px;
+  padding:18px 16px 16px;overflow-y:auto;scrollbar-width:none;
 }
-/* ORTA: Bilgi + Ekran Kodu + Sayaç + PIN */
-#qr-fs-code{
-  display:flex;flex-direction:column;gap:14px;
-  padding:20px 16px;
-  border-right:1px solid rgba(255,255,255,.07);
-  overflow-y:auto;
+#qr-fs-left::-webkit-scrollbar{display:none}
+
+#qr-fullscreen-name{
+  color:#fff;font-size:.92rem;font-weight:800;
+  text-align:left;letter-spacing:.03em;text-transform:uppercase;
+  padding-bottom:10px;border-bottom:1px solid rgba(0,114,206,.3);
+  flex-shrink:0;
 }
-/* Hoca / blok bilgi kartı */
+
+/* Info card */
 #qr-fs-info{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.11);
-  border-radius:16px;padding:14px 16px;flex-shrink:0;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(0,114,206,.35);
+  border-radius:14px;padding:13px 15px;flex-shrink:0;
 }
-#qr-fs-info-prof{font-size:1rem;font-weight:700;color:#fff;margin-bottom:7px}
+#qr-fs-info-prof{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:7px}
 .qr-fs-info-row{
   font-size:.68rem;color:rgba(255,255,255,.55);
-  display:flex;align-items:center;gap:7px;margin-bottom:3px;
+  display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap;
 }
 .qr-fs-info-chip{
-  background:rgba(0,114,206,.25);border:1px solid rgba(0,114,206,.4);
-  border-radius:6px;padding:1px 8px;font-size:.6rem;font-weight:700;
+  background:rgba(0,114,206,.3);border:1px solid rgba(0,114,206,.55);
+  border-radius:6px;padding:2px 8px;font-size:.6rem;font-weight:700;
   color:#60bfff;letter-spacing:.04em;flex-shrink:0;
 }
-/* Ekran Kodu */
+
+/* PIN + Ekran Kodu row */
+#qr-fs-codes-row{display:flex;gap:10px;flex-shrink:0}
+#qr-fs-pin-wrap,#qr-fs-code{
+  flex:1;background:rgba(255,255,255,.07);
+  border:1px solid rgba(0,114,206,.3);
+  border-radius:13px;padding:11px 12px;text-align:center;flex-shrink:0;
+}
+#qr-fullscreen-label{color:rgba(255,255,255,.5);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;display:block}
+#qr-fullscreen-pin{
+  font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:800;letter-spacing:.2em;
+  color:var(--pau-gold);font-family:'Plus Jakarta Sans',sans-serif;
+  text-shadow:0 0 22px rgba(200,151,58,.55);line-height:1;
+}
+#qr-fs-cdown{color:rgba(255,255,255,.35);font-size:.62rem;margin-top:4px;letter-spacing:.04em}
 .qr-fs-code-label{
-  color:rgba(255,255,255,.55);font-size:.75rem;font-weight:700;
-  letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);font-size:.6rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;display:block;
 }
 #qr-fs-vcode{
-  font-size:clamp(3rem,6vw,4.5rem);font-weight:800;letter-spacing:.5em;
-  color:var(--pau-gold);text-shadow:0 0 30px rgba(200,151,58,.65);
-  font-family:'Plus Jakarta Sans',sans-serif;line-height:1;padding-right:.5em;
+  font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;letter-spacing:.3em;
+  color:var(--pau-gold);text-shadow:0 0 22px rgba(200,151,58,.65);
+  font-family:'Plus Jakarta Sans',sans-serif;line-height:1;padding-right:.3em;
 }
-#qr-fs-vcode-sub{color:rgba(255,255,255,.35);font-size:.7rem;letter-spacing:.04em}
-/* BİTİŞ SAYACI — büyük */
+#qr-fs-vcode-sub{color:rgba(255,255,255,.35);font-size:.65rem;letter-spacing:.04em;margin-top:3px}
+
+/* Countdown */
 #qr-fs-end-wrap{
-  background:rgba(0,40,80,.45);
+  background:rgba(0,40,80,.5);
   border:1px solid rgba(0,114,206,.35);
-  border-radius:18px;padding:18px 16px 14px;
-  display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;
+  border-radius:13px;padding:12px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;
 }
 #qr-fs-end-label{
-  font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
   color:rgba(120,200,255,.7);font-weight:600;
 }
 #qr-fs-end-cnt{
-  font-size:clamp(2.6rem,5vw,4rem);font-weight:900;
+  font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;
   color:#60c8ff;font-variant-numeric:tabular-nums;
   letter-spacing:.06em;line-height:1;
-  text-shadow:0 0 28px rgba(0,180,255,.45);
-  transition:color .5s;
+  text-shadow:0 0 24px rgba(0,180,255,.45);transition:color .5s;
 }
-#qr-fs-end-sub{font-size:.6rem;color:rgba(120,200,255,.4);letter-spacing:.04em}
-/* PIN */
-#qr-fs-pin-wrap{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.11);
-  border-radius:16px;padding:14px 16px;text-align:center;flex-shrink:0;
-}
-#qr-fullscreen-label{color:rgba(255,255,255,.55);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
-#qr-fullscreen-pin{
-  font-size:clamp(2rem,4.5vw,3.2rem);font-weight:800;letter-spacing:.22em;
-  color:var(--pau-gold);font-family:'Plus Jakarta Sans',sans-serif;
-  text-shadow:0 0 30px rgba(200,151,58,.5);line-height:1;
-}
-#qr-fs-cdown{color:rgba(255,255,255,.35);font-size:.65rem;margin-top:5px;letter-spacing:.04em}
-/* QR kutusu */
-#qr-fullscreen-qr{background:#fff;padding:16px;border-radius:16px;box-shadow:0 0 60px rgba(0,0,0,.4)}
-#qr-fullscreen-name{color:rgba(255,255,255,.7);font-size:.78rem;font-weight:600;text-align:center;letter-spacing:.04em;text-transform:uppercase}
-#qr-close-btn{
-  position:fixed;top:20px;right:20px;
-  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
-  color:#fff;font-size:1.4rem;width:48px;height:48px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  backdrop-filter:blur(10px);
-  transition:background .2s,transform .15s;
-}
-#qr-close-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.1)}
-/* ── QR TAM EKRAN CANLI AKIŞ ── */
+#qr-fs-end-sub{font-size:.58rem;color:rgba(120,200,255,.4);letter-spacing:.04em}
+
+/* Feed */
 #qr-fs-feed{
-  display:flex;flex-direction:column;
-  padding:20px 16px;overflow:hidden;
+  display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:100px;
 }
 #qr-fs-feed-title{
-  color:rgba(255,255,255,.55);font-size:.7rem;font-weight:700;
+  color:rgba(255,255,255,.55);font-size:.68rem;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:12px;flex-shrink:0;
+  margin-bottom:8px;flex-shrink:0;
 }
 #qr-fs-feed-count{
   background:var(--pau-gold);color:var(--pau-navy);
-  border-radius:20px;padding:2px 10px;
-  font-size:.72rem;font-weight:800;
+  border-radius:20px;padding:2px 10px;font-size:.7rem;font-weight:800;
 }
 #qr-fs-feed-list{
-  list-style:none;margin:0;padding:0;
-  overflow-y:auto;flex:1;
-  display:flex;flex-direction:column;gap:6px;
-  scrollbar-width:none;
+  list-style:none;margin:0;padding:0;overflow-y:auto;flex:1;
+  display:flex;flex-direction:column;gap:5px;scrollbar-width:none;
 }
 #qr-fs-feed-list::-webkit-scrollbar{display:none}
 .fs-att-item{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 10px;
-  background:rgba(255,255,255,.1);
-  border-radius:10px;
-  animation:fsAttIn .45s cubic-bezier(.25,.8,.25,1) both;
-  flex-shrink:0;
+  display:flex;align-items:center;gap:10px;padding:7px 10px;
+  background:rgba(255,255,255,.09);border-radius:9px;
+  animation:fsAttIn .45s cubic-bezier(.25,.8,.25,1) both;flex-shrink:0;
 }
 .fs-att-avatar{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--pau-gold);
+  width:28px;height:28px;border-radius:50%;background:var(--pau-gold);
   display:flex;align-items:center;justify-content:center;
-  font-size:.66rem;font-weight:800;color:var(--pau-navy);
+  font-size:.62rem;font-weight:800;color:var(--pau-navy);
   flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;
 }
 .fs-att-info{flex:1;min-width:0}
-.fs-att-no{font-weight:700;font-size:.78rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fs-att-name{font-size:.68rem;color:rgba(255,255,255,.58);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fs-att-time{font-size:.62rem;color:rgba(255,255,255,.36);flex-shrink:0;align-self:flex-start;padding-top:2px}
+.fs-att-no{font-weight:700;font-size:.76rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-att-name{font-size:.66rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-att-time{font-size:.6rem;color:rgba(255,255,255,.35);flex-shrink:0;align-self:flex-start;padding-top:2px}
 @keyframes fsAttIn{from{opacity:0;transform:translateX(18px) scale(.95)}to{opacity:1;transform:none}}
 #qr-fs-fail-warn{
   display:none;align-items:center;gap:8px;
   background:rgba(239,68,68,.2);border:1.5px solid rgba(239,68,68,.5);
-  border-radius:10px;padding:8px 12px;margin-bottom:10px;flex-shrink:0;
+  border-radius:10px;padding:7px 12px;margin-bottom:8px;flex-shrink:0;
   animation:fsAttIn .4s both;
 }
 #qr-fs-fail-warn.visible{display:flex}
-#qr-fs-fail-warn-icon{font-size:1.15rem;flex-shrink:0}
-#qr-fs-fail-warn-text{font-size:.7rem;font-weight:700;color:#fca5a5;line-height:1.35}
+#qr-fs-fail-warn-icon{font-size:1.1rem;flex-shrink:0}
+#qr-fs-fail-warn-text{font-size:.68rem;font-weight:700;color:#fca5a5;line-height:1.35}
 #qr-fs-feed-stats{
-  display:flex;gap:8px;margin-top:10px;flex-shrink:0;
-  padding-top:10px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;gap:7px;margin-top:8px;flex-shrink:0;
+  padding-top:8px;border-top:1px solid rgba(255,255,255,.08);
 }
 .qr-fs-stat-box{
-  flex:1;background:rgba(255,255,255,.06);border-radius:10px;
-  padding:8px 6px;text-align:center;
+  flex:1;background:rgba(255,255,255,.06);border-radius:9px;
+  padding:7px 5px;text-align:center;
 }
-.qr-fs-stat-val{font-size:1.3rem;font-weight:800;color:#60bfff;line-height:1}
-.qr-fs-stat-lbl{font-size:.55rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-top:3px;text-transform:uppercase}
-@media(max-width:700px){
-  #qr-fullscreen{flex-direction:column;gap:20px;overflow-y:auto;justify-content:flex-start;padding-top:48px}
-  #qr-fs-code{width:100%;max-width:360px;padding:20px 16px}
-  #qr-fs-vcode{font-size:clamp(2.5rem,10vw,3.5rem)}
-  #qr-fs-feed{width:100%;max-width:360px;height:200px}
+.qr-fs-stat-val{font-size:1.2rem;font-weight:800;color:#60bfff;line-height:1}
+.qr-fs-stat-lbl{font-size:.52rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-top:3px;text-transform:uppercase}
+
+/* ── RIGHT QR PANEL ── */
+#qr-fs-right{
+  flex:1;
+  background:linear-gradient(155deg,#001830 0%,#002555 55%,#001020 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;padding:24px;position:relative;overflow:hidden;
+}
+#qr-fs-right::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(0,114,206,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* Status indicator */
+#qr-fs-status-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(34,197,94,.1);
+  border:1px solid rgba(34,197,94,.25);
+  border-radius:20px;padding:7px 18px;flex-shrink:0;
+}
+.qr-fs-status-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#22c55e;display:inline-block;
+  box-shadow:0 0 8px #22c55e;
+  animation:qrDotPulse 1.6s ease-in-out infinite;
+}
+@keyframes qrDotPulse{
+  0%,100%{opacity:1;box-shadow:0 0 6px #22c55e}
+  50%{opacity:.45;box-shadow:0 0 18px #22c55e}
+}
+#qr-fs-status-text{
+  font-size:.78rem;font-weight:600;color:rgba(255,255,255,.8);letter-spacing:.04em;
+}
+
+/* QR code container with gradient border frame */
+.qr-fs-qr-frame{
+  padding:4px;
+  background:linear-gradient(135deg,#002F6C 0%,#0072CE 100%);
+  border-radius:22px;
+  box-shadow:0 8px 40px rgba(0,114,206,.35),0 0 80px rgba(0,114,206,.15);
+  flex-shrink:0;
+}
+.qr-fs-qr-frame-inner{
+  background:#fff;border-radius:18px;
+  padding:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+
+#qr-fullscreen-qr{display:flex;align-items:center;justify-content:center}
+
+/* Ring SVG overlaid on QR */
+.qr-fs-ring-wrap{
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+
+#qr-fs-ring-time{
+  font-family:monospace;font-size:1.2rem;letter-spacing:.18em;
+  color:rgba(255,255,255,.5);flex-shrink:0;
+}
+#qr-fs-qr-timer{
+  color:rgba(255,255,255,.32);font-size:.68rem;
+  letter-spacing:.04em;flex-shrink:0;
+}
+
+/* Ticker */
+#qr-fs-ticker{
+  background:#0072CE;padding:9px 0;flex-shrink:0;
+  border-top:2px solid rgba(0,56,101,.5);
+  box-shadow:0 -3px 12px rgba(0,0,0,.25);
+}
+
+@media(max-width:900px){
+  #qr-fs-main{flex-direction:column}
+  #qr-fs-left{width:100%;min-width:0;max-width:100%;max-height:46vh}
+  #qr-fs-right{flex:1;min-height:0}
+  #qr-fs-logo1,#qr-fs-logo2{height:42px}
+  #qr-fs-hdr-uni{font-size:.85rem}
 }
 
 /* ── TOAST BİLDİRİMLER ── */
@@ -943,12 +1116,14 @@ html{scroll-behavior:smooth}
   width:100%;
 }
 .toast{
-  background:var(--bg-card);
-  border:1.5px solid var(--border);
+  background:var(--bg2);
+  border:1px solid var(--border);
   border-left:4px solid var(--ok);
-  border-radius:var(--rad-sm);
-  padding:10px 14px;
-  box-shadow:var(--shadow-md);
+  border-radius:14px;
+  padding:12px 16px;
+  box-shadow:0 8px 32px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.08),0 0 0 1px rgba(255,255,255,.06);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
   display:flex;align-items:flex-start;gap:10px;
   font-size:.82rem;
   pointer-events:auto;
@@ -2357,118 +2532,223 @@ input:focus,select:focus,textarea:focus{
   </div>
 </div>
 
-<!-- ═══ QR TAM EKRAN OVERLAY ═══ -->
+<!-- ═══ QR TAM EKRAN OVERLAY (v95) ═══ -->
 <div id="qr-fullscreen">
 
-  <!-- SOL KOLON: QR + Ring -->
-  <div id="qr-fs-left">
-    <div id="qr-fullscreen-name"></div>
-    <div class="qr-fs-ring-wrap" style="position:relative;display:flex;align-items:center;justify-content:center;width:min(76vh,740px);height:min(76vh,740px)">
-      <svg id="qr-fs-ring-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2" viewBox="0 0 560 560">
-        <circle cx="280" cy="280" r="268" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="14"/>
-        <circle cx="280" cy="280" r="268" fill="none" stroke="rgba(0,114,206,.3)" stroke-width="22"
-          transform="rotate(-90 280 280)" style="filter:blur(7px)"/>
-        <circle id="qr-fs-ring-arc" cx="280" cy="280" r="268" fill="none" stroke="#0072CE" stroke-width="14"
-          stroke-linecap="round" stroke-dasharray="1684" stroke-dashoffset="0"
-          transform="rotate(-90 280 280)" style="transition:stroke-dashoffset .95s linear,stroke .5s;filter:drop-shadow(0 0 10px currentColor)"/>
-      </svg>
-      <div id="qr-fullscreen-qr" style="position:absolute;inset:32px;display:flex;align-items:center;justify-content:center"></div>
+  <!-- HEADER: PAÜ + Tıp logoları -->
+  <div id="qr-fs-header">
+    <img src="https://bukalemun.pusula.pau.edu.tr/upload/BIYS/siteler/tip/editor/logo/pa%C3%BC.png"
+         alt="PAÜ" id="qr-fs-logo1">
+    <div id="qr-fs-header-title">
+      <div id="qr-fs-hdr-uni">PAMUKKALE ÜNİVERSİTESİ</div>
+      <div id="qr-fs-hdr-sub">Tıp Fakültesi &nbsp;·&nbsp; Dijital Yoklama Sistemi</div>
     </div>
-    <div id="qr-fs-ring-time" style="font-family:monospace;font-size:1.4rem;letter-spacing:.18em;color:rgba(255,255,255,.5);margin-top:4px">00:00:00</div>
-    <div id="qr-fs-qr-timer" style="color:rgba(255,255,255,.35);font-size:.7rem;letter-spacing:.04em;margin-top:2px"></div>
+    <img src="https://bukalemun.pusula.pau.edu.tr/upload/BIYS/siteler/tip/editor/logo/t%C4%B1p%20logo.png"
+         alt="Tıp" id="qr-fs-logo2">
+    <button id="qr-close-btn" onclick="closeQrFullscreen()" title="Kapat">✕</button>
   </div>
 
-  <!-- ORTA KOLON: Hoca bilgisi + Sayaç + PIN -->
-  <div id="qr-fs-code">
-    <!-- Hoca bilgi kartı -->
-    <div id="qr-fs-info">
-      <div id="qr-fs-info-prof">—</div>
-      <div class="qr-fs-info-row">
-        <span id="qr-fs-info-abd">—</span>
-      </div>
-      <div class="qr-fs-info-row">
-        <span class="qr-fs-info-chip" id="qr-fs-info-blok-chip">—</span>
-        <span style="color:rgba(255,255,255,.4)">·</span>
-        <span class="qr-fs-info-chip" id="qr-fs-info-hafta-chip">—</span>
-        <span style="color:rgba(255,255,255,.5);font-size:.65rem" id="qr-fs-info-ders">—</span>
-      </div>
-      <div class="qr-fs-info-row" id="qr-fs-info-tarih-row">
-        <span style="font-size:.7rem;color:rgba(255,255,255,.4)" id="qr-fs-info-tarih">—</span>
-      </div>
-    </div>
+  <!-- MAIN İKİ PANEL -->
+  <div id="qr-fs-main">
 
-    <!-- Ekran Kodu -->
-    <div style="flex-shrink:0">
-      <div class="qr-fs-code-label">🔡 Ekran Kodu</div>
-      <div id="qr-fs-vcode">—</div>
-      <div id="qr-fs-vcode-sub">—</div>
-    </div>
+    <!-- SOL: Bilgi paneli -->
+    <div id="qr-fs-left">
 
-    <!-- Yoklama bitiş sayacı (büyük) -->
-    <div id="qr-fs-end-wrap">
-      <div id="qr-fs-end-label">⏳ YOKLAMA KAPANIYOR</div>
-      <div id="qr-fs-end-cnt">—</div>
-      <div id="qr-fs-end-sub">kalan süre</div>
-    </div>
+      <!-- Ders adı -->
+      <div id="qr-fullscreen-name"></div>
 
-    <!-- PIN -->
-    <div id="qr-fs-pin-wrap">
-      <div style="font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Geçerli PIN</div>
-      <div id="qr-fullscreen-pin">—</div>
-      <div id="qr-fs-cdown" style="font-size:.65rem;color:rgba(255,255,255,.35);margin-top:4px"></div>
-    </div>
+      <!-- Hoca / blok bilgisi -->
+      <div id="qr-fs-info">
+        <div id="qr-fs-info-prof">—</div>
+        <div class="qr-fs-info-row">
+          <span id="qr-fs-info-abd">—</span>
+        </div>
+        <div class="qr-fs-info-row">
+          <span class="qr-fs-info-chip" id="qr-fs-info-blok-chip">—</span>
+          <span style="color:rgba(255,255,255,.4)">·</span>
+          <span class="qr-fs-info-chip" id="qr-fs-info-hafta-chip">—</span>
+          <span style="color:rgba(255,255,255,.5);font-size:.65rem" id="qr-fs-info-ders">—</span>
+        </div>
+        <div class="qr-fs-info-row" id="qr-fs-info-tarih-row">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.4)" id="qr-fs-info-tarih">—</span>
+        </div>
+      </div>
+
+      <!-- PIN + Ekran Kodu yan yana -->
+      <div id="qr-fs-codes-row">
+        <div id="qr-fs-pin-wrap">
+          <div id="qr-fullscreen-label">Geçerli PIN</div>
+          <div id="qr-fullscreen-pin">—</div>
+          <div id="qr-fs-cdown"></div>
+        </div>
+        <div id="qr-fs-code">
+          <div class="qr-fs-code-label">🔡 Ekran Kodu</div>
+          <div id="qr-fs-vcode">—</div>
+          <div id="qr-fs-vcode-sub">—</div>
+        </div>
+      </div>
+
+      <!-- Bitiş sayacı -->
+      <div id="qr-fs-end-wrap">
+        <div id="qr-fs-end-label">⏳ YOKLAMA KAPANIYOR</div>
+        <div id="qr-fs-end-cnt">—</div>
+        <div id="qr-fs-end-sub">kalan süre</div>
+      </div>
+
+      <!-- Katılımcı akışı -->
+      <div id="qr-fs-feed">
+        <div id="qr-fs-feed-title">
+          <span>👥 Katılımcılar</span>
+          <span id="qr-fs-feed-count">0</span>
+        </div>
+        <div id="qr-fs-fail-warn">
+          <span id="qr-fs-fail-warn-icon">⚠️</span>
+          <span id="qr-fs-fail-warn-text"></span>
+        </div>
+        <ul id="qr-fs-feed-list"></ul>
+        <div id="qr-fs-feed-stats">
+          <div class="qr-fs-stat-box">
+            <div class="qr-fs-stat-val" id="qr-fs-stat-katilan">0</div>
+            <div class="qr-fs-stat-lbl">Katılan</div>
+          </div>
+          <div class="qr-fs-stat-box">
+            <div class="qr-fs-stat-val" id="qr-fs-stat-devamsiz" style="color:#f87171">0</div>
+            <div class="qr-fs-stat-lbl">Devamsız</div>
+          </div>
+          <div class="qr-fs-stat-box">
+            <div class="qr-fs-stat-val" id="qr-fs-stat-pct" style="color:#34d399">—%</div>
+            <div class="qr-fs-stat-lbl">Katılım</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end #qr-fs-left -->
+
+    <!-- SAĞ: QR paneli -->
+    <div id="qr-fs-right">
+
+      <!-- Sistem durum göstergesi -->
+      <div id="qr-fs-status-row">
+        <span class="qr-fs-status-dot"></span>
+        <span id="qr-fs-status-text">Sistem Aktif — Tarama Bekleniyor</span>
+      </div>
+
+      <!-- QR kodu + katılım halkası -->
+      <div class="qr-fs-ring-wrap" style="position:relative;display:flex;align-items:center;justify-content:center;width:min(55vh,500px);height:min(55vh,500px)">
+        <svg id="qr-fs-ring-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2" viewBox="0 0 560 560">
+          <circle cx="280" cy="280" r="268" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="14"/>
+          <circle cx="280" cy="280" r="268" fill="none" stroke="rgba(0,114,206,.25)" stroke-width="22"
+            transform="rotate(-90 280 280)" style="filter:blur(7px)"/>
+          <circle id="qr-fs-ring-arc" cx="280" cy="280" r="268" fill="none" stroke="#0072CE" stroke-width="14"
+            stroke-linecap="round" stroke-dasharray="1684" stroke-dashoffset="0"
+            transform="rotate(-90 280 280)" style="transition:stroke-dashoffset .95s linear,stroke .5s;filter:drop-shadow(0 0 12px currentColor)"/>
+        </svg>
+        <!-- QR: gradient çerçeve içinde -->
+        <div style="position:absolute;inset:30px;display:flex;align-items:center;justify-content:center;z-index:3">
+          <div class="qr-fs-qr-frame">
+            <div class="qr-fs-qr-frame-inner">
+              <div id="qr-fullscreen-qr"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zaman bilgileri -->
+      <div id="qr-fs-ring-time">00:00:00</div>
+      <div id="qr-fs-qr-timer"></div>
+
+    </div><!-- end #qr-fs-right -->
+
+  </div><!-- end #qr-fs-main -->
+
+  <!-- ALT: Akan bilgi bandı -->
+  <div id="qr-fs-ticker">
+    <marquee behavior="scroll" direction="right" scrollamount="5"
+      style="color:#fff;font-weight:700;font-size:.82rem;letter-spacing:.04em">
+      &nbsp;&nbsp;&nbsp;&nbsp;/// SİSTEM AKTİF — Karekod güvenliğiniz için düzenli olarak yenilenmektedir
+      /// PAÜ Tıp Fakültesi &nbsp;·&nbsp; Sınav Koordinasyon Birimi &nbsp;·&nbsp; Dijital Dönüşüm Ekosistemi ///
+      &nbsp;&nbsp;&nbsp;&nbsp;
+    </marquee>
   </div>
 
-  <!-- SAĞ KOLON: Katılımcılar listesi -->
-  <div id="qr-fs-feed">
-    <div id="qr-fs-feed-title">
-      <span>👥 Katılımcılar</span>
-      <span id="qr-fs-feed-count">0</span>
-    </div>
-    <div id="qr-fs-fail-warn">
-      <span id="qr-fs-fail-warn-icon">⚠️</span>
-      <span id="qr-fs-fail-warn-text"></span>
-    </div>
-    <ul id="qr-fs-feed-list"></ul>
-    <div id="qr-fs-feed-stats">
-      <div class="qr-fs-stat-box">
-        <div class="qr-fs-stat-val" id="qr-fs-stat-katilan">0</div>
-        <div class="qr-fs-stat-lbl">Katılan</div>
-      </div>
-      <div class="qr-fs-stat-box">
-        <div class="qr-fs-stat-val" id="qr-fs-stat-devamsiz" style="color:#f87171">0</div>
-        <div class="qr-fs-stat-lbl">Devamsız</div>
-      </div>
-      <div class="qr-fs-stat-box">
-        <div class="qr-fs-stat-val" id="qr-fs-stat-pct" style="color:#34d399">—%</div>
-        <div class="qr-fs-stat-lbl">Katılım</div>
-      </div>
-    </div>
-  </div>
-
-  <button id="qr-close-btn" onclick="closeQrFullscreen()" title="Kapat">✕</button>
 </div>
 
 <!-- ═══ PROJEKSİYON FULLSCREEN ═══ -->
 <div id="proj-fullscreen">
   <button id="proj-close-btn" onclick="closeProjFullscreen()" title="Kapat">✕</button>
-  <div id="proj-course-name">—</div>
-  <div id="proj-date-info">—</div>
-  <div id="proj-ring-area">
-    <svg id="proj-ring-svg" viewBox="0 0 200 200">
-      <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16"/>
-      <circle id="proj-ring-arc" cx="100" cy="100" r="86" fill="none" stroke="#4ade80" stroke-width="16"
-        stroke-dasharray="540.35" stroke-dashoffset="540.35" stroke-linecap="round"
-        transform="rotate(-90 100 100)"/>
-    </svg>
-    <div id="proj-ring-center">
-      <div id="proj-cnt-big">0</div>
-      <div id="proj-cnt-label">öğrenci</div>
-      <div id="proj-pct-big">%0</div>
+  <div id="proj-grid">
+    <!-- SOL SÜTUN: Ders bilgisi + istatistik -->
+    <div id="proj-left">
+      <div id="proj-course-name">—</div>
+      <div id="proj-date-info">—</div>
+      <div id="proj-ring-area">
+        <svg id="proj-ring-svg" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16"/>
+          <circle id="proj-ring-arc" cx="100" cy="100" r="86" fill="none" stroke="#4ade80" stroke-width="16"
+            stroke-dasharray="540.35" stroke-dashoffset="540.35" stroke-linecap="round"
+            transform="rotate(-90 100 100)"/>
+        </svg>
+        <div id="proj-ring-center">
+          <div id="proj-cnt-big">0</div>
+          <div id="proj-cnt-label">katılan</div>
+          <div id="proj-pct-big">%0</div>
+        </div>
+      </div>
+      <div class="proj-stat-row">
+        <div class="proj-stat-box green">
+          <div class="psb-val" id="proj-stat-present">0</div>
+          <div class="psb-lbl">Katılan</div>
+        </div>
+        <div class="proj-stat-box red">
+          <div class="psb-val" id="proj-stat-absent">0</div>
+          <div class="psb-lbl">Devamsız</div>
+        </div>
+        <div class="proj-stat-box">
+          <div class="psb-val" id="proj-stat-total">0</div>
+          <div class="psb-lbl">Toplam</div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div id="proj-feed">
-    <ul id="proj-feed-list"></ul>
+    <!-- ORTA SÜTUN: Büyük QR kod + PIN -->
+    <div id="proj-center">
+      <div id="proj-center-title">Yoklama QR Kodu</div>
+      <div id="proj-qr-ring-wrap">
+        <svg id="proj-qr-ring-svg" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="projQrGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4ade80" stop-opacity="1"/>
+              <stop offset="50%" stop-color="#0072CE" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#4ade80" stop-opacity="0.3"/>
+            </linearGradient>
+          </defs>
+          <circle class="proj-qr-ring-track" cx="180" cy="180" r="170"/>
+          <circle id="proj-qr-ring-arc1" class="proj-qr-ring-arc" cx="180" cy="180" r="170" transform="rotate(-90 180 180)"/>
+          <circle id="proj-qr-ring-arc2" class="proj-qr-ring-arc" cx="180" cy="180" r="170" transform="rotate(90 180 180)"/>
+        </svg>
+      <div id="proj-qr-box">
+        <div id="proj-qr-wrap">
+          <div id="proj-qr-inner"></div>
+        </div>
+        <div id="proj-pin-area">
+          <div id="proj-pin-label">Geçerli PIN</div>
+          <div id="proj-pin-val">—</div>
+          <div id="proj-pin-timer">— saniye</div>
+        </div>
+      </div>
+      </div><!-- /proj-qr-ring-wrap -->
+      <div id="proj-scan-hint">Kameranızı QR koda tutunuz</div>
+      <div id="proj-system-badge">
+        <span class="ps-dot"></span>
+        <span>Sistem Aktif · Pamukkale Üniversitesi Tıp Fakültesi</span>
+      </div>
+    </div>
+    <!-- SAĞ SÜTUN: Canlı katılım akışı -->
+    <div id="proj-right">
+      <div id="proj-right-header">Canlı Katılım</div>
+      <div id="proj-feed">
+        <ul id="proj-feed-list"></ul>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2654,7 +2934,8 @@ input:focus,select:focus,textarea:focus{
 
   <!-- Tab 2: No ID -->
   <div class="card" id="stform2" style="display:none">
-    <div class="card-title">📋 Yoklama Al — Kimliksiz</div>
+    <div class="card-title">📋 Yoklama Al</div>
+    <!-- Adım 1: Oturum kodu + Öğrenci no -->
     <div class="form-row">
       <label>Oturum Kodu</label>
       <input id="st-code2" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code').value=this.value;if(this.value.length===6)_autoDetectSessionMode(this.value)" placeholder="6 haneli kod">
@@ -2663,18 +2944,26 @@ input:focus,select:focus,textarea:focus{
       <label>Öğrenci No</label>
       <input id="st-no2" inputmode="numeric" placeholder="xx270xxx" oninput="lookupSt2(this.value)">
     </div>
-    <div id="st-stu-info2" style="display:none;margin:-4px 0 8px;padding:7px 12px;background:color-mix(in srgb,var(--ok) 13%,transparent);border-left:3px solid var(--ok);border-radius:6px;font-size:.8rem;line-height:1.5"><span id="st-stu-info2-name" style="font-weight:600;color:var(--ok)"></span><span id="st-stu-info2-dept" style="color:var(--fg2)"></span></div>
-    <div class="form-row">
+    <!-- Öğrenci bilgisi (no girince gösterilir) -->
+    <div id="st-stu-info2" style="display:none;margin:-4px 0 14px;padding:10px 14px;background:color-mix(in srgb,var(--ok) 13%,transparent);border-left:3px solid var(--ok);border-radius:8px;font-size:.85rem;line-height:1.6">
+      <span id="st-stu-info2-name" style="font-weight:700;color:var(--ok);display:block"></span>
+      <span id="st-stu-info2-dept" style="color:var(--fg2);font-size:.78rem"></span>
+    </div>
+    <!-- Ad soyad gizli (roster'dan otomatik) -->
+    <div class="form-row" style="display:none">
       <label>Ad Soyad</label>
       <input id="st-name2" placeholder="Adınız Soyadınız">
     </div>
-    <div class="form-row" id="st-pin2-row">
-      <label>PIN (tahtadaki 4 haneli kod)</label>
-      <input id="st-pin2" inputmode="numeric" maxlength="4" placeholder="0000">
-    </div>
-    <div class="form-row">
-      <label>🔡 Ekran Kodu <span style="font-size:.72rem;color:var(--fg3);font-weight:400">(hocanın ekranındaki 3 harf)</span></label>
-      <input id="st-vcode2" maxlength="3" placeholder="ABC" style="text-transform:uppercase;letter-spacing:.2em;font-size:1.05rem;font-weight:700" oninput="this.value=this.value.toUpperCase()">
+    <!-- Adım 2: PIN + Ekran kodu (öğrenci no bulununca gösterilir) -->
+    <div id="st-step2-fields" style="display:none">
+      <div class="form-row" id="st-pin2-row">
+        <label>PIN <span style="font-size:.72rem;color:var(--fg3);font-weight:400">(tahtadaki 4 haneli kod)</span></label>
+        <input id="st-pin2" inputmode="numeric" maxlength="4" placeholder="0000" style="font-size:1.3rem;font-weight:700;letter-spacing:.25em;text-align:center">
+      </div>
+      <div class="form-row" id="st-vcode2-row">
+        <label>🔡 Ekran Kodu <span style="font-size:.72rem;color:var(--fg3);font-weight:400">(hocanın ekranındaki 3 harf)</span></label>
+        <input id="st-vcode2" maxlength="3" placeholder="ABC" style="text-transform:uppercase;letter-spacing:.35em;font-size:1.3rem;font-weight:700;text-align:center" oninput="this.value=this.value.toUpperCase()">
+      </div>
     </div>
     <div id="stmsg2" style="margin-bottom:10px"></div>
     <div class="al alwrn" style="font-size:.76rem;margin-bottom:10px;line-height:1.5">⚠️ <strong>Başkası adına yoklama almak yasak ve disiplin suçudur.</strong> IP adresiniz ve konumunuz kayıt altına alınmaktadır.</div>
@@ -2927,7 +3216,7 @@ input:focus,select:focus,textarea:focus{
         <div style="font-size:.71rem;color:var(--fg3);margin-top:-4px;margin-bottom:8px">⏱ Yoklama süresi dolunca QR/PIN kapanır · 🕐 Ders süresi dolunca oturum kapatılır · 0 = süresiz</div>
         <div class="form-row" style="display:flex;align-items:center;gap:10px">
           <input type="checkbox" id="new-pinreq" checked style="width:auto">
-          <label for="new-pinreq" style="margin:0;cursor:pointer">🔢 PIN gerektir <span style="font-size:.68rem;color:var(--fg3)">(her 10 sn. değişir)</span></label>
+          <label for="new-pinreq" style="margin:0;cursor:pointer">🔢 PIN gerektir <span style="font-size:.68rem;color:var(--fg3)">(her 20 sn. değişir)</span></label>
         </div>
         <div class="form-row" style="display:flex;align-items:center;gap:10px">
           <input type="checkbox" id="new-idreq" style="width:auto">
@@ -3000,7 +3289,7 @@ input:focus,select:focus,textarea:focus{
     <div class="pin-box" id="act-pin-box" style="margin-top:12px">
       <div class="pin-label">Geçerli PIN</div>
       <div class="pin-val" id="act-pin">—</div>
-      <div class="pin-sub" id="act-pin-sub">Her 10 saniyede değişir</div>
+      <div class="pin-sub" id="act-pin-sub">Her 20 saniyede değişir</div>
     </div>
     <div class="pin-box" style="margin-top:10px;background:color-mix(in srgb,var(--pau-gold) 12%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--pau-gold) 40%,transparent)">
       <div class="pin-label" style="color:var(--pau-gold)">🔡 Ekran Kodu <span style="font-size:.68rem;font-weight:400;opacity:.75">(öğrenciler girmeli)</span></div>
@@ -3665,9 +3954,42 @@ input:focus,select:focus,textarea:focus{
       </div>
       <div class="form-row" style="margin:0">
         <label>Ekip / Grup</label>
-        <select id="mt-ekip" style="width:100%">
+        <select id="mt-ekip" onchange="_onMtEkipChange()" style="width:100%">
           <option value="">— Önce dönem seçin —</option>
         </select>
+      </div>
+      <!-- Öğrenci önizleme -->
+      <div id="mt-stu-preview" style="display:none;margin-top:-4px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span id="mt-stu-summary" style="font-size:.78rem;font-weight:700;color:var(--fg2)"></span>
+          <button class="btn bg bsm" style="font-size:.7rem;padding:3px 10px" onclick="_toggleMtStuList()">👁 Listeyi Göster</button>
+        </div>
+        <div id="mt-stu-list" style="display:none;max-height:200px;overflow-y:auto;margin-top:8px;display:flex;flex-direction:column;gap:3px"></div>
+      </div>
+      <!-- Oturum Ayarları -->
+      <div style="border-top:1.5px solid var(--border);padding-top:14px;margin-top:4px">
+        <div style="font-size:.72rem;font-weight:700;color:var(--fg3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">⚙️ Oturum Ayarları</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="checkbox" id="mt-pinreq" checked style="width:auto;accent-color:var(--pau-285c)">
+            <label for="mt-pinreq" style="margin:0;cursor:pointer;font-size:.85rem">🔢 PIN gerektir <span style="font-size:.68rem;color:var(--fg3)">(her 20 sn. değişir)</span></label>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="checkbox" id="mt-idreq" style="width:auto;accent-color:var(--pau-285c)">
+            <label for="mt-idreq" style="margin:0;cursor:pointer;font-size:.85rem">🪪 Kimlik doğrulama gerektir</label>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:120px">
+              <label style="font-size:.74rem;font-weight:600;color:var(--fg2);display:block;margin-bottom:4px">⏱ Yoklama süresi (dk)</label>
+              <input type="number" id="mt-att-dur" min="0" max="60" value="5" style="width:100%;padding:8px 10px;border:1.5px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.88rem;box-sizing:border-box;outline:none">
+            </div>
+            <div style="flex:1;min-width:120px">
+              <label style="font-size:.74rem;font-weight:600;color:var(--fg2);display:block;margin-bottom:4px">🕐 Ders süresi (dk)</label>
+              <input type="number" id="mt-dur" min="0" max="480" value="90" style="width:100%;padding:8px 10px;border:1.5px solid var(--bor);border-radius:8px;background:var(--bg2);color:var(--fg);font-size:.88rem;box-sizing:border-box;outline:none">
+            </div>
+          </div>
+          <div style="font-size:.68rem;color:var(--fg3)">0 gir = süresiz · Yoklama süresi dolunca QR/PIN kapanır · Ders süresi dolunca oturum kapanır</div>
+        </div>
       </div>
       <div class="form-row" style="margin:0">
         <label>Sorumlu Hoca(lar)</label>
@@ -4062,7 +4384,7 @@ function _poll(key,ms,fn){if(_polls[key])clearInterval(_polls[key]);fn();_polls[
 function _stopPoll(key){if(_polls[key]){clearInterval(_polls[key]);delete _polls[key];}}
 
 async function computePin(code,off=0){
-  const slot=Math.floor(Date.now()/10000)+off; // 10-second slots
+  const slot=Math.floor(Date.now()/20000)+off; // 20-second slots
   const enc=new TextEncoder().encode(code+'|'+slot);
   const buf=await crypto.subtle.digest('SHA-256',enc);
   const view=new DataView(buf);
@@ -4107,7 +4429,7 @@ async function updatePin(){
   }
   // Geri sayım her saniye güncellenir
   const nowSec=Math.floor(Date.now()/1000);
-  const sec=10-nowSec%10;
+  const sec=20-nowSec%20;
   const subEl=document.getElementById('act-pin-sub');
   if(subEl)subEl.textContent=`${sec}s sonra değişir`;
   // Ekran kodu geri sayımı (60s)
@@ -4115,7 +4437,7 @@ async function updatePin(){
   const vcSubEl=document.getElementById('act-vcode-sub');
   if(vcSubEl)vcSubEl.textContent=`${vcSec}s sonra değişir`;
   // PIN ve QR yalnızca slot değişince güncellenir
-  const slot=Math.floor(Date.now()/10000);
+  const slot=Math.floor(Date.now()/20000);
   if(slot===lastPinSlot)return;
   lastPinSlot=slot;
   const pin=await computePin(curActiveCode,0);
@@ -6805,20 +7127,20 @@ function renderQuickTasks(){
   const card=document.getElementById('quick-tasks-card');
   const list=document.getElementById('quick-tasks-list');
   if(!card||!list||!isProfessor)return;
-  // Get tasks from global tasks object
-  const taskArr=Object.values(tasks||{});
-  if(!taskArr.length){card.style.display='none';return;}
-  // Sort by most recently used (by blok/module info), take last 5
-  const recent=taskArr.slice(-5).reverse();
+  // Sadece hocanın kendi dersleri (myTasks = sorumluEmail ile eşleşenler)
+  const myArr=(myTasks||[]).length?myTasks:[];
+  if(!myArr.length){card.style.display='none';return;}
+  // En son eklenenler önce, en fazla 6 göster
+  const recent=[...myArr].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,6);
   card.style.display='';
   list.innerHTML=recent.map(t=>{
-    const taskId=t.id||t.blokId||Object.keys(tasks||{}).find(k=>tasks[k]===t)||'';
-    const donemLabel=t.donem?`D${t.donem}`:'';
-    const blokLabel=t.blokAdi||t.modulAdi||t.name||taskId;
+    const taskId=t.id||t.blokId||'';
+    const donemLabel=t.donem?`DDönem ${t.donem}`:'';
+    const blokLabel=t.blokName||t.blokAdi||t.modulAdi||t.name||taskId;
     return`<button class="qtask-btn" onclick="quickStartSession(${attrJ(taskId)},${attrJ(t.name||blokLabel)})">
       <span class="qt-icon">🗂</span>
       <span class="qt-name">${esc(t.name||blokLabel)}</span>
-      <span class="qt-meta">${donemLabel}${donemLabel&&t.dept?' · ':''} ${esc(t.dept||'')}${(t.donem||t.dept)?' · ':''} Hızlı başlat</span>
+      <span class="qt-meta">${donemLabel}${donemLabel?' · ':''} Hızlı başlat</span>
     </button>`;
   }).join('');
 }
@@ -9267,8 +9589,14 @@ function lookupSt(no){
 }
 function lookupSt2(no){
   const n=_stRosterName(no);
-  if(n){_applyFoundName('st-name2','st-stu-info2','st-stu-info2-name','st-stu-info2-dept','st-pin2',no,n);}
-  else{_clearFoundName('st-name2','st-stu-info2');}
+  const step2=document.getElementById('st-step2-fields');
+  if(n){
+    _applyFoundName('st-name2','st-stu-info2','st-stu-info2-name','st-stu-info2-dept',null,no,n);
+    if(step2){step2.style.display='';setTimeout(()=>{const p=document.getElementById('st-pin2');if(p&&!p.value)p.focus();},80);}
+  } else {
+    _clearFoundName('st-name2','st-stu-info2');
+    if(step2)step2.style.display='none';
+  }
 }
 async function _getClientIp(){try{const r=await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(4000)});const d=await r.json();return d.ip||null;}catch{return null;}}
 function populateCourseSelect(){
@@ -10907,13 +11235,13 @@ async function finalSubmitAtt(){
 async function submitAtt2(){
   const code=document.getElementById('st-code2').value.trim().toUpperCase();
   const no=document.getElementById('st-no2').value.trim();
-  const name=document.getElementById('st-name2').value.trim();
-  const p=document.getElementById('st-pin2').value.trim();
+  // Ad soyad alanı gizli — roster'dan otomatik alınır
+  const _rosterName2=_stRosterName(no);
+  const name=_rosterName2||(document.getElementById('st-name2')?.value||'').trim();
   const msgEl='stmsg2',btnEl='stbtn2';
   document.getElementById(msgEl).innerHTML='';
   if(!code||code.length!==6){setMsg(msgEl,'alerr','Geçerli oturum kodu girin.');return;}
   if(!no){setMsg(msgEl,'alerr','Öğrenci no gerekli.');return;}
-  if(!name){setMsg(msgEl,'alerr','Ad soyad gerekli.');return;}
   const btn=document.getElementById(btnEl);
   btn.innerHTML='<span class="spin"></span> Gönderiliyor…';btn.disabled=true;
   try{
@@ -10927,11 +11255,14 @@ async function submitAtt2(){
     } else {
       if(!/^\d{3,15}$/.test(no)){setMsg(msgEl,'alerr','Geçerli bir öğrenci numarası girin.');return;}
     }
+    // PIN doğrulaması
+    const p2=(document.getElementById('st-pin2')?.value||'').trim();
     if(sess.pinRequired!==false){
-      if(!p||p.length!==4){setMsg(msgEl,'alerr','4 haneli PIN girin.');return;}
-      const[pNow,pPrev]=await Promise.all([computePin(code,0),computePin(code,-1)]);
-      if(p!==pNow&&p!==pPrev){setMsg(msgEl,'alerr','PIN hatalı.');(async()=>{try{const fp=await fbGet('/sessions/'+code+'/failedAttempts/'+no);const fc=(fp&&fp.count||0)+1;await fbPut('/sessions/'+code+'/failedAttempts/'+no,{count:fc,lastTime:Date.now(),name:name||''});}catch{}})();return;}
+      if(!p2||p2.length!==4){setMsg(msgEl,'alerr','4 haneli PIN girin (tahtadaki kod).');return;}
+      const[pNow2,pPrev2]=await Promise.all([computePin(code,0),computePin(code,-1)]);
+      if(p2!==pNow2&&p2!==pPrev2){setMsg(msgEl,'alerr','PIN hatalı. Tahtadaki kodu kontrol edin.');return;}
     }
+    // Ekran kodu doğrulaması
     const vc2=(document.getElementById('st-vcode2')?.value||'').trim().toUpperCase();
     if(!vc2||vc2.length!==3){setMsg(msgEl,'alerr','Hocanın ekranındaki 3 harfli kodu girin.');return;}
     const[vcNow2,vcPrev2]=await Promise.all([computeVisualCode(code,0),computeVisualCode(code,-1)]);
@@ -10955,8 +11286,9 @@ async function submitAtt2(){
       if(roster&&Object.keys(roster).length>0){
         const entry=roster[no];
         if(!entry){setMsg(msgEl,'alerr','❌ Bu derse kayıtlı öğrenci listesinde bulunamadınız. Öğrenci numaranızı kontrol edin.');return;}
+        // Ad soyad alanı gizli — roster adını direkt kullan
         const rosterName=typeof entry==='string'?entry:(entry.name||'');
-        if(rosterName){const rn=_normName(rosterName);const ni=_normName(name);const iw=ni.split(' ').filter(Boolean);const isTr=/^\d{2}270[^8]\d{2}$/.test(no);if(isTr){if(ni!==rn){setMsg(msgEl,'alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}}else{const mt=iw.filter(w=>rn.includes(w)).length;if(!iw.length||mt/iw.length<0.75){setMsg(msgEl,'alerr',`❌ Ad soyad kayıtla eşleşmiyor. Kayıtlı ad: ${esc(rosterName)}`);return;}}}
+        if(rosterName&&!name){/* name zaten roster'dan alındı */}
       }
     }
     if((await fbGet('/sessions/'+code+'/attendance/'+no))!==null){setMsg(msgEl,'alwrn','Zaten yoklama aldınız.');return;}
@@ -11093,7 +11425,7 @@ function countUp(el,target,duration=800){
 let qrFsOpen=false,qrFsInterval=null;
 function _fsFeedItem(a){
   const no=a.studentNo||'?';
-  const name=a.studentName||'';
+  const _sn2=a.studentName;const name=typeof _sn2==='string'?_sn2:(_sn2?.name||'');
   const t=a.timeStr||new Date().toTimeString().slice(0,5);
   const initials=(name?name.split(' ').map(w=>w[0]).join('').slice(0,2):no.slice(-2)).toUpperCase();
   const li=document.createElement('li');
@@ -11387,7 +11719,8 @@ function checkNewAttendees(){
       const a=attendees[key];
       if(a&&!a.absent){
         const displayNo=a.studentNo||key;
-        const displayName=a.studentName?` — ${a.studentName}`:'';
+        const _sn=a.studentName;const _snStr=typeof _sn==='string'?_sn:(_sn?.name||'');
+        const displayName=_snStr?` — ${_snStr}`:'';
         showToast('✅',`${displayNo}${displayName}`,`Yoklama başarılı · ${a.timeStr||new Date().toTimeString().slice(0,5)}`,'ok',5000);
         addToFsFeed(a); // canlı akışa ekle
       }
@@ -11839,6 +12172,7 @@ function updateProgressRing(present,total){
 }
 
 // ── 2. PROJEKSİYON MODU ──
+let _projPinTimer=null;
 function openProjFullscreen(){
   const el=document.getElementById('proj-fullscreen');
   if(!el)return;
@@ -11850,20 +12184,51 @@ function openProjFullscreen(){
   const dinfo=document.getElementById('proj-date-info');
   if(cname)cname.textContent=sess?.courseName||sess?.courseId||'—';
   if(dinfo){const now=new Date();dinfo.textContent=now.toLocaleDateString('tr-TR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+  // Render QR code in projection center panel
+  _renderProjQr();
+  // Start PIN update loop for projection
+  _updateProjPin();
+  if(_projPinTimer)clearInterval(_projPinTimer);
+  _projPinTimer=setInterval(_updateProjPin,1000);
   updateProjFs();
   document.body.style.overflow='hidden';
+}
+
+function _renderProjQr(){
+  const wrap=document.getElementById('proj-qr-inner');
+  if(!wrap||!curActiveCode)return;
+  wrap.innerHTML='';
+  // Size: use available space — roughly 42vh capped at 400px
+  const sz=Math.min(400,Math.max(220,Math.round(window.innerHeight*0.42)));
+  try{new QRCode(wrap,{text:_qrUrl(curActiveCode),width:sz,height:sz,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
+}
+
+async function _updateProjPin(){
+  if(!projFsOpen)return;
+  const pinEl=document.getElementById('proj-pin-val');
+  const timerEl=document.getElementById('proj-pin-timer');
+  const nowSec=Math.floor(Date.now()/1000)%20;
+  const sec=20-nowSec;
+  if(timerEl)timerEl.textContent=sec+' saniyede değişir';
+  if(!curActiveCode){if(pinEl)pinEl.textContent='—';return;}
+  try{
+    const pin=await computePin(curActiveCode,0);
+    if(pinEl)pinEl.textContent=pin;
+  }catch(e){}
 }
 
 function closeProjFullscreen(){
   const el=document.getElementById('proj-fullscreen');
   if(el)el.classList.remove('open');
   projFsOpen=false;
+  if(_projPinTimer){clearInterval(_projPinTimer);_projPinTimer=null;}
   document.body.style.overflow='';
 }
 
 function updateProjFs(){
   if(!projFsOpen)return;
   const present=Object.values(attendees||{}).filter(a=>!a.absent).length;
+  const absent=Object.values(attendees||{}).filter(a=>a.absent).length;
   const total=Object.keys(courseStudents).length;
   const arc=document.getElementById('proj-ring-arc');
   const cntBig=document.getElementById('proj-cnt-big');
@@ -11876,7 +12241,14 @@ function updateProjFs(){
     arc.style.stroke=p>=80?'#4ade80':p>=50?'#fbbf24':'#f87171';
   }
   if(cntBig)cntBig.textContent=present;
-  if(pctBig){const p=total>0?Math.round(present/total*100):0;pctBig.textContent='%'+p+(total?' / '+total:' öğrenci');}
+  if(pctBig){const p=total>0?Math.round(present/total*100):0;pctBig.textContent='%'+p;}
+  // Update stat boxes
+  const spEl=document.getElementById('proj-stat-present');
+  const saEl=document.getElementById('proj-stat-absent');
+  const stEl=document.getElementById('proj-stat-total');
+  if(spEl)spEl.textContent=present;
+  if(saEl)saEl.textContent=absent;
+  if(stEl)stEl.textContent=total||'—';
   _updateProjFeed();
 }
 
@@ -11887,11 +12259,12 @@ function _updateProjFeed(){
   newOnes.forEach(a=>_projFeedSeen.add(a.studentNo));
   if(!newOnes.length)return;
   newOnes.forEach(a=>{
+    const _pfSn=a.studentName;const _pfName=typeof _pfSn==='string'?_pfSn:(_pfSn?.name||'');
     const li=document.createElement('li');
     li.className='proj-feed-item';
-    li.innerHTML=`<div class="av" style="background:${_avBg(a.studentNo||a.studentName)};width:40px;height:40px;font-size:.95rem;flex-shrink:0">${_initials(a.studentName)}</div><div><div style="font-weight:700;font-size:1.1rem">${esc(a.studentName||'—')}</div><div style="font-size:.82rem;opacity:.7">${esc(a.studentNo||'')} · ${a.timeStr||''}</div></div>`;
+    li.innerHTML=`<div class="pf-av" style="background:${_avBg(a.studentNo||_pfName)}">${_initials(_pfName)}</div><div style="overflow:hidden;flex:1;min-width:0"><div class="pf-name">${esc(_pfName||'—')}</div><div class="pf-no">${esc(a.studentNo||'')}</div></div><span class="pf-time">${a.timeStr||''}</span>`;
     feedList.prepend(li);
-    while(feedList.children.length>20)feedList.removeChild(feedList.lastChild);
+    while(feedList.children.length>15)feedList.removeChild(feedList.lastChild);
   });
 }
 
@@ -12132,6 +12505,44 @@ function _onMtTaskSelChange(){
     if(nameEl)nameEl.value='';
   }
 }
+async function _onMtEkipChange(){
+  const donem=document.getElementById('mt-donem')?.value||'';
+  const ekipSel=document.getElementById('mt-ekip');
+  const ekipId=ekipSel?.value||'';
+  const preview=document.getElementById('mt-stu-preview');
+  const summary=document.getElementById('mt-stu-summary');
+  const listEl=document.getElementById('mt-stu-list');
+  if(preview)preview.style.display='none';
+  if(!ekipId||!donem)return;
+  try{
+    const dk=_dk(donem);
+    const grpData=await fbGet('/donem-groups/'+dk+'/'+ekipId)||{};
+    const students=grpData.students||{};
+    const stuList=Object.entries(students).sort((a,b)=>(a[1].name||a[0]).localeCompare(b[1].name||b[0],'tr'));
+    if(summary)summary.textContent=(grpData.name||ekipId)+' — '+stuList.length+' öğrenci';
+    if(listEl){
+      listEl.innerHTML='';
+      stuList.forEach(([sid,s])=>{
+        const d=document.createElement('div');
+        d.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;font-size:.8rem;background:var(--bg2)';
+        d.innerHTML='<span style="font-size:.9rem">👤</span><span style="font-weight:600;color:var(--fg)">'+esc(s.name||sid)+'</span>'+(s.studentId?'<span style="color:var(--fg3);margin-left:auto;font-size:.72rem">'+esc(s.studentId)+'</span>':'');
+        listEl.appendChild(d);
+      });
+    }
+    if(preview)preview.style.display='block';
+    if(listEl)listEl.style.display='none';
+    const btn=preview?.querySelector('button');
+    if(btn)btn.textContent='👁 Listeyi Göster';
+  }catch(e){console.error('Öğrenci yüklenemedi',e);}
+}
+function _toggleMtStuList(){
+  const listEl=document.getElementById('mt-stu-list');
+  const btn=document.querySelector('#mt-stu-preview button');
+  if(!listEl)return;
+  const vis=listEl.style.display==='flex'||listEl.style.display==='block';
+  listEl.style.display=vis?'none':'flex';
+  if(btn)btn.textContent=vis?'👁 Listeyi Göster':'🙈 Gizle';
+}
 function _populateMtSorumluSelect(){
   const sel=document.getElementById('mt-sorumlu-pick');
   if(!sel)return;
@@ -12187,8 +12598,17 @@ function removeMtSorumluChip(email){
 }
 function _mtReset(){
   selectedMtSorumluEmails=[];
-  ['mt-donem','mt-blok','mt-modul','mt-name'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['mt-donem','mt-blok','mt-modul','mt-name','mt-ekip'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const mw=document.getElementById('mt-modul-wrap');if(mw)mw.style.display='none';
+  const nw=document.getElementById('mt-name-wrap');if(nw)nw.style.display='none';
+  const ts=document.getElementById('mt-task-sel');if(ts)ts.innerHTML='<option value="">— Önce blok seçin —</option>';
+  const es=document.getElementById('mt-ekip');if(es)es.innerHTML='<option value="">— Önce dönem seçin —</option>';
+  const sp=document.getElementById('mt-stu-preview');if(sp)sp.style.display='none';
+  const sl=document.getElementById('mt-stu-list');if(sl)sl.style.display='none';
+  const pinEl=document.getElementById('mt-pinreq');if(pinEl)pinEl.checked=true;
+  const idEl=document.getElementById('mt-idreq');if(idEl)idEl.checked=false;
+  const adEl=document.getElementById('mt-att-dur');if(adEl)adEl.value='5';
+  const durEl=document.getElementById('mt-dur');if(durEl)durEl.value='90';
   _renderMtSorumluChips();
   const errEl=document.getElementById('mt-err');if(errEl)errEl.innerHTML='';
 }
@@ -12196,18 +12616,35 @@ async function addManualTask(){
   const donem=(document.getElementById('mt-donem')?.value||'').trim();
   const blok=(document.getElementById('mt-blok')?.value||'').trim();
   const modul=(document.getElementById('mt-modul')?.value||'').trim();
-  const name=(document.getElementById('mt-name')?.value||'').trim();
+  const taskSel=document.getElementById('mt-task-sel');
+  const taskSelVal=(taskSel?.value||'').trim();
+  const ekipSel=document.getElementById('mt-ekip');
+  const ekipId=(ekipSel?.value||'').trim();
+  const ekipAdi=ekipId?(ekipSel.options[ekipSel.selectedIndex]?.text||''):'';
   const errEl=document.getElementById('mt-err');
   if(errEl)errEl.innerHTML='';
   if(!donem){if(errEl)errEl.innerHTML='<div class="al alerr">Dönem seçimi zorunlu.</div>';return;}
   if(!blok){if(errEl)errEl.innerHTML='<div class="al alerr">Blok seçimi zorunlu.</div>';return;}
-  if(!name){if(errEl)errEl.innerHTML='<div class="al alerr">Task adı zorunlu.</div>';return;}
-  const id='task_'+Date.now();
+  if(!taskSelVal){if(errEl)errEl.innerHTML='<div class="al alerr">Task seçimi zorunlu.</div>';return;}
+  // Mevcut task seçildi mi yoksa yeni mi?
+  let taskId,name;
+  if(taskSelVal==='__yeni__'){
+    name=(document.getElementById('mt-name')?.value||'').trim();
+    if(!name){if(errEl)errEl.innerHTML='<div class="al alerr">Yeni task adı zorunlu.</div>';return;}
+    taskId='task_'+Date.now();
+  } else {
+    taskId=taskSelVal;
+    name=tasks[taskId]?.name||taskSelVal;
+  }
   const sorumluEmail=selectedMtSorumluEmails[0]||'';
-  const data={name,blokName:blok,donem,modul:modul||null,sorumluEmail,sorumluEmails:selectedMtSorumluEmails.length?selectedMtSorumluEmails:[],createdAt:Date.now()};
+  const pinReq=document.getElementById('mt-pinreq')?.checked!==false;
+  const idReq=!!document.getElementById('mt-idreq')?.checked;
+  const attDur=parseInt(document.getElementById('mt-att-dur')?.value||'5',10)||5;
+  const dur=parseInt(document.getElementById('mt-dur')?.value||'90',10)||90;
+  const data={name,blokName:blok,donem,modul:modul||null,sorumluEmail,sorumluEmails:selectedMtSorumluEmails.length?selectedMtSorumluEmails:[],ekipId:ekipId||null,ekipAdi:ekipAdi||null,pinReq,idReq,attDur,dur,createdAt:Date.now()};
   try{
-    await fbPut('/tasks/'+id,data);
-    tasks[id]=data;
+    await fbPut('/tasks/'+taskId,data);
+    tasks[taskId]=data;
     if(isAdmin)myTasks=Object.entries(tasks).map(([i,t])=>({id:i,...t}));
     _fillTaskSelect();
     renderTaskPanel();
