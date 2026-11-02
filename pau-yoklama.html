@@ -3655,7 +3655,19 @@ input:focus,select:focus,textarea:focus{
       </div>
       <div class="form-row" style="margin:0">
         <label>Task Adı / No</label>
-        <input id="mt-name" placeholder="Task 3">
+        <select id="mt-task-sel" onchange="_onMtTaskSelChange()" style="width:100%">
+          <option value="">— Önce blok seçin —</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0;display:none" id="mt-name-wrap">
+        <label>Yeni Task Adı</label>
+        <input id="mt-name" placeholder="Örn: Task 4">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>Ekip / Grup</label>
+        <select id="mt-ekip" style="width:100%">
+          <option value="">— Önce dönem seçin —</option>
+        </select>
       </div>
       <div class="form-row" style="margin:0">
         <label>Sorumlu Hoca(lar)</label>
@@ -12044,28 +12056,81 @@ async function renderStats(){
 
 /* ── Manuel Task — Program sekmesi ── */
 let selectedMtSorumluEmails=[];
-function _onMtDonemChange(){
+async function _onMtDonemChange(){
   const donem=document.getElementById('mt-donem').value;
   const blokSel=document.getElementById('mt-blok');
   const modulWrap=document.getElementById('mt-modul-wrap');
   const modulEl=document.getElementById('mt-modul');
+  const taskSel=document.getElementById('mt-task-sel');
+  const nameWrap=document.getElementById('mt-name-wrap');
+  const ekipSel=document.getElementById('mt-ekip');
   if(modulEl)modulEl.value='';
   if(modulWrap)modulWrap.style.display='none';
+  if(nameWrap)nameWrap.style.display='none';
   blokSel.innerHTML='<option value="">— Blok seç —</option>';
-  if(!donem)return;
+  if(taskSel)taskSel.innerHTML='<option value="">— Önce blok seçin —</option>';
+  if(ekipSel)ekipSel.innerHTML='<option value="">— Yükleniyor… —</option>';
+  if(!donem){if(ekipSel)ekipSel.innerHTML='<option value="">— Önce dönem seçin —</option>';return;}
   const bloklar=NT_BLOK_MAP[donem]||[];
   if(bloklar.length){
     bloklar.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;blokSel.appendChild(o);});
   } else {
     const o=document.createElement('option');o.value='';o.textContent='— (Blok bilgisi yakında eklenecek) —';blokSel.appendChild(o);
   }
+  // Grupları yükle
+  try{
+    const dk=_dk(donem);
+    const groupsData=await fbGet('/donem-groups/'+dk)||{};
+    if(ekipSel){
+      ekipSel.innerHTML='<option value="">— Ekip seç (opsiyonel) —</option>';
+      Object.entries(groupsData).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr')).forEach(([gid,g])=>{
+        const o=document.createElement('option');
+        o.value=gid;
+        const count=g.count||Object.keys(g.students||{}).length||0;
+        o.textContent=(g.name||gid)+(count?' ('+count+' öğrenci)':'');
+        ekipSel.appendChild(o);
+      });
+      if(ekipSel.options.length===1)ekipSel.innerHTML='<option value="">— Bu dönemde grup yok —</option>';
+    }
+  }catch(e){if(ekipSel)ekipSel.innerHTML='<option value="">— Grup yüklenemedi —</option>';}
 }
 function _onMtBlokChange(){
   const donem=document.getElementById('mt-donem').value;
   const blok=document.getElementById('mt-blok').value;
   const modulWrap=document.getElementById('mt-modul-wrap');
+  const taskSel=document.getElementById('mt-task-sel');
+  const nameWrap=document.getElementById('mt-name-wrap');
   const erken=['Dönem 1','Dönem 2','Dönem 3'].includes(donem);
   if(modulWrap)modulWrap.style.display=(erken&&blok)?'block':'none';
+  if(nameWrap)nameWrap.style.display='none';
+  if(!taskSel)return;
+  taskSel.innerHTML='<option value="">— Task seç —</option>';
+  if(!blok)return;
+  // Mevcut task'ları filtrele
+  const mevcutTasks=Object.entries(tasks||{}).filter(([,t])=>t.donem===donem&&t.blokName===blok);
+  mevcutTasks.sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr')).forEach(([tid,t])=>{
+    const o=document.createElement('option');
+    o.value=tid;
+    o.textContent=t.name+(t.modul?' — '+t.modul:'');
+    taskSel.appendChild(o);
+  });
+  const yeniO=document.createElement('option');
+  yeniO.value='__yeni__';
+  yeniO.textContent='➕ Yeni task ekle…';
+  taskSel.appendChild(yeniO);
+}
+function _onMtTaskSelChange(){
+  const sel=document.getElementById('mt-task-sel');
+  const nameWrap=document.getElementById('mt-name-wrap');
+  const nameEl=document.getElementById('mt-name');
+  if(!sel||!nameWrap)return;
+  if(sel.value==='__yeni__'){
+    nameWrap.style.display='block';
+    if(nameEl)nameEl.focus();
+  } else {
+    nameWrap.style.display='none';
+    if(nameEl)nameEl.value='';
+  }
 }
 function _populateMtSorumluSelect(){
   const sel=document.getElementById('mt-sorumlu-pick');
