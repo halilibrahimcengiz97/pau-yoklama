@@ -5489,6 +5489,27 @@ async function deleteStudentList(){
 
 /* ── DÖNEM & GRUP YÖNETİMİ ── */
 let _dlCurDonem=null;
+let _dlMode='tip'; // 'tip' | 'tipdisi'
+const _DL_TIP_DONEMS=['Dönem 1','Dönem 2','Dönem 3','Dönem 4','Dönem 5'];
+
+function setDlMode(mode){
+  _dlMode=mode;
+  try{localStorage.setItem('pau_dl_mode',mode);}catch{}
+  // Buton görünümü
+  const bTip=document.getElementById('dl-mode-tip');
+  const bDisi=document.getElementById('dl-mode-tipdisi');
+  if(bTip){bTip.className=mode==='tip'?'btn bp bsm':'btn bg bsm';}
+  if(bDisi){bDisi.className=mode==='tipdisi'?'btn bp bsm':'btn bg bsm';}
+  // Tıp modunda donemler sabittir
+  if(mode==='tip'){
+    window._dlDonems=[..._DL_TIP_DONEMS];
+    _dlCurDonem=null;
+    _renderDlTabs();
+  } else {
+    // Tıp Dışı: Firebase'den yükle
+    loadDonemListsCard();
+  }
+}
 
 function _renderDlView(){
   // Move donem-lists-card into the view-dl container if not already there
@@ -5504,6 +5525,20 @@ async function loadDonemListsCard(){
   const card=document.getElementById('donem-lists-card');
   if(!card)return;
   card.style.display='';
+  // Kaydedilmiş modu yükle
+  try{const m=localStorage.getItem('pau_dl_mode');if(m==='tipdisi')_dlMode='tipdisi';else _dlMode='tip';}catch{}
+  // Toggle buton görünümünü güncelle
+  const bTip=document.getElementById('dl-mode-tip');
+  const bDisi=document.getElementById('dl-mode-tipdisi');
+  if(bTip){bTip.className=_dlMode==='tip'?'btn bp bsm':'btn bg bsm';}
+  if(bDisi){bDisi.className=_dlMode==='tipdisi'?'btn bp bsm':'btn bg bsm';}
+
+  if(_dlMode==='tip'){
+    // Tıp: sabit Dönem 1-5
+    window._dlDonems=[..._DL_TIP_DONEMS];
+    _renderDlTabs();
+    return;
+  }
   const btnsEl=document.getElementById('dl-tab-btns');
   if(!btnsEl)return;
   btnsEl.innerHTML=`<span class="spin" style="font-size:.75rem;color:var(--fg3)"></span>`;
@@ -5517,20 +5552,28 @@ function _renderDlTabs(){
   const btnsEl=document.getElementById('dl-tab-btns');
   if(!btnsEl)return;
   const donems=window._dlDonems||[];
-  btnsEl.innerHTML=donems.map(d=>`
-    <div style="display:inline-flex;align-items:center;gap:0;position:relative">
-      <button class="btn bsm" id="dl-btn-${_dk(d)}" onclick="dlSelectDonem(${attrJ(d)})" style="border-radius:var(--rad-sm) 0 0 var(--rad-sm);padding-right:6px">${esc(d)}</button>
-      <button title="Sil" onclick="deleteCustomDonem(${attrJ(d)})" style="padding:4px 7px;font-size:.72rem;border:1px solid var(--border);border-left:none;border-radius:0 var(--rad-sm) var(--rad-sm) 0;background:var(--bg2);color:var(--fg3);cursor:pointer;line-height:1;transition:background .1s" onmouseover="this.style.background='var(--err-bg)';this.style.color='var(--err)'" onmouseout="this.style.background='var(--bg2)';this.style.color='var(--fg3)'">✕</button>
-    </div>`).join('')
-  +`<button class="btn bsm" onclick="showAddDonemUI()" style="background:color-mix(in srgb,var(--pau-285c) 12%,transparent);color:var(--pau-285c);border:1.5px dashed color-mix(in srgb,var(--pau-285c) 40%,transparent)" title="Yeni dönem ekle">+ Dönem Ekle</button>
-   <div id="dl-add-donem-row" style="display:none;margin-top:8px;display:none;gap:6px;align-items:center;flex-wrap:wrap">
-     <input id="dl-new-donem-inp" placeholder="Dönem adı (örn: Dönem 1, Klinik Yıl…)" style="padding:6px 10px;border-radius:var(--rad-sm);border:1.5px solid var(--pau-285c);background:var(--bg2);color:var(--fg);font-size:.82rem;flex:2;min-width:160px" onkeydown="if(event.key==='Enter')addCustomDonem()">
-     <button class="btn bp bsm" onclick="addCustomDonem()">✓ Ekle</button>
-     <button class="btn bg bsm" onclick="document.getElementById('dl-add-donem-row').style.display='none'">İptal</button>
-   </div>`;
+  const isTip=(_dlMode==='tip');
+  if(isTip){
+    // Tıp modu: sadece sekmeler, silme/ekleme yok
+    btnsEl.innerHTML=donems.map(d=>`
+      <button class="btn bsm" id="dl-btn-${_dk(d)}" onclick="dlSelectDonem(${attrJ(d)})">${esc(d)}</button>`).join('');
+  } else {
+    // Tıp Dışı modu: silme + ekle butonu
+    btnsEl.innerHTML=donems.map(d=>`
+      <div style="display:inline-flex;align-items:center;gap:0;position:relative">
+        <button class="btn bsm" id="dl-btn-${_dk(d)}" onclick="dlSelectDonem(${attrJ(d)})" style="border-radius:var(--rad-sm) 0 0 var(--rad-sm);padding-right:6px">${esc(d)}</button>
+        <button title="Sil" onclick="deleteCustomDonem(${attrJ(d)})" style="padding:4px 7px;font-size:.72rem;border:1px solid var(--border);border-left:none;border-radius:0 var(--rad-sm) var(--rad-sm) 0;background:var(--bg2);color:var(--fg3);cursor:pointer;line-height:1;transition:background .1s" onmouseover="this.style.background='var(--err-bg)';this.style.color='var(--err)'" onmouseout="this.style.background='var(--bg2)';this.style.color='var(--fg3)'">✕</button>
+      </div>`).join('')
+    +`<button class="btn bsm" onclick="showAddDonemUI()" style="background:color-mix(in srgb,var(--pau-285c) 12%,transparent);color:var(--pau-285c);border:1.5px dashed color-mix(in srgb,var(--pau-285c) 40%,transparent)" title="Yeni dönem ekle">+ Dönem Ekle</button>
+     <div id="dl-add-donem-row" style="display:none;margin-top:8px;display:none;gap:6px;align-items:center;flex-wrap:wrap">
+       <input id="dl-new-donem-inp" placeholder="Dönem adı (örn: Dönem 1, Klinik Yıl…)" style="padding:6px 10px;border-radius:var(--rad-sm);border:1.5px solid var(--pau-285c);background:var(--bg2);color:var(--fg);font-size:.82rem;flex:2;min-width:160px" onkeydown="if(event.key==='Enter')addCustomDonem()">
+       <button class="btn bp bsm" onclick="addCustomDonem()">✓ Ekle</button>
+       <button class="btn bg bsm" onclick="document.getElementById('dl-add-donem-row').style.display='none'">İptal</button>
+     </div>`;
+  }
   if(donems.length&&(!_dlCurDonem||!donems.includes(_dlCurDonem)))dlSelectDonem(donems[0]);
   else if(donems.length&&_dlCurDonem)dlSelectDonem(_dlCurDonem);
-  else{const el=document.getElementById('dl-tab-content');if(el)el.innerHTML=`<div style="color:var(--fg3);font-size:.82rem;padding:12px 0">Henüz dönem yok — "Dönem Ekle" ile başlayın.</div>`;}
+  else{const el=document.getElementById('dl-tab-content');if(el)el.innerHTML=`<div style="color:var(--fg3);font-size:.82rem;padding:12px 0">${isTip?'Dönem seçin.':'Henüz dönem yok — "Dönem Ekle" ile başlayın.'}</div>`;}
 }
 function showAddDonemUI(){
   const row=document.getElementById('dl-add-donem-row');
