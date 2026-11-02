@@ -275,17 +275,17 @@ select option{background:var(--bg2);color:var(--fg)}
 #proj-close-btn:hover{background:rgba(255,255,255,.28)}
 #proj-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr;height:100vh;gap:0}
 #proj-left{display:flex;flex-direction:column;padding:24px 20px 24px 32px;border-right:1px solid rgba(255,255,255,.07);overflow:hidden}
-#proj-left-top{flex-shrink:0}
-#proj-course-name{font-size:clamp(.85rem,1.5vw,1.2rem);font-weight:800;color:#fff;letter-spacing:.01em;margin-bottom:4px;line-height:1.3}
-#proj-date-info{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-bottom:16px}
-#proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:0 0 14px 0}
-#proj-ring-svg{width:clamp(100px,13vh,150px);height:clamp(100px,13vh,150px)}
+#proj-center-course-info{text-align:center;margin-bottom:10px;width:100%;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+#proj-course-name{font-size:clamp(.85rem,1.5vw,1.3rem);font-weight:800;color:#fff;letter-spacing:.01em;margin-bottom:4px;line-height:1.3;text-align:center}
+#proj-date-info{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-bottom:0;text-align:center}
+#proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:10px 0 10px 0}
+#proj-ring-svg{width:clamp(80px,11vh,130px);height:clamp(80px,11vh,130px)}
 #proj-ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
 #proj-cnt-big{font-size:clamp(1.4rem,3.5vw,2.6rem);font-weight:900;color:#fff;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;transition:all .4s}
 #proj-cnt-label{font-size:clamp(.5rem,.85vw,.7rem);color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 #proj-pct-big{font-size:clamp(.75rem,1.5vw,1.2rem);font-weight:800;color:#60bfff;letter-spacing:-.02em;transition:all .4s}
 /* Sol katılan listesi */
-#proj-att-list-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;margin-top:10px;min-height:0}
+#proj-att-list-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;margin-top:0;min-height:0}
 #proj-att-list-header{font-size:.6rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;flex-shrink:0}
 #proj-att-list{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px}
 .proj-att-row{display:flex;align-items:center;gap:7px;padding:5px 8px;background:rgba(255,255,255,.06);border-radius:8px;animation:feedIn .35s ease;flex-shrink:0}
@@ -299,7 +299,7 @@ select option{background:var(--bg2);color:var(--fg)}
 .proj-stat-box .psb-lbl{font-size:.55rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
 .proj-stat-box.green .psb-val{color:#4ade80}
 .proj-stat-box.red .psb-val{color:#f87171}
-#proj-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative}
+#proj-center{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 20px 16px;position:relative;overflow-y:hidden}
 #proj-center-title{font-size:.72rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.18em;margin-bottom:16px}
 #proj-qr-box{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);border-radius:24px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;backdrop-filter:blur(8px)}
 #proj-qr-ring-wrap{position:relative;display:flex;align-items:center;justify-content:center}
@@ -324,13 +324,24 @@ select option{background:var(--bg2);color:var(--fg)}
 #proj-right-header{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.16em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 #proj-right-header::before{content:'';width:7px;height:7px;border-radius:50%;background:#4ade80;animation:projBlink 1.8s ease-in-out infinite;flex-shrink:0}
 #proj-feed{flex:1;overflow:hidden}
-#proj-feed-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+#proj-feed-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;overflow:hidden}
 .proj-feed-item{display:flex;align-items:center;gap:10px;padding:9px 13px;background:rgba(255,255,255,.07);border-radius:12px;animation:feedIn .4s cubic-bezier(.4,0,.2,1);border:1px solid rgba(255,255,255,.08)}
 .proj-feed-item .pf-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0}
 .proj-feed-item .pf-name{font-size:.9rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .proj-feed-item .pf-no{font-size:.7rem;color:rgba(255,255,255,.42)}
 .proj-feed-item .pf-time{font-size:.68rem;color:rgba(255,255,255,.32);flex-shrink:0;margin-left:auto}
 @keyframes feedIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+/* Yoklama Başarılı success cards (sağ sütun) */
+.proj-success-card{background:linear-gradient(135deg,rgba(74,222,128,.18) 0%,rgba(0,114,206,.12) 100%);border:1.5px solid rgba(74,222,128,.45);border-radius:16px;padding:14px 16px;animation:successCardIn .55s cubic-bezier(.4,0,.2,1);transition:opacity .4s,transform .4s,background .4s,border-color .4s;cursor:default;overflow:hidden}
+.proj-success-card.old{opacity:.45;transform:scale(.96);background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+.proj-success-card .psc-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.proj-success-card .psc-icon{font-size:1.4rem;line-height:1;flex-shrink:0}
+.proj-success-card .psc-badge{font-size:.58rem;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.12em;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.3);border-radius:20px;padding:2px 8px}
+.proj-success-card .psc-name{font-size:1.05rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.proj-success-card .psc-sub{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.proj-success-card .psc-no{font-size:.7rem;color:rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
+.proj-success-card .psc-time{font-size:.68rem;color:#4ade80;font-weight:600;font-variant-numeric:tabular-nums}
+@keyframes successCardIn{from{opacity:0;transform:translateY(-18px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 /* ── STATS PAGE ── */
 #view-stats .stat-course-sel{width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--fg);font-size:.88rem;margin-bottom:14px}
 .stat-card{background:var(--bg2);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,56,101,.08)}
@@ -2686,47 +2697,48 @@ input:focus,select:focus,textarea:focus{
 <div id="proj-fullscreen">
   <button id="proj-close-btn" onclick="closeProjFullscreen()" title="Kapat">✕</button>
   <div id="proj-grid">
-    <!-- SOL SÜTUN: Ders bilgisi + istatistik + öğrenci listesi -->
+    <!-- SOL SÜTUN: Sadece katılan öğrenci listesi -->
     <div id="proj-left">
-      <div id="proj-left-top">
-        <div id="proj-course-name">—</div>
-        <div id="proj-date-info">—</div>
-        <div id="proj-ring-area">
-          <svg id="proj-ring-svg" viewBox="0 0 200 200">
-            <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16"/>
-            <circle id="proj-ring-arc" cx="100" cy="100" r="86" fill="none" stroke="#4ade80" stroke-width="16"
-              stroke-dasharray="540.35" stroke-dashoffset="540.35" stroke-linecap="round"
-              transform="rotate(-90 100 100)"/>
-          </svg>
-          <div id="proj-ring-center">
-            <div id="proj-cnt-big">0</div>
-            <div id="proj-cnt-label">katılan</div>
-            <div id="proj-pct-big">%0</div>
-          </div>
-        </div>
-        <div class="proj-stat-row">
-          <div class="proj-stat-box green">
-            <div class="psb-val" id="proj-stat-present">0</div>
-            <div class="psb-lbl">Katılan</div>
-          </div>
-          <div class="proj-stat-box red">
-            <div class="psb-val" id="proj-stat-absent">0</div>
-            <div class="psb-lbl">Devamsız</div>
-          </div>
-          <div class="proj-stat-box">
-            <div class="psb-val" id="proj-stat-total">0</div>
-            <div class="psb-lbl">Toplam</div>
-          </div>
-        </div>
-      </div>
-      <!-- Katılan öğrenci listesi — öğrenciler kendi ismini görsün -->
       <div id="proj-att-list-wrap">
         <div id="proj-att-list-header">Katılan Öğrenciler</div>
         <div id="proj-att-list"></div>
       </div>
     </div>
-    <!-- ORTA SÜTUN: Büyük QR kod + PIN -->
+    <!-- ORTA SÜTUN: Ders bilgisi + istatistik + büyük QR -->
     <div id="proj-center">
+      <!-- Ders adı ve tarih -->
+      <div id="proj-center-course-info">
+        <div id="proj-course-name">—</div>
+        <div id="proj-date-info">—</div>
+      </div>
+      <!-- Katılım halkası + istatistik -->
+      <div id="proj-ring-area">
+        <svg id="proj-ring-svg" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16"/>
+          <circle id="proj-ring-arc" cx="100" cy="100" r="86" fill="none" stroke="#4ade80" stroke-width="16"
+            stroke-dasharray="540.35" stroke-dashoffset="540.35" stroke-linecap="round"
+            transform="rotate(-90 100 100)"/>
+        </svg>
+        <div id="proj-ring-center">
+          <div id="proj-cnt-big">0</div>
+          <div id="proj-cnt-label">katılan</div>
+          <div id="proj-pct-big">%0</div>
+        </div>
+      </div>
+      <div class="proj-stat-row" style="width:100%;max-width:360px;margin-bottom:18px">
+        <div class="proj-stat-box green">
+          <div class="psb-val" id="proj-stat-present">0</div>
+          <div class="psb-lbl">Katılan</div>
+        </div>
+        <div class="proj-stat-box red">
+          <div class="psb-val" id="proj-stat-absent">0</div>
+          <div class="psb-lbl">Devamsız</div>
+        </div>
+        <div class="proj-stat-box">
+          <div class="psb-val" id="proj-stat-total">0</div>
+          <div class="psb-lbl">Toplam</div>
+        </div>
+      </div>
       <div id="proj-center-title">Yoklama QR Kodu</div>
       <div id="proj-qr-ring-wrap">
         <svg id="proj-qr-ring-svg" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
@@ -2865,6 +2877,7 @@ input:focus,select:focus,textarea:focus{
     <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
       <button onclick="reviewDownload()" style="padding:9px 18px;background:var(--bg3);color:var(--fg);border:1px solid var(--border2);border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer">⬇️ İndir (CSV)</button>
       <button onclick="reviewSendEmail()" id="rv-mail-btn" style="padding:9px 18px;background:var(--pau-285c);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer">📩 Mail Gönder</button>
+      <button onclick="reviewConfirm()" id="rv-confirm-btn" style="padding:9px 18px;background:var(--ok,#22c55e);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer">✅ Onayla ve Kaydet</button>
       <button onclick="closeReviewModal()" style="padding:9px 18px;background:var(--bg3);color:var(--fg2);border:1px solid var(--border);border-radius:10px;font-size:.88rem;cursor:pointer">Kapat</button>
     </div>
   </div>
@@ -8782,6 +8795,35 @@ async function reviewDownload(){
   await doDownload(c,fn);
 }
 
+async function reviewConfirm(){
+  if(!_rvSess||!_rvAtt)return;
+  const btn=document.getElementById('rv-confirm-btn');
+  if(btn){btn.innerHTML='<span class="spin"></span> Kaydediliyor…';btn.disabled=true;}
+  try{
+    const code=_rvSess.code;
+    if(!code){showToast('❌','Hata','Oturum kodu bulunamadı.','err',3000);return;}
+    // Tüm _rvAtt kayıtlarını Firebase'e yaz (onaylanan liste)
+    const writes=Object.entries(_rvAtt).map(([no,rec])=>fbPut('/sessions/'+code+'/attendance/'+no,rec));
+    // groupStart-only olan öğrencileri kaldır (artık _rvAtt'da yoklarsa)
+    const existAtt=await fbGet('/sessions/'+code+'/attendance');
+    if(existAtt){
+      const removeWrites=Object.entries(existAtt)
+        .filter(([no,rec])=>rec&&rec.groupStart&&!rec.manual&&!_rvAtt[no])
+        .map(([no])=>fbPut('/sessions/'+code+'/attendance/'+no,null));
+      writes.push(...removeWrites);
+    }
+    // Oturumu onaylandı olarak işaretle
+    writes.push(fbPatch('/sessions/'+code,{confirmed:true,confirmedAt:Date.now()}));
+    await Promise.all(writes);
+    showToast('✅','Onaylandı','Yoklama Firebase\'e kaydedildi.','ok',3500);
+    closeReviewModal();
+  }catch(e){
+    showToast('❌','Hata','Kayıt sırasında hata: '+e.message,'err',4000);
+  }finally{
+    if(btn){btn.innerHTML='✅ Onayla ve Kaydet';btn.disabled=false;}
+  }
+}
+
 /* ── SYSTEM PIN MANAGEMENT ── */
 async function loadSystemPinDisplay(){
   try{
@@ -11523,7 +11565,7 @@ async function submitAtt2(){
   const no=document.getElementById('st-no2').value.trim();
   // Ad soyad alanı gizli — roster'dan otomatik alınır
   const _rosterName2=_stRosterName(no);
-  const name=_rosterName2||(document.getElementById('st-name2')?.value||'').trim();
+  let name=_rosterName2||(document.getElementById('st-name2')?.value||'').trim();
   const msgEl='stmsg2',btnEl='stbtn2';
   document.getElementById(msgEl).innerHTML='';
   if(!code||code.length!==6){setMsg(msgEl,'alerr','Geçerli oturum kodu girin.');return;}
@@ -11579,7 +11621,7 @@ async function submitAtt2(){
         if(!entry){setMsg(msgEl,'alerr','❌ Bu derse kayıtlı öğrenci listesinde bulunamadınız. Öğrenci numaranızı kontrol edin.');return;}
         // Ad soyad alanı gizli — roster adını direkt kullan
         const rosterName=typeof entry==='string'?entry:(entry.name||'');
-        if(rosterName&&!name){/* name zaten roster'dan alındı */}
+        if(rosterName&&!name){name=rosterName;}
       }
     }
     const _existRec2=await fbGet('/sessions/'+code+'/attendance/'+no);
@@ -12495,8 +12537,8 @@ function _renderProjQr(){
   const wrap=document.getElementById('proj-qr-inner');
   if(!wrap||!curActiveCode)return;
   wrap.innerHTML='';
-  // Size: use available space — roughly 42vh capped at 400px
-  const sz=Math.min(360,Math.max(200,Math.round(window.innerHeight*0.38)));
+  // Size: use available space — roughly 40vh capped at 420px
+  const sz=Math.min(420,Math.max(220,Math.round(window.innerHeight*0.40)));
   try{new QRCode(wrap,{text:_qrUrl(curActiveCode),width:sz,height:sz,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
 }
 
@@ -12601,31 +12643,25 @@ function _updateProjFeed(){
   const newOnes=Object.values(attendees||{}).filter(a=>!a.absent&&!_projFeedSeen.has(a.studentNo));
   newOnes.forEach(a=>_projFeedSeen.add(a.studentNo));
   if(!newOnes.length)return;
-  const sessObj=activeSessions.find(s=>s.code===curActiveCode)||{};
-  const sessLoc=_sessLocCache[curActiveCode]||null;
-  const sessStart=sessObj.startTime||0;
-  const sessEnd=sessObj.endTime||0;
   newOnes.forEach(a=>{
-    const _pfSn=a.studentName;const _pfName=typeof _pfSn==='string'?_pfSn:(_pfSn?.name||'');
-    const vst=attVerifyStatus(a,sessLoc,sessStart,sessEnd);
-    const vs=statusStyle(vst);
-    const distTxt=(a._distM!=null&&vst==='present_far')?` · ${a._distM}m`:'';
+    const _pfSn=a.studentName;
+    const _pfName=typeof _pfSn==='string'?_pfSn:(_pfSn?.name||_pfSn?.ad||'');
+    // Mark all existing cards as "old"
+    feedList.querySelectorAll('.proj-success-card').forEach(c=>c.classList.add('old'));
     const li=document.createElement('li');
-    li.className='proj-feed-item';
-    li.style.borderLeft=`3px solid ${vs.color}`;
-    li.innerHTML=`<div class="pf-av" style="background:${_avBg(a.studentNo||_pfName)}">${_initials(_pfName)}</div>`+
-      `<div style="overflow:hidden;flex:1;min-width:0">`+
-        `<div class="pf-name">${esc(_pfName||'—')}</div>`+
-        `<div class="pf-no" style="display:flex;align-items:center;gap:5px">${esc(a.studentNo||'')}`+
-          `<span style="font-size:.68rem;color:${vs.color};font-weight:600">${vs.icon} ${vs.label}${distTxt}</span>`+
-        `</div>`+
+    li.className='proj-success-card';
+    li.innerHTML=
+      `<div class="psc-header">`+
+        `<span class="psc-icon">✅</span>`+
+        `<span class="psc-badge">Yoklama Başarılı</span>`+
       `</div>`+
-      `<div style="display:flex;flex-direction:column;align-items:center;gap:3px">`+
-        `<svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="2.5"/><circle cx="9" cy="9" r="8" fill="none" stroke="${vs.color}" stroke-width="2.5" stroke-dasharray="${vst==='absent'?'0':'50.3'}" stroke-dashoffset="${vst==='present_far'?'25':vst==='present_time'?'12':'0'}" stroke-linecap="round" transform="rotate(-90 9 9)"/></svg>`+
-        `<span style="font-size:.62rem;color:rgba(255,255,255,.45)">${a.timeStr||''}</span>`+
+      `<div class="psc-name">${esc(_pfName||'—')}</div>`+
+      `<div class="psc-sub">`+
+        `<span class="psc-no">${esc(a.studentNo||'')}</span>`+
+        `<span class="psc-time">${a.timeStr||''}</span>`+
       `</div>`;
     feedList.prepend(li);
-    while(feedList.children.length>15)feedList.removeChild(feedList.lastChild);
+    while(feedList.children.length>6)feedList.removeChild(feedList.lastChild);
   });
 }
 
@@ -13017,6 +13053,13 @@ async function addManualTask(){
 function _onShowProgramPanel(){
   _populateMtSorumluSelect();
 }
+// ── SEKME KAPANMA UYARISI ── yoklama onaylanmadan çıkılmaya çalışılırsa uyar
+window.addEventListener('beforeunload',function(e){
+  if(curActiveCode&&activeSessions.some(s=>s.code===curActiveCode&&!s.confirmed)){
+    e.preventDefault();
+    return e.returnValue='Aktif oturum var. Yoklama raporu alınmadan çıkmak istediğinizden emin misiniz?';
+  }
+});
 </script>
 
 <!-- ═══ TASK MODAL ═══ -->
