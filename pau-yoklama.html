@@ -278,6 +278,7 @@ select option{background:var(--bg2);color:var(--fg)}
 #proj-center-course-info{text-align:center;margin-bottom:10px;width:100%;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
 #proj-course-name{font-size:clamp(.85rem,1.5vw,1.3rem);font-weight:800;color:#fff;letter-spacing:.01em;margin-bottom:4px;line-height:1.3;text-align:center}
 #proj-date-info{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-bottom:0;text-align:center}
+#proj-prof-name{font-size:clamp(.78rem,1.25vw,1.05rem);font-weight:700;color:#60bfff;letter-spacing:.02em;margin-bottom:4px;text-align:center;line-height:1.3}
 #proj-ring-area{position:relative;display:flex;align-items:center;justify-content:center;margin:10px 0 10px 0}
 #proj-ring-svg{width:clamp(80px,11vh,130px);height:clamp(80px,11vh,130px)}
 #proj-ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
@@ -320,7 +321,7 @@ select option{background:var(--bg2);color:var(--fg)}
 #proj-system-badge .ps-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:projBlink 1.8s ease-in-out infinite;flex-shrink:0}
 #proj-system-badge span{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.05em}
 @keyframes projBlink{0%,100%{opacity:1}50%{opacity:.3}}
-#proj-right{display:flex;flex-direction:column;padding:40px 40px 40px 28px;border-left:1px solid rgba(255,255,255,.07)}
+#proj-right{display:flex;flex-direction:column;padding:18px 22px 18px 18px;border-left:1px solid rgba(255,255,255,.07)}
 #proj-right-header{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.16em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 #proj-right-header::before{content:'';width:7px;height:7px;border-radius:50%;background:#4ade80;animation:projBlink 1.8s ease-in-out infinite;flex-shrink:0}
 #proj-feed{flex:1;overflow:hidden}
@@ -342,6 +343,28 @@ select option{background:var(--bg2);color:var(--fg)}
 .proj-success-card .psc-no{font-size:.7rem;color:rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
 .proj-success-card .psc-time{font-size:.68rem;color:#4ade80;font-weight:600;font-variant-numeric:tabular-nums}
 @keyframes successCardIn{from{opacity:0;transform:translateY(-18px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* Kayıtlı öğrenci listesi (sağ sütun roster) */
+#proj-feed{flex:1;overflow-y:auto;overflow-x:hidden;padding-right:2px}
+/* Stats bar */
+#proj-roster-stats{display:flex;gap:0;margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.prs-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;gap:2px}
+.prs-item:not(:last-child){border-right:1px solid rgba(255,255,255,.08)}
+.prs-present{background:rgba(74,222,128,.12)}
+.prs-absent{background:rgba(239,68,68,.08)}
+.prs-total{background:rgba(255,255,255,.04)}
+.prs-item .prs-count{font-size:1.4rem;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.prs-present .prs-count{color:#4ade80}
+.prs-absent .prs-count{color:#f87171}
+.prs-total .prs-count{color:rgba(255,255,255,.7)}
+.prs-item .prs-label{font-size:.58rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+/* Section header */
+.proj-sec-hdr{font-size:.6rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin:8px 0 5px 2px}
+/* 3-col grid */
+.proj-roster-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:4px}
+.pri-chip{display:flex;align-items:center;justify-content:center;padding:5px 3px;border-radius:8px;font-size:.68rem;font-weight:700;text-align:center;letter-spacing:.02em;transition:background .3s,border-color .3s}
+.pri-chip.pri-present{background:rgba(74,222,128,.18);border:1px solid rgba(74,222,128,.4);color:#4ade80}
+.pri-chip.pri-absent{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4)}
+#proj-right-header .pri-counts{font-size:.65rem;color:rgba(255,255,255,.4);margin-left:auto;font-weight:400;letter-spacing:0}
 /* ── STATS PAGE ── */
 #view-stats .stat-course-sel{width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--fg);font-size:.88rem;margin-bottom:14px}
 .stat-card{background:var(--bg2);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,56,101,.08)}
@@ -2709,6 +2732,7 @@ input:focus,select:focus,textarea:focus{
       <!-- Ders adı ve tarih -->
       <div id="proj-center-course-info">
         <div id="proj-course-name">—</div>
+        <div id="proj-prof-name">—</div>
         <div id="proj-date-info">—</div>
       </div>
       <!-- Katılım halkası + istatistik -->
@@ -2779,17 +2803,57 @@ input:focus,select:focus,textarea:focus{
         <span>Sistem Aktif · Pamukkale Üniversitesi Tıp Fakültesi</span>
       </div>
     </div>
-    <!-- SAĞ SÜTUN: Canlı katılım akışı -->
+    <!-- SAĞ SÜTUN: Kayıtlı öğrenci listesi -->
     <div id="proj-right">
-      <div id="proj-right-header">Canlı Katılım</div>
-      <div id="proj-loc-badge" style="font-size:.64rem;color:rgba(255,255,255,.35);margin:-6px 0 10px 0;padding:5px 8px;background:rgba(255,255,255,.05);border-radius:8px;line-height:1.4">📍 Konum bekleniyor…</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-        <span style="font-size:.6rem;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#4ade80" stroke-width="2"/></svg>Konum+Saat ✓</span>
-        <span style="font-size:.6rem;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#facc15" stroke-width="2"/></svg>Saat ✓</span>
-        <span style="font-size:.6rem;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#fb923c" stroke-width="2"/></svg>Şüpheli</span>
+      <div id="proj-right-header">Kayıtlı Öğrenciler</div>
+      <div id="proj-roster-stats">
+        <div class="prs-item prs-present"><span class="prs-count" id="proj-rs-present">0</span><span class="prs-label">Katılan</span></div>
+        <div class="prs-item prs-absent"><span class="prs-count" id="proj-rs-absent">0</span><span class="prs-label">Katılmayan</span></div>
+        <div class="prs-item prs-total"><span class="prs-count" id="proj-rs-total">0</span><span class="prs-label">Toplam</span></div>
       </div>
+      <div id="proj-countdown" style="text-align:center;font-size:1.05rem;font-weight:800;letter-spacing:.04em;padding:10px 14px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6)">⏱ —</div>
+      <div id="proj-loc-badge" style="font-size:.64rem;color:rgba(255,255,255,.35);margin:-4px 0 8px 0;padding:5px 8px;background:rgba(255,255,255,.05);border-radius:8px;line-height:1.4">📍 Konum bekleniyor…</div>
       <div id="proj-feed">
-        <ul id="proj-feed-list"></ul>
+        <div id="proj-feed-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MANUEL ROSTER MODAL ═══ -->
+<div id="manuel-roster-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;overflow-y:auto;padding:20px 16px;box-sizing:border-box" onclick="if(event.target===this)closeManuelRoster()">
+  <div style="background:var(--bg2);border-radius:16px;max-width:640px;margin:0 auto;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)">
+    <!-- Header -->
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)">
+      <div>
+        <div style="font-size:1rem;font-weight:800">📋 Yoklama Yönetimi</div>
+        <div id="mnr-sub" style="font-size:.72rem;color:var(--fg2);margin-top:3px">—</div>
+      </div>
+      <button onclick="closeManuelRoster()" style="background:none;border:none;font-size:1.6rem;cursor:pointer;color:var(--fg2);line-height:1;padding:4px 8px">×</button>
+    </div>
+    <!-- Search -->
+    <div style="padding:10px 16px;border-bottom:1px solid var(--border)">
+      <input id="mnr-search" placeholder="🔍 Öğrenci no veya ad ile ara…" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg);font-size:.85rem" oninput="filterManuelRoster()">
+    </div>
+    <!-- Student list -->
+    <div id="mnr-list" style="max-height:55vh;overflow-y:auto;padding:12px 16px 4px"></div>
+    <!-- Quick single-add form -->
+    <div style="padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--bg3)">
+      <div style="font-size:.68rem;font-weight:800;color:var(--pau-285c,#0072ce);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">⚠️ İstisna — Tek Öğrenci Ekle</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <input id="mnr-no" inputmode="numeric" placeholder="Öğrenci No" style="flex:1;min-width:100px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg);font-size:.82rem" oninput="mnrLookup(this.value)">
+        <input id="mnr-name" placeholder="Ad Soyad" style="flex:2;min-width:130px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg);font-size:.82rem">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="mnr-reason" style="flex:1;min-width:150px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg);font-size:.82rem">
+          <option value="phone">📱 Telefon arızası</option>
+          <option value="battery">🔋 Şarj bitti</option>
+          <option value="late">⏰ Sisteme geç kaldı</option>
+          <option value="network">📶 İnternet erişimi yoktu</option>
+          <option value="other">✏️ Diğer</option>
+        </select>
+        <button class="btn bp bsm" onclick="mnrManualAdd()">✓ Ekle</button>
+        <button class="btn bg bsm" onclick="closeManuelRoster()">İptal</button>
       </div>
     </div>
   </div>
@@ -2956,11 +3020,11 @@ input:focus,select:focus,textarea:focus{
     </div>
     <div class="form-row">
       <label>Oturum Kodu</label>
-      <input id="st-code" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code2').value=this.value;if(this.value.length===6)_autoDetectSessionMode(this.value)" placeholder="6 haneli kod">
+      <input id="st-code" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code2').value=this.value;if(this.value.length===6){_autoDetectSessionMode(this.value);const sno=document.getElementById('st-no');if(sno&&!sno.value)sno.focus();}" placeholder="6 haneli kod">
     </div>
     <div class="form-row">
       <label>Öğrenci No</label>
-      <input id="st-no" inputmode="numeric" placeholder="xx270xxx" oninput="lookupSt(this.value)">
+      <input id="st-no" inputmode="numeric" maxlength="8" placeholder="Öğrenci No" onkeydown="if(event.key==='Backspace'&&this.value.endsWith('270')&&this.value.length===5){event.preventDefault();this.value=this.value.slice(0,2);}" oninput="lookupSt(_auto270(this));if(this.value.length===8){const p=document.getElementById('st-pin');if(p&&!p.value)p.focus();}">
     </div>
     <div id="st-stu-info" style="display:none;margin:-4px 0 8px;padding:7px 12px;background:color-mix(in srgb,var(--ok) 13%,transparent);border-left:3px solid var(--ok);border-radius:6px;font-size:.8rem;line-height:1.5"><span id="st-stu-info-name" style="font-weight:600;color:var(--ok)"></span><span id="st-stu-info-dept" style="color:var(--fg2)"></span></div>
     <div class="form-row">
@@ -2969,7 +3033,7 @@ input:focus,select:focus,textarea:focus{
     </div>
     <div class="form-row" id="st-pin-row">
       <label>PIN (tahtadaki 4 haneli kod)</label>
-      <input id="st-pin" inputmode="numeric" maxlength="4" placeholder="0000">
+      <input id="st-pin" inputmode="numeric" maxlength="4" placeholder="0000" oninput="if(this.value.length===4){const vc=document.getElementById('st-vcode');if(vc)vc.focus();}">
     </div>
     <div class="form-row">
       <label>🔡 Ekran Kodu <span style="font-size:.72rem;color:var(--fg3);font-weight:400">(hocanın ekranındaki 3 harf)</span></label>
@@ -3028,11 +3092,11 @@ input:focus,select:focus,textarea:focus{
     <!-- Adım 1: Oturum kodu + Öğrenci no -->
     <div class="form-row">
       <label>Oturum Kodu</label>
-      <input id="st-code2" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code').value=this.value;if(this.value.length===6)_autoDetectSessionMode(this.value)" placeholder="6 haneli kod">
+      <input id="st-code2" maxlength="6" style="text-transform:uppercase;font-weight:700;letter-spacing:.1em;font-size:1.1rem" oninput="this.value=this.value.toUpperCase();document.getElementById('st-code').value=this.value;if(this.value.length===6){_autoDetectSessionMode(this.value);const sno2=document.getElementById('st-no2');if(sno2&&!sno2.value)sno2.focus();}" placeholder="6 haneli kod">
     </div>
     <div class="form-row">
       <label>Öğrenci No</label>
-      <input id="st-no2" inputmode="numeric" placeholder="xx270xxx" oninput="lookupSt2(this.value)">
+      <input id="st-no2" inputmode="numeric" maxlength="8" placeholder="Öğrenci No" onkeydown="if(event.key==='Backspace'&&this.value.endsWith('270')&&this.value.length===5){event.preventDefault();this.value=this.value.slice(0,2);}" oninput="lookupSt2(_auto270(this))">
     </div>
     <!-- Öğrenci bilgisi (no girince gösterilir) -->
     <div id="st-stu-info2" style="display:none;margin:-4px 0 14px;padding:10px 14px;background:color-mix(in srgb,var(--ok) 13%,transparent);border-left:3px solid var(--ok);border-radius:8px;font-size:.85rem;line-height:1.6">
@@ -3048,7 +3112,7 @@ input:focus,select:focus,textarea:focus{
     <div id="st-step2-fields" style="display:none">
       <div class="form-row" id="st-pin2-row">
         <label>PIN <span style="font-size:.72rem;color:var(--fg3);font-weight:400">(tahtadaki 4 haneli kod)</span></label>
-        <input id="st-pin2" inputmode="numeric" maxlength="4" placeholder="0000" style="font-size:1.3rem;font-weight:700;letter-spacing:.25em;text-align:center">
+        <input id="st-pin2" inputmode="numeric" maxlength="4" placeholder="0000" style="font-size:1.3rem;font-weight:700;letter-spacing:.25em;text-align:center" oninput="if(this.value.length===4){const vc=document.getElementById('st-vcode2');if(vc)vc.focus();}">
       </div>
       <div class="form-row" id="st-vcode2-row">
         <label>🔡 Ekran Kodu <span style="font-size:.72rem;color:var(--fg3);font-weight:400">(hocanın ekranındaki 3 harf)</span></label>
@@ -3244,6 +3308,20 @@ input:focus,select:focus,textarea:focus{
         <select id="new-course" onchange="_saveLastCourse(this.value);_onCourseChange()">
           <option value="">— Ders seçin —</option>
         </select>
+        <div style="margin-top:4px;font-size:.72rem;color:var(--fg3)">Dersiniz listede yok mu? <button type="button" onclick="_inlineCourseAdd()" style="background:none;border:none;color:var(--pau-285c);cursor:pointer;font-size:.72rem;font-weight:700;padding:0;text-decoration:underline">➕ Hızlı Ders Ekle</button></div>
+        <!-- Inline quick-add course form -->
+        <div id="inline-course-form" style="display:none;margin-top:10px;padding:12px;border:1.5px dashed var(--border);border-radius:10px;background:var(--bg3)">
+          <div style="font-weight:700;font-size:.82rem;margin-bottom:10px;color:var(--fg)">➕ Yeni Ders</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input id="icf-name" placeholder="Ders Adı *" maxlength="80" style="width:100%;box-sizing:border-box">
+            <input id="icf-code" placeholder="Ders Kodu (isteğe bağlı, örn. TIP401)" maxlength="20" style="width:100%;box-sizing:border-box">
+            <div id="icf-err" style="font-size:.74rem;color:var(--err);display:none"></div>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <button class="btn bg bsm" onclick="document.getElementById('inline-course-form').style.display='none'">İptal</button>
+              <button class="btn bp bsm" onclick="_saveInlineCourse()">💾 Kaydet & Seç</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="form-row">
         <label>🏟 Amfi / Derslik</label>
@@ -3414,6 +3492,7 @@ input:focus,select:focus,textarea:focus{
       <button class="btn bg bsm" onclick="exportCsv()">📊 CSV</button>
       <button class="btn bg bsm" onclick="generatePdf()">🖨 PDF</button>
       <button class="btn bg bsm" onclick="showAuditLog(curActiveCode)" title="Aktivite logu">📋 Log</button>
+      <button class="btn bd bsm" onclick="clearAttendance()" title="Tüm yoklama kayıtlarını sil" id="clear-att-btn">🗑 Kayıtları Sil</button>
     </div>
     <!-- Ortak hocalar -->
     <div id="act-cohosts" style="display:none;margin-top:10px;padding:8px 12px;background:color-mix(in srgb,var(--pau-blue) 8%,transparent);border:1px solid color-mix(in srgb,var(--pau-blue) 20%,transparent);border-radius:var(--rad-sm);font-size:.75rem;color:var(--fg2)"></div>
@@ -3689,25 +3768,91 @@ input:focus,select:focus,textarea:focus{
   </div>
   <!-- New course form -->
   <div class="card" id="new-course-card" style="display:none">
-    <div class="card-title">Yeni Ders Ekle</div>
-    <div class="form-grid">
-      <div class="form-row" style="margin:0"><label>Ders Adı *</label><input id="nc-name" placeholder="örn. Dahiliye Stajı"></div>
-      <div class="form-row" style="margin:0"><label>Ders Kodu</label><input id="nc-code" placeholder="örn. TIP401" maxlength="20"></div>
-    </div>
-    <div class="form-grid" style="margin-top:8px">
-      <div class="form-row" style="margin:0">
-        <label>Sorumlu Hoca</label>
-        <select id="nc-sorumlu">
-          <option value="">— Seçin —</option>
+    <div class="card-title">➕ Yeni Ders Ekle</div>
+    <!-- Dönem / Blok / DASK (sadece tıp fakültesi) -->
+    <div id="nc-task-section" style="display:none">
+      <div class="form-row">
+        <label>📅 Dönem</label>
+        <select id="nc-donem" onchange="_ncOnDonemChange()">
+          <option value="">— Dönem seçin —</option>
         </select>
       </div>
-      <div class="form-row" style="margin:0"><label>Bölüm / Birim</label><input id="nc-dept" placeholder="örn. Dahiliye AD" maxlength="60"></div>
+      <div class="form-row" id="nc-modul-row" style="display:none">
+        <label>📖 Modül / Konu</label>
+        <input id="nc-modul" placeholder="örn. Kardiyovasküler Sistem" maxlength="100">
+      </div>
+      <div class="form-row" id="nc-blok-row" style="display:none">
+        <label>🧩 Blok</label>
+        <select id="nc-blok" onchange="_ncOnBlokChange()">
+          <option value="">— Blok seçin —</option>
+        </select>
+      </div>
+      <div class="form-row" id="nc-final-row" style="display:none">
+        <label>📋 DASK</label>
+        <select id="nc-task">
+          <option value="">— DASK seçin —</option>
+        </select>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn bp" onclick="createCourse()">💾 Kaydet</button>
-      <button class="btn bg" onclick="hideNewCourse()">İptal</button>
+    <!-- Ders Adı -->
+    <div class="form-row">
+      <label>📚 Ders Adı</label>
+      <input id="nc-name" placeholder="örn. Dahiliye Stajı" maxlength="80">
     </div>
-    <div id="course-err" style="margin-top:6px"></div>
+    <!-- Öğretim Üyesi -->
+    <div class="form-row">
+      <label>👨‍🏫 Dersin Konusunu Anlatacak Öğretim Üyesi</label>
+      <select id="nc-sorumlu">
+        <option value="">— Öğretim üyesi seçin —</option>
+      </select>
+    </div>
+    <!-- Öğrenciler -->
+    <div id="nc-group-row" style="display:none">
+      <div class="form-row">
+        <label>👥 Derse Girecek Öğrenciler</label>
+        <div id="nc-group-btns" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+        <div id="nc-group-hint" style="font-size:.71rem;color:var(--fg3);margin-top:6px"></div>
+      </div>
+    </div>
+    <!-- Amfi -->
+    <div class="form-row">
+      <label>🏟 Amfi / Derslik</label>
+      <select id="nc-classroom">
+        <option value="">— Seçilmedi (konum kilidi yok) —</option>
+      </select>
+    </div>
+    <!-- Email bildirimi -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <input type="checkbox" id="nc-notify" checked style="width:auto">
+      <label for="nc-notify" style="margin:0;cursor:pointer;font-size:.85rem">📧 Bana da yoklama e-postası gelsin</label>
+    </div>
+    <!-- Gelişmiş Ayarlar -->
+    <button type="button" id="nc-adv-toggle" onclick="_ncToggleAdv()" style="background:none;border:none;color:var(--pau-285c);font-size:.78rem;font-weight:600;cursor:pointer;padding:4px 0;margin-bottom:2px;display:flex;align-items:center;gap:5px;width:auto">
+      <span id="nc-adv-arrow" style="transition:transform .2s">▶</span> Gelişmiş Ayarlar
+    </button>
+    <div id="nc-adv-section" style="display:none">
+      <div class="form-grid">
+        <div class="form-row">
+          <label>⏱ Yoklama süresi (dk)</label>
+          <input type="number" id="nc-att-dur" min="0" max="60" value="5" placeholder="5">
+        </div>
+        <div class="form-row">
+          <label>🕐 Ders süresi (dk)</label>
+          <input type="number" id="nc-dur" min="0" max="480" value="90" placeholder="90">
+        </div>
+      </div>
+      <div style="font-size:.71rem;color:var(--fg3);margin-top:-4px;margin-bottom:8px">⏱ Yoklama süresi dolunca QR/PIN kapanır · 🕐 Ders süresi dolunca oturum kapatılır · 0 = süresiz</div>
+      <div class="form-row" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="nc-pinreq" checked style="width:auto">
+        <label for="nc-pinreq" style="margin:0;cursor:pointer">🔢 PIN gerektir <span style="font-size:.68rem;color:var(--fg3)">(her 20 sn. değişir)</span></label>
+      </div>
+      <div class="form-row" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="nc-idreq" style="width:auto">
+        <label for="nc-idreq" style="margin:0;cursor:pointer">🪪 Kimlik doğrulama gerektir</label>
+      </div>
+    </div>
+    <div id="course-err" style="margin-bottom:10px"></div>
+    <button class="btn bp bfull" id="nc-btn" onclick="createCourse()">💾 Dersi Kaydet</button>
   </div>
   <!-- Blok Dönem Quick Start -->
   <div class="card" id="blok-quick-card" style="display:none">
@@ -3766,8 +3911,9 @@ input:focus,select:focus,textarea:focus{
       <button class="btn bg bsm" onclick="hideCourseDetail()">← Geri</button>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="btn bo bsm" onclick="showEditSorumlu()">✏️ Sorumlu Hoca Düzenle</button>
-      <button class="btn bd bsm" onclick="deleteCourse()">🗑 Dersi Sil</button>
+      <button class="btn bp bsm" onclick="_startCourseSession(curCourse)" style="font-weight:700">▶ Oturum Başlat</button>
+      <button class="btn bo bsm" onclick="showEditSorumlu()">✏️ Sorumlu Düzenle</button>
+      <button class="btn bd bsm" onclick="deleteCourse()">🗑 Sil</button>
     </div>
     <!-- Edit sorumlu inline -->
     <div id="edit-sorumlu-form" style="display:none;padding:12px;border:1px dashed var(--border);border-radius:var(--rad-sm);margin-bottom:12px">
@@ -4136,6 +4282,10 @@ input:focus,select:focus,textarea:focus{
           <select id="mt-sorumlu-pick" onchange="addMtSorumluChip(this)" style="border:none;background:transparent;color:var(--fg2);font-size:.82rem;padding:0;flex:1;min-width:120px;outline:none;cursor:pointer">
             <option value="">+ Hoca seç…</option>
           </select>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+          <input type="checkbox" id="mt-cc-me" style="width:auto;accent-color:var(--pau-285c)">
+          <label for="mt-cc-me" style="margin:0;cursor:pointer;font-size:.82rem;color:var(--fg2)">📧 Bana da gönder</label>
         </div>
       </div>
       <div id="mt-err"></div>
@@ -4898,6 +5048,9 @@ function updateNavBadges(){
     const showFab=isProfessor&&['student','session'].includes(curView);
     fab.classList.toggle('show',showFab);
   }
+  // Dersler nav (professors + admins)
+  const coursesNav=document.getElementById('nav-courses');
+  if(coursesNav)coursesNav.style.display=(isProfessor||isAdmin)?'':'none';
   // Calendar nav button
   const calNav=document.getElementById('nav-calendar');
   if(calNav)calNav.style.display=(isProfessor||isAdmin)?'':'none';
@@ -5421,40 +5574,105 @@ function renderTaskMatrix(taskSessions){
 
 function taskExcel(){
   if(!curTaskId||!tasks[curTaskId])return;
+  if(typeof XLSX==='undefined'){showToast('❌','XLSX yüklenemedi','','err',3500);return;}
   const task=tasks[curTaskId];
   const taskSessions=sessions.filter(s=>s.taskId===curTaskId).sort((a,b)=>a.startTime-b.startTime);
-  if(!taskSessions.length){alert('Bu task\'a ait oturum yok.');return;}
+  if(!taskSessions.length){showToast('ℹ️','Veri yok',"Bu DASK'a ait oturum yok.",'info',2500);return;}
+  // Öğrenci haritası
   const studentMap={};
   taskSessions.forEach(s=>{
     Object.entries(s.attendees||{}).forEach(([sid,att])=>{
       if(!studentMap[sid])studentMap[sid]={name:att.name||sid,no:att.no||'',dept:att.dept||''};
     });
   });
-  const students=Object.values(studentMap).sort((a,b)=>(a.name||'').localeCompare(b.name||'','tr'));
+  const stuEntries=Object.entries(studentMap).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   const taskLabel=`${task.donem||''} ${task.blokName||''} ${task.name||curTaskId}`.trim();
-  const sessLabels=taskSessions.map(s=>`${s.courseName||''}|${s.profName||''}|${new Date(s.startTime).toLocaleDateString('tr-TR')}`);
-  const rows=[];
-  rows.push(['Öğrenci No','Ad Soyad','ABD',...sessLabels,'Katılım','Devamsızlık','Devam %'].join('\t'));
-  students.forEach(st=>{
-    const sid=Object.keys(studentMap).find(k=>studentMap[k]===st)||'';
-    const cells=taskSessions.map(s=>(s.attendees&&s.attendees[sid]?.joined)?'1':'0');
-    const attended=cells.filter(c=>c==='1').length;
+  const now=new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  // ── Sayfa 1: Devamsızlık Matrisi ──────────────────────────────────────────
+  const sessHeaders=taskSessions.map(s=>{
+    const d=s.startTime?new Date(s.startTime):null;
+    return (s.courseName||'?')+'\n'+(s.profName||'')+'\n'+(d?d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'');
+  });
+  const mat=[];
+  mat.push(['PAU Tıp Fakültesi — Devamsızlık Matrisi']);
+  mat.push([taskLabel]);
+  mat.push(['Oluşturma: '+now+' | Toplam '+stuEntries.length+' öğrenci, '+taskSessions.length+' oturum']);
+  mat.push([]);
+  mat.push(['Sıra','Öğrenci No','Ad Soyad','ABD/Bölüm',...sessHeaders,'Katılım','Devamsızlık','Devam %']);
+  stuEntries.forEach(([sid,st],i)=>{
+    const cells=taskSessions.map(s=>(s.attendees&&s.attendees[sid]?.joined)?1:0);
+    const attended=cells.reduce((a,c)=>a+c,0);
     const absent=cells.length-attended;
     const pct=cells.length?Math.round(attended/cells.length*100):0;
-    rows.push([st.no||'',st.name,st.dept,...cells,attended,absent,pct+'%'].join('\t'));
+    mat.push([i+1,st.no||'',st.name,st.dept||'',...cells,attended,absent,pct]);
   });
-  rows.push('');
-  rows.push(['OTURUM BİLGİLERİ','','','Ders','Hoca','Tarih','Öğrenci'].join('\t'));
+  mat.push([]);
+  // Katılım ortalaması satırı
+  const avgRow=['','','','ORTALAMA'];
   taskSessions.forEach(s=>{
-    const cnt=s.attendees?Object.keys(s.attendees).length:0;
-    rows.push(['','','',s.courseName||'',s.profName||'',new Date(s.startTime).toLocaleDateString('tr-TR'),cnt].join('\t'));
+    const cnt=stuEntries.filter(([sid])=>s.attendees&&s.attendees[sid]?.joined).length;
+    avgRow.push(cnt);
   });
-  const blob=new Blob(['﻿'+rows.join('\n')],{type:'text/tab-separated-values;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`PAU_Yoklama_${taskLabel.replace(/\s+/g,'_')}.xls`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
+  const allPcts=stuEntries.map(([sid,st])=>{
+    const attended=taskSessions.filter(s=>s.attendees&&s.attendees[sid]?.joined).length;
+    return taskSessions.length?Math.round(attended/taskSessions.length*100):0;
+  });
+  const avgPct=allPcts.length?Math.round(allPcts.reduce((a,b)=>a+b,0)/allPcts.length):0;
+  const zeroAbs=stuEntries.filter(([sid])=>taskSessions.every(s=>!(s.attendees&&s.attendees[sid]?.joined))).length;
+  avgRow.push('','',avgPct);
+  mat.push(avgRow);
+  mat.push([]);
+  mat.push(['* 1 = Katıldı, 0 = Katılmadı   ** '+zeroAbs+' öğrenci hiç katılmadı']);
+
+  const ws1=XLSX.utils.aoa_to_sheet(mat);
+  ws1['!cols']=[{wch:5},{wch:14},{wch:30},{wch:22},...taskSessions.map(()=>({wch:16})),{wch:10},{wch:13},{wch:10}];
+  ws1['!rows']=[{hpt:18},{hpt:16},{hpt:14},{hpt:6},{hpt:52}]; // oturum başlık satırı yüksek (3 satır içerik)
+
+  // ── Sayfa 2: Oturum Özeti ─────────────────────────────────────────────────
+  const sum=[];
+  sum.push(['PAU Tıp Fakültesi — Oturum Özeti']);
+  sum.push([taskLabel]);
+  sum.push(['Oluşturma: '+now]);
+  sum.push([]);
+  sum.push(['#','Ders / Konu','Öğretim Üyesi','Tarih','Saat','Katılan','Devamsız','Katılım %']);
+  taskSessions.forEach((s,i)=>{
+    const d=s.startTime?new Date(s.startTime):null;
+    const katilan=s.attendees?Object.values(s.attendees).filter(a=>a.joined).length:0;
+    const toplam=stuEntries.length;
+    const devamsiz=toplam-katilan;
+    const pct=toplam?Math.round(katilan/toplam*100):0;
+    sum.push([i+1,s.courseName||'',s.profName||'',d?d.toLocaleDateString('tr-TR'):'',s.time||'',katilan,devamsiz,pct]);
+  });
+  sum.push([]);
+  sum.push(['','','','','GENEL',
+    taskSessions.reduce((a,s)=>a+(s.attendees?Object.values(s.attendees).filter(x=>x.joined).length:0),0),
+    '',
+    avgPct
+  ]);
+
+  const ws2=XLSX.utils.aoa_to_sheet(sum);
+  ws2['!cols']=[{wch:4},{wch:34},{wch:28},{wch:14},{wch:8},{wch:10},{wch:12},{wch:12}];
+
+  // ── Sayfa 3: Hiç Katılmayanlar ────────────────────────────────────────────
+  const neverJoined=stuEntries.filter(([sid])=>taskSessions.every(s=>!(s.attendees&&s.attendees[sid]?.joined)));
+  const nev=[];
+  nev.push(['PAU Tıp Fakültesi — Hiç Katılmayanlar']);
+  nev.push([taskLabel]);
+  nev.push(['Oluşturma: '+now+' | '+neverJoined.length+' öğrenci']);
+  nev.push([]);
+  nev.push(['Sıra','Öğrenci No','Ad Soyad','ABD/Bölüm','Devamsızlık (gün)']);
+  neverJoined.forEach(([,st],i)=>nev.push([i+1,st.no||'',st.name,st.dept||'',taskSessions.length]));
+
+  const ws3=XLSX.utils.aoa_to_sheet(nev);
+  ws3['!cols']=[{wch:5},{wch:14},{wch:30},{wch:22},{wch:18}];
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws1,'Devamsızlık Matrisi');
+  XLSX.utils.book_append_sheet(wb,ws2,'Oturum Özeti');
+  if(neverJoined.length)XLSX.utils.book_append_sheet(wb,ws3,'Hiç Katılmayanlar');
+  XLSX.writeFile(wb,`PAU_Yoklama_${taskLabel.replace(/[\s/\\:*?"<>|]/g,'_')}_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('✅','Excel İndirildi',`${stuEntries.length} öğrenci · ${taskSessions.length} oturum`,'ok',3000);
 }
 
 /* ── GENEL ONAY MODALI ── */
@@ -5675,11 +5893,12 @@ function listenClassrooms(){
   _poll('classrooms',60000,async()=>{try{const data=await fbGet('/classrooms');classrooms=data||{};_fillClassroomSelect();renderClassroomList();_seedClassroomsIfEmpty();}catch{}});
 }
 function _fillClassroomSelect(){
-  const sel=document.getElementById('new-classroom');if(!sel)return;
-  const cur=sel.value;
   const entries=Object.entries(classrooms).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
-  sel.innerHTML='<option value="">— Seçilmedi (konum kilidi yok) —</option>'+entries.map(([id,c])=>`<option value="${esc(id)}">${esc(c.name||id)}${c.building?' · '+esc(c.building):''}</option>`).join('');
-  if(cur)sel.value=cur;
+  const opts='<option value="">— Seçilmedi (konum kilidi yok) —</option>'+entries.map(([id,c])=>`<option value="${esc(id)}">${esc(c.name||id)}${c.building?' · '+esc(c.building):''}</option>`).join('');
+  const sel=document.getElementById('new-classroom');
+  if(sel){const cur=sel.value;sel.innerHTML=opts;if(cur)sel.value=cur;}
+  const ncSel=document.getElementById('nc-classroom');
+  if(ncSel){const cur=ncSel.value;ncSel.innerHTML='<option value="">— Seçilmedi —</option>'+entries.map(([id,c])=>`<option value="${esc(id)}">${esc(c.name||id)}${c.building?' · '+esc(c.building):''}</option>`).join('');if(cur)ncSel.value=cur;}
 }
 function _onClassroomChange(){
   const sel=document.getElementById('new-classroom');
@@ -7234,7 +7453,7 @@ function renderMyActiveSessions(){
         <div style="font-size:.8rem;color:var(--fg3);flex-shrink:0">→</div>
       </div>
       <div class="act-card-v2-actions">
-        <button class="act-card-v2-btn primary" onclick="openActiveSession(${codeQ})">📋 Detay &amp; Yoklama</button>
+        <button class="act-card-v2-btn primary" onclick="event.stopPropagation();openActiveSession(${codeQ})">📋 Detay &amp; Yoklama</button>
         <button class="act-card-v2-btn ghost" onclick="copyCode(${codeQ})">🔗 Kodu Kopyala</button>
         ${isAdmin?`<button class="act-card-v2-btn danger" onclick="deleteSession(${codeQ},${nameQ})">🗑</button>`:''}
       </div>
@@ -8181,6 +8400,26 @@ let _roundEkipStu={};  // {no: name} — seçilen ekibin öğrencileri
 let _roundEkipName=''; // seçilen ekip adı
 let _roundNum=0;       // tur sayacı
 
+async function clearAttendance(){
+  if(!curActiveCode)return;
+  const sess=activeSessions.find(s=>s.code===curActiveCode);
+  const name=sess?.courseName||sess?.name||curActiveCode;
+  if(!confirm(`"${name}" oturumunun TÜM yoklama kayıtları silinecek.\nBu işlem geri alınamaz.\n\nEmin misiniz?`))return;
+  try{
+    await fbDel('/sessions/'+curActiveCode+'/attendance');
+    attendees={};
+    renderAtt(curActiveCode);
+    const cntEl=document.getElementById('act-cnt');
+    if(cntEl)cntEl.textContent='0 kişi';
+    const badgeEl=document.getElementById('att-cnt-badge');
+    if(badgeEl)badgeEl.textContent='0';
+    updateProgressRing(0,Object.keys(courseStudents).length);
+    showToast('🗑','Kayıtlar Silindi','Tüm yoklama kayıtları temizlendi.','warn',3500);
+  }catch(e){
+    showToast('❌','Hata','Kayıtlar silinemedi: '+esc(e.message),'err',4000);
+  }
+}
+
 function openActiveSession(code){
   curActiveCode=code;
   nav('active'); // önce ekrana geç, veri yoksa boş görünür
@@ -8214,6 +8453,7 @@ function openActiveSession(code){
   }
   updateActiveHeader(sess);
   renderQr(code);
+  profListeners[code]=true;
   listenAtt(code);
   loadAbsenceHistory(sess);
   updatePin();
@@ -8963,19 +9203,35 @@ async function sendSessionEmail(sess){
   const openingProf=sess.profUid&&professors[sess.profUid]?professors[sess.profUid]
     :(sess.profEmail?Object.values(professors).find(p=>p.email===sess.profEmail):null)||null;
   const openingProfFull=openingProf?profFullName(openingProf):(sess.profName||sess.profEmail||'—');
-  const subject=`Yoklama Raporu — ${sess.name||''} (${dayN(sess.date)} ${fmtDate(sess.date)})`;
-  const taskLine=task?`Görev     : ${task.donem||''}${task.blokName?' · '+task.blokName:''}${task.name?' · '+task.name:''}`:null;
-  const body=`PAÜ Tıp Fakültesi — Yoklama Raporu
-
-Öğretim Üyesi : ${openingProfFull}
-Ders          : ${sess.courseName||course?.name||'—'}
-${taskLine?taskLine+'\n':''}Sorumlu       : ${sorumluFullNames.join(', ')||'—'}
-Tarih         : ${dayN(sess.date)} ${fmtDate(sess.date)}
-Saat          : ${sess.time||'—'}
-Katılan       : ${rows.length} öğrenci
-
-Katılan Öğrenciler:
-${list||'—'}`;
+  const subject=`${fmtDate(sess.date)} tarihli ${sess.courseName||course?.name||sess.name||''} yoklaması`;
+  const _GUNLER=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const gunFull=sess.date?_GUNLER[new Date(sess.date+'T12:00:00').getDay()]:'—';
+  const classroomName=sess.classroomName||(sess.classroomId&&classrooms[sess.classroomId]?.name)||null;
+  const absentRows=Object.values(att).filter(a=>a.absent&&!a.groupStart);
+  const absentList=absentRows.length?absentRows.map((a,i)=>`${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n'):'—';
+  const _sep='─'.repeat(44);
+  const _bodyLines=[
+    'PAÜ Tıp Fakültesi — Yoklama Raporu',
+    _sep,
+    `Öğretim Üyesi  : ${openingProfFull}`,
+    `DASK Sorumlusu : ${sorumluFullNames.join(', ')||'—'}`,
+    `Ders           : ${sess.courseName||course?.name||'—'}`,
+    task?.donem?`Dönem          : ${task.donem}`:null,
+    task?.blokName?`Blok           : ${task.blokName}`:null,
+    task?.name?`DASK           : ${task.name}`:null,
+    `Tarih          : ${fmtDate(sess.date)}`,
+    `Gün            : ${gunFull}`,
+    `Saat           : ${sess.time||'—'}`,
+    `Sınıf / Amfi   : ${classroomName||'—'}`,
+    _sep,
+    `Katılan        : ${rows.length} öğrenci`,
+    `Devamsız       : ${absentRows.length} öğrenci`,
+    '',
+    `► Katılan Öğrenciler (${rows.length}):`,
+    list||'—',
+  ].filter(l=>l!==null);
+  if(absentRows.length){_bodyLines.push('',`► Devamsız Öğrenciler (${absentRows.length}):`,absentList);}
+  const body=_bodyLines.join('\n');
 
   // Alıcılar: dersi açan hoca (onayladıysa) + admin e-postaları + task sorumluları
   const recipients=new Set();
@@ -9018,15 +9274,25 @@ async function testEmail(){
 }
 
 /* ── ATTENDANCE LISTENER ── */
+let _attFirstLoad=true;// ilk yüklemede toast gösterme
 function listenAtt(code){
   _prevAttKeys=new Set();// reset on new session
+  _attFirstLoad=true;// ilk poll sessiz geçsin
   _poll('att-'+code,3000,async()=>{
     try{
       const d=await fbGet('/sessions/'+code+'/attendance');
       attendees=d||{};
-      checkNewAttendees();// ← live toast for prof
+      if(_attFirstLoad){
+        // İlk yükleme: mevcut kayıtları "zaten bilinen" say, toast atma
+        _prevAttKeys=new Set(Object.keys(attendees));
+        _attFirstLoad=false;
+      } else {
+        checkNewAttendees();// ← live toast for prof (sadece sonraki pollarda)
+      }
       renderAtt(code);
       if(_roundModeActive)renderRoundStudents();
+      // Roster modal açıksa güncelle
+      if(document.getElementById('manuel-roster-overlay')?.style.display==='block')renderManuelRoster();
       const presentCnt=Object.values(attendees).filter(a=>!a.absent).length;
       const total=Object.keys(courseStudents).length;
       document.getElementById('act-cnt').textContent=presentCnt+(total?' / '+total:'')+' kişi';
@@ -9267,9 +9533,195 @@ function delAtt(code,no){
   });
 }
 function showManualAdd(){
-  ['paste-add','group-add'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('manual-add').style.display='block';
-  document.getElementById('ma-no').focus();
+  showManuelRoster();
+}
+function showManuelRoster(){
+  const overlay=document.getElementById('manuel-roster-overlay');
+  if(!overlay)return;
+  const sub=document.getElementById('mnr-sub');
+  if(sub){
+    const sess=activeSessions.find(s=>s.code===curActiveCode);
+    sub.textContent=(sess?.courseName||sess?.courseId||'Aktif Oturum')+' · '+( curActiveCode||'');
+  }
+  overlay.style.display='block';
+  document.body.style.overflow='hidden';
+  renderManuelRoster();
+}
+function closeManuelRoster(){
+  const overlay=document.getElementById('manuel-roster-overlay');
+  if(overlay)overlay.style.display='none';
+  document.body.style.overflow='';
+}
+function renderManuelRoster(){
+  const all=Object.entries(courseStudents||{});
+  const att=attendees||{};
+  const katilan=[],rejected=[],katilmayan=[];
+  all.forEach(([no,name])=>{
+    const a=att[no];
+    if(a&&!a.absent){
+      if(a.idVerified===false) rejected.push({no,name,a});
+      else katilan.push({no,name,a});
+    } else {
+      katilmayan.push({no,name});
+    }
+  });
+  Object.entries(att).forEach(([no,a])=>{
+    if(a&&!a.absent&&!courseStudents[no]){
+      if(a.idVerified===false) rejected.push({no,name:a.studentName||no,a});
+      else katilan.push({no,name:a.studentName||no,a});
+    }
+  });
+  const sub=document.getElementById('mnr-sub');
+  if(sub){
+    const sess=activeSessions.find(s=>s.code===curActiveCode);
+    sub.textContent=(sess?.courseName||sess?.courseId||'Aktif Oturum')+' — '+(katilan.length+rejected.length)+' katılan · '+katilmayan.length+' katılmayan · '+all.length+' kayıtlı';
+  }
+  const list=document.getElementById('mnr-list');
+  if(!list)return;
+
+  // Sol sütun: katılanlar satırı
+  const _resolveName=(no,name)=>{
+    const raw=name||courseStudents[no]||lookupName(no)||'';
+    return typeof raw==='string'?raw:(raw?.name||String(raw||''));
+  };
+  const _reasonLabel=(r)=>({phone:'📵 Telefon',battery:'🔋 Pil',late:'⏰ Geç geldi',network:'📶 İnternet',other:'📝 Diğer'}[r]||r||'');
+  const leftRow=(no,name,time,type,isManual,reason)=>{
+    const nameStr=_resolveName(no,name);
+    const icon=type==='red'?'🔴':'✅';
+    const timeHtml=time?`<div style="font-size:.65rem;color:var(--fg3);margin-top:1px">${esc(time)}</div>`:'';
+    const manuelBadge=isManual?`<span style="font-size:.58rem;background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);border-radius:4px;padding:1px 5px;flex-shrink:0;white-space:nowrap">Manuel${reason?' · '+_reasonLabel(reason):''}</span>`:'';
+    return `<div class="mnr-row mnr-left" data-no="${esc(no)}" data-name="${esc((nameStr||'').toLowerCase())}"
+      style="display:flex;align-items:center;gap:6px;padding:5px 8px;margin-bottom:3px;border-radius:8px;
+             background:${type==='red'?'rgba(239,68,68,.07)':'rgba(74,222,128,.07)'};
+             border:1px solid ${type==='red'?'rgba(239,68,68,.25)':'rgba(74,222,128,.25)'}">
+      <span style="font-size:.8rem;flex-shrink:0">${icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.75rem;font-weight:700;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(no)}</div>
+        <div style="font-size:.68rem;color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(nameStr)}</div>
+        ${manuelBadge}${timeHtml}
+      </div>
+      <button class="btn bd" style="padding:2px 7px;font-size:.7rem;flex-shrink:0;border-radius:6px" onclick="mnrRemove(${attrJ(no)},${attrJ(nameStr)})">✕</button>
+    </div>`;
+  };
+
+  // Sağ sütun: katılmayanlar satırı
+  const rightRow=(no,name)=>{
+    const nameStr=_resolveName(no,name);
+    return `<div class="mnr-row mnr-right" data-no="${esc(no)}" data-name="${esc((nameStr||'').toLowerCase())}"
+      style="display:flex;align-items:center;gap:6px;padding:5px 8px;margin-bottom:3px;border-radius:8px;
+             background:rgba(0,0,0,0);border:1px solid var(--border)">
+      <span style="font-size:.8rem;flex-shrink:0">⚫</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.75rem;font-weight:700;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(no)}</div>
+        <div style="font-size:.68rem;color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(nameStr)}</div>
+      </div>
+      <button class="btn bp" style="padding:2px 7px;font-size:.7rem;flex-shrink:0;border-radius:6px" onclick="mnrAddDialog(${attrJ(no)},${attrJ(nameStr)})">+</button>
+    </div>`;
+  };
+
+  const leftItems=[...katilan.map(({no,name,a})=>leftRow(no,a.studentName||name,a.timeStr||'','katilan',a.manual,a.manualReason)),
+                   ...rejected.map(({no,name,a})=>leftRow(no,a.studentName||name,a.timeStr||'','red',a.manual,a.manualReason))];
+  const rightItems=katilmayan.map(({no,name})=>rightRow(no,name));
+
+  const leftHdr=`<div style="font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#4ade80;padding:4px 2px 6px;border-bottom:1px solid rgba(74,222,128,.2);margin-bottom:6px">
+    ✅ Katılanlar <span style="opacity:.7">(${leftItems.length})</span></div>`;
+  const rightHdr=`<div style="font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3);padding:4px 2px 6px;border-bottom:1px solid var(--border);margin-bottom:6px">
+    ⚫ Katılmayanlar <span style="opacity:.7">(${rightItems.length})</span></div>`;
+
+  list.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;height:100%">
+    <div id="mnr-col-left" style="padding:10px 8px 10px 12px;border-right:1px solid var(--border);overflow-y:auto">
+      ${leftHdr}${leftItems.length?leftItems.join(''):'<div style="font-size:.75rem;color:var(--fg3);padding:12px 4px;text-align:center">Henüz katılan yok</div>'}
+    </div>
+    <div id="mnr-col-right" style="padding:10px 12px 10px 8px;overflow-y:auto">
+      ${rightHdr}${rightItems.length?rightItems.join(''):'<div style="font-size:.75rem;color:var(--fg3);padding:12px 4px;text-align:center">Tüm öğrenciler katıldı 🎉</div>'}
+    </div>
+  </div>`;
+}
+function filterManuelRoster(){
+  const q=(document.getElementById('mnr-search')?.value||'').toLowerCase().trim();
+  document.querySelectorAll('#mnr-list .mnr-row').forEach(row=>{
+    const no=(row.dataset.no||'').toLowerCase();
+    const name=(row.dataset.name||'');
+    row.style.display=(!q||no.includes(q)||name.includes(q))?'':'none';
+  });
+}
+function mnrLookup(val){const n=lookupName(val);if(n)document.getElementById('mnr-name').value=n;}
+function mnrAddDialog(no,name){
+  document.getElementById('mnr-add-dlg')?.remove();
+  const resolvedName=name||courseStudents[no]||lookupName(no)||no;
+  const reasons=[
+    {v:'phone',l:'📵 Telefon / Teknik sorun'},
+    {v:'battery',l:'🔋 Pil bitti'},
+    {v:'late',l:'⏰ Geç geldi'},
+    {v:'network',l:'📶 İnternet sorunu'},
+    {v:'other',l:'📝 Diğer'},
+  ];
+  const dlg=document.createElement('div');
+  dlg.id='mnr-add-dlg';
+  dlg.style.cssText='position:fixed;inset:0;z-index:9300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)';
+  dlg.innerHTML=`<div style="background:var(--bg2);border-radius:16px;padding:22px 20px;width:min(300px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.5)">
+    <div style="font-size:.95rem;font-weight:800;margin-bottom:4px">📋 Manuel Ekle</div>
+    <div style="font-size:.75rem;color:var(--fg2);margin-bottom:14px">${esc(no)}${resolvedName&&resolvedName!==no?' · '+esc(resolvedName):''}</div>
+    <div style="font-size:.72rem;font-weight:700;color:var(--fg2);margin-bottom:6px">Sebep seç</div>
+    <select id="mnr-add-reason" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:.82rem;margin-bottom:16px">
+      ${reasons.map(r=>`<option value="${r.v}">${r.l}</option>`).join('')}
+    </select>
+    <div style="display:flex;gap:8px">
+      <button class="btn bp" style="flex:1;padding:9px 0" onclick="mnrAddConfirm(${attrJ(no)},${attrJ(resolvedName)})">✓ Ekle</button>
+      <button class="btn bd" style="flex:1;padding:9px 0" onclick="document.getElementById('mnr-add-dlg').remove()">İptal</button>
+    </div>
+  </div>`;
+  document.body.appendChild(dlg);
+}
+function mnrAddConfirm(no,name){
+  const reason=document.getElementById('mnr-add-reason')?.value||'phone';
+  document.getElementById('mnr-add-dlg')?.remove();
+  mnrQuickAdd(no,name,reason);
+}
+async function mnrQuickAdd(no,name,reason){
+  reason=reason||'phone';
+  if(!curActiveCode){showToast('⚠️','Oturum yok','Aktif oturum seçilmedi.','warn',2500);return;}
+  const resolvedName=name||courseStudents[no]||lookupName(no)||no;
+  const now=new Date();const timeStr=now.toTimeString().slice(0,5);
+  const rec={studentNo:no,studentName:resolvedName,time:Date.now(),timeStr,manual:true,manualReason:reason,absent:false,addedBy:curUser?.email||''};
+  try{
+    await fbPut('/sessions/'+curActiveCode+'/attendance/'+no,rec);
+    _auditLog(curActiveCode,'att_manual',{studentNo:no,studentName:resolvedName,reason});
+    if(!attendees)attendees={};
+    attendees[no]=rec;
+    showToast('📝',resolvedName,'Manuel eklendi','warn',4000);
+    renderManuelRoster();
+  }catch(e){showToast('❌','Hata',String(e),'err');}
+}
+async function mnrRemove(no,name){
+  if(!curActiveCode)return;
+  const resolvedName=name||courseStudents[no]||lookupName(no)||no;
+  showConfirm('🗑','Yoklamadan Çıkar',`${resolvedName} yoklama listesinden çıkarılacak.`,'Çıkar',async()=>{
+    try{
+      await fbDel('/sessions/'+curActiveCode+'/attendance/'+no);
+      _auditLog(curActiveCode,'att_deleted',{studentNo:no,studentName:resolvedName});
+      if(attendees)delete attendees[no];
+      showToast('✅','Çıkarıldı',resolvedName,'ok',3000);
+      renderManuelRoster();
+    }catch(e){showToast('❌','Hata',String(e),'err');}
+  });
+}
+async function mnrManualAdd(){
+  const no=document.getElementById('mnr-no')?.value.trim();
+  const rawName=document.getElementById('mnr-name')?.value.trim();
+  const name=rawName||lookupName(no)||'';
+  const reason=document.getElementById('mnr-reason')?.value||'phone';
+  if(!curActiveCode||!no){showToast('⚠️','Eksik Bilgi','Öğrenci No zorunludur.','warn',3000);return;}
+  if(!name){showToast('⚠️','Eksik Bilgi','Ad Soyad zorunludur.','warn',3000);return;}
+  const now=new Date();const timeStr=now.toTimeString().slice(0,5);
+  try{
+    await fbPut('/sessions/'+curActiveCode+'/attendance/'+no,{studentNo:no,studentName:name,time:Date.now(),timeStr,manual:true,manualReason:reason,absent:false,addedBy:curUser?.email||''});
+    _auditLog(curActiveCode,'att_manual',{studentNo:no,studentName:name,reason});
+    showToast('📝',name,'Manuel eklendi','warn',4000);
+    if(document.getElementById('mnr-no'))document.getElementById('mnr-no').value='';
+    if(document.getElementById('mnr-name'))document.getElementById('mnr-name').value='';
+    renderManuelRoster();
+  }catch(e){showToast('❌','Hata',String(e),'err');}
 }
 function showPasteAdd(){
   ['manual-add','group-add'].forEach(id=>document.getElementById(id).style.display='none');
@@ -9975,6 +10427,19 @@ function lookupSt(no){
   if(n){_applyFoundName('st-name','st-stu-info','st-stu-info-name','st-stu-info-dept','st-pin',no,n);}
   else{_clearFoundName('st-name','st-stu-info');}
 }
+// Öğrenci no 270 otomatik ekleme — kullanıcı sadece 5 hane girer (XX+XXX), sistem "270" ortaya ekler
+function _auto270(el){
+  let v=el.value.replace(/\D/g,'');
+  let raw;
+  // "XX270YYY" formatındaysa gerçek haneleri çıkar
+  const m=v.match(/^(\d{1,2})270(\d{0,3})$/);
+  if(m){raw=(m[1]||'')+(m[2]||'');}
+  else{raw=v.replace(/270/g,'').slice(0,5);}
+  raw=raw.slice(0,5);
+  const full=raw.length>=2?raw.slice(0,2)+'270'+raw.slice(2):raw;
+  el.value=full;
+  return full; // XX270YYY formatında (lookup için)
+}
 function lookupSt2(no){
   const n=_stRosterName(no);
   const step2=document.getElementById('st-step2-fields');
@@ -10129,6 +10594,73 @@ async function quickBlokStart(){
 }
 /* ── /BLOK DÖNEM QUICK-START ── */
 
+function _startCourseSession(id){
+  if(!id)return;
+  nav('session');
+  setTimeout(()=>{
+    const sel=document.getElementById('new-course');
+    if(sel&&sel.querySelector('option[value="'+id+'"]')){
+      sel.value=id;
+      _saveLastCourse(id);
+      _onCourseChange();
+    }
+    // Pre-fill session form with saved course settings
+    const c=courses[id];
+    if(c){
+      // Classroom
+      const clSel=document.getElementById('new-classroom');
+      if(clSel&&c.classroom){clSel.value=c.classroom;_onClassroomChange();}
+      // Attendance duration
+      const attDurEl=document.getElementById('new-att-dur');
+      if(attDurEl&&c.attDur!=null)attDurEl.value=c.attDur;
+      // Session duration
+      const durEl=document.getElementById('new-dur');
+      if(durEl&&c.dur!=null)durEl.value=c.dur;
+      // PIN required
+      const pinEl=document.getElementById('new-pinreq');
+      if(pinEl&&c.pinreq!=null)pinEl.checked=!!c.pinreq;
+      // ID required
+      const idEl=document.getElementById('new-idreq');
+      if(idEl&&c.idreq!=null)idEl.checked=!!c.idreq;
+    }
+    const card=document.getElementById('new-sess-card');
+    if(card)card.scrollIntoView({behavior:'smooth',block:'start'});
+  },120);
+}
+function _inlineCourseAdd(){
+  const form=document.getElementById('inline-course-form');
+  if(!form)return;
+  const open=form.style.display==='none'||!form.style.display;
+  form.style.display=open?'block':'none';
+  if(open){const n=document.getElementById('icf-name');if(n)setTimeout(()=>n.focus(),50);}
+}
+async function _saveInlineCourse(){
+  const nameEl=document.getElementById('icf-name');
+  const codeEl=document.getElementById('icf-code');
+  const errEl=document.getElementById('icf-err');
+  const name=(nameEl?.value||'').trim();
+  if(!name){if(errEl){errEl.textContent='Ders adı zorunlu.';errEl.style.display='block';}return;}
+  if(errEl)errEl.style.display='none';
+  try{
+    const id='c'+Date.now();
+    const code=(codeEl?.value||'').trim()||null;
+    const dept=(curUser?.dept||null);
+    const uid=curUser?.uid||null;
+    const cname=curUser?.name||null;
+    const cemail=curUser?.email||null;
+    const data={name,code,dept,sorumlulUid:uid,sorumlulName:cname,sorumlulEmail:cemail,students:{}};
+    const resp=await fetch(FB_CFG.databaseURL+'/courses/'+id+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    courses[id]=data;
+    populateCourseSelect();
+    const sel=document.getElementById('new-course');
+    if(sel){sel.value=id;_saveLastCourse(id);_onCourseChange();}
+    document.getElementById('inline-course-form').style.display='none';
+    if(nameEl)nameEl.value='';
+    if(codeEl)codeEl.value='';
+    showToast('✅','Ders Eklendi',name,'ok',2500);
+  }catch(e){if(errEl){errEl.textContent='Kaydedilemedi: '+e.message;errEl.style.display='block';}}
+}
 function renderCourses(){
   const list=document.getElementById('clist');if(!list)return;
   const entries=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
@@ -10137,46 +10669,228 @@ function renderCourses(){
     const cnt=c.students?Object.keys(c.students).length:0;
     const sorumlu=c.sorumlulUid&&professors[c.sorumlulUid]?professors[c.sorumlulUid].name:(c.sorumlulName||'—');
     const meta=[c.code,c.dept,cnt+' öğrenci','Sorumlu: '+sorumlu].filter(Boolean).join(' · ');
-    return`<li class="lrow" style="cursor:pointer" onclick="showCourseDetail('${id}')">
-      <div class="lname">
+    return`<li class="lrow">
+      <div class="lname" style="cursor:pointer;flex:1;min-width:0" onclick="showCourseDetail('${id}')">
         <div class="n">${esc(c.name)}</div>
         <div class="m">${esc(meta)}</div>
       </div>
-      <span style="color:var(--fg2)">›</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <button class="btn bp bsm" style="font-size:.72rem;padding:4px 10px;white-space:nowrap" onclick="_startCourseSession('${id}')">▶ Başlat</button>
+        <span style="color:var(--fg2);cursor:pointer" onclick="showCourseDetail('${id}')">›</span>
+      </div>
     </li>`;
   }).join('');
 }
+// ── Yeni Ders Ekle — state & helpers ──────────────────────────────────────
+let _ncSelGroups=new Set();
+let _ncGrpData={};
+
+function _ncFillDonem(){
+  const FIXED_DONEMS=['Dönem 1','Dönem 2','Dönem 3','Dönem 4','Dönem 5'];
+  const taskDonems=Object.values(tasks).map(t=>t.donem||'').filter(Boolean);
+  const donems=[...new Set([...FIXED_DONEMS,...taskDonems])].sort((a,b)=>a.localeCompare(b,'tr'));
+  const sel=document.getElementById('nc-donem');
+  if(!sel)return;
+  sel.innerHTML='<option value="">— Dönem seçin —</option>'+donems.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
+  const sec=document.getElementById('nc-task-section');
+  if(sec)sec.style.display=(curUserFaculty==='tip')?'block':'none';
+}
+
+function _ncOnDonemChange(){
+  const donem=(document.getElementById('nc-donem')?.value||'').trim();
+  const modulRow=document.getElementById('nc-modul-row');
+  const blokRow=document.getElementById('nc-blok-row');
+  const finalRow=document.getElementById('nc-final-row');
+  const isD123=donem&&/^Dönem [123]$/.test(donem);
+  const isD45=donem&&/^Dönem [45]$/.test(donem);
+  if(modulRow)modulRow.style.display=isD123?'block':'none';
+  if(blokRow)blokRow.style.display=isD45?'block':'none';
+  if(finalRow)finalRow.style.display='none';
+  if(isD45){
+    // Populate blok select
+    const blokSel=document.getElementById('nc-blok');
+    if(blokSel){
+      const bloks=[...new Set(Object.values(tasks).filter(t=>t.donem===donem&&t.blokName).map(t=>t.blokName))].sort((a,b)=>a.localeCompare(b,'tr'));
+      blokSel.innerHTML='<option value="">— Blok seçin —</option>'+bloks.map(b=>`<option value="${esc(b)}">${esc(b)}</option>`).join('');
+    }
+  }
+  _ncApplyGroupFilter(donem);
+}
+
+function _ncOnBlokChange(){
+  const donem=(document.getElementById('nc-donem')?.value||'').trim();
+  const blok=(document.getElementById('nc-blok')?.value||'').trim();
+  const finalRow=document.getElementById('nc-final-row');
+  const taskSel=document.getElementById('nc-task');
+  if(!blok||!finalRow||!taskSel){if(finalRow)finalRow.style.display='none';return;}
+  const filtered=Object.entries(tasks).filter(([,t])=>t.donem===donem&&t.blokName===blok);
+  taskSel.innerHTML='<option value="">— DASK seçin —</option>'+filtered.map(([id,t])=>`<option value="${esc(id)}">${esc(t.name||id)}</option>`).join('');
+  finalRow.style.display=filtered.length?'block':'none';
+}
+
+function _ncFillSorumlu(){
+  const sel=document.getElementById('nc-sorumlu');
+  if(!sel)return;
+  const profs=Object.entries(professors||{}).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
+  sel.innerHTML='<option value="">— Öğretim üyesi seçin —</option>'+profs.map(([uid,p])=>`<option value="${esc(uid)}">${esc(p.name||uid)}</option>`).join('');
+  // Eğer mevcut kullanıcı profesör ise onu seç
+  if(curUser?.uid&&professors[curUser.uid]){
+    sel.value=curUser.uid;
+  }
+}
+
+function _ncApplyGroupFilter(donem){
+  const row=document.getElementById('nc-group-row');
+  if(!row)return;
+  _ncSelGroups.clear();
+  if(!donem){_ncGrpData={};row.style.display='none';return;}
+  const dk=_dk(donem);
+  _ncGrpData={};
+  Object.entries(_allGrpData).forEach(([key,g])=>{if(g.dk===dk)_ncGrpData[key]=g;});
+  if(!Object.keys(_ncGrpData).length){row.style.display='none';return;}
+  _ncRenderGroupBtns();
+  row.style.display='';
+  _ncUpdateGroupHint();
+}
+
+function _ncRenderGroupBtns(){
+  const btns=document.getElementById('nc-group-btns');
+  if(!btns)return;
+  const allKeys=Object.keys(_ncGrpData);
+  const parentKeys=allKeys.filter(k=>!_ncGrpData[k].parentKey);
+  const childrenOf={};
+  allKeys.forEach(k=>{const pk=_ncGrpData[k].parentKey;if(pk){if(!childrenOf[pk])childrenOf[pk]=[];childrenOf[pk].push(k);}});
+  const mkBtn=(k,big=true)=>{
+    const g=_ncGrpData[k];const sel=_ncSelGroups.has(k);
+    const pad=big?'10px 22px':'7px 16px';const fs=big?'.95rem':'.85rem';
+    return `<button id="ncgb-${esc(k)}" onclick="_ncToggleGroup(${attrJ(k)},false)"
+      style="padding:${pad};font-size:${fs};font-weight:700;border-radius:10px;border:2px solid ${sel?'var(--pau-285c)':'var(--border)'};background:${sel?'var(--pau-285c)':'var(--bg2)'};color:${sel?'#fff':'var(--fg)'};cursor:pointer;transition:all .15s;white-space:nowrap">${esc(g.name)}</button>`;
+  };
+  let html='<div style="display:flex;flex-direction:column;gap:10px">';
+  const rendered=new Set();
+  parentKeys.forEach(pk=>{
+    rendered.add(pk);
+    const subs=(childrenOf[pk]||[]).sort();
+    if(subs.length){
+      const allSubSel=subs.every(k=>_ncSelGroups.has(k));
+      html+=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button id="ncgb-${esc(pk)}" onclick="_ncToggleGroup(${attrJ(pk)},false,'parent')"
+          style="padding:6px 14px;font-size:.8rem;font-weight:700;border-radius:8px;border:2px solid ${allSubSel?'var(--pau-288c)':'var(--border)'};background:${allSubSel?'var(--pau-288c)':'var(--bg3)'};color:${allSubSel?'#fff':'var(--fg2)'};cursor:pointer;transition:all .15s;white-space:nowrap">${esc(_ncGrpData[pk].name)}</button>
+        <span style="color:var(--fg3)">→</span>`;
+      subs.forEach(ck=>{rendered.add(ck);html+=mkBtn(ck,false);});
+      html+='</div>';
+    } else {
+      html+=`<div>${mkBtn(pk,true)}</div>`;
+    }
+  });
+  allKeys.filter(k=>!rendered.has(k)).forEach(k=>{html+=`<div>${mkBtn(k,true)}</div>`;});
+  const allSel=allKeys.length>0&&allKeys.every(k=>_ncSelGroups.has(k));
+  html+=`<div><button id="ncgb-all" onclick="_ncToggleGroup('',true)"
+    style="padding:10px 22px;font-size:.95rem;font-weight:700;border-radius:10px;border:2px solid ${allSel?'var(--pau-gold)':'var(--border)'};background:${allSel?'var(--pau-gold)':'var(--bg2)'};color:${allSel?'#fff':'var(--fg)'};cursor:pointer;transition:all .15s;white-space:nowrap">🏫 Tüm Sınıf</button></div>`;
+  html+='</div>';
+  btns.innerHTML=html;
+}
+
+function _ncToggleGroup(key,isAll,mode){
+  const allKeys=Object.keys(_ncGrpData);
+  if(isAll){
+    const allSel=allKeys.length>0&&allKeys.every(k=>_ncSelGroups.has(k));
+    if(allSel)_ncSelGroups.clear();else allKeys.forEach(k=>_ncSelGroups.add(k));
+  } else if(mode==='parent'){
+    const children=allKeys.filter(k=>_ncGrpData[k].parentKey===key);
+    if(children.length){
+      const allSel=children.every(k=>_ncSelGroups.has(k));
+      if(allSel)children.forEach(k=>_ncSelGroups.delete(k));else children.forEach(k=>_ncSelGroups.add(k));
+    } else {
+      if(_ncSelGroups.has(key))_ncSelGroups.delete(key);else _ncSelGroups.add(key);
+    }
+  } else {
+    if(_ncSelGroups.has(key))_ncSelGroups.delete(key);else _ncSelGroups.add(key);
+  }
+  _ncRenderGroupBtns();
+  _ncUpdateGroupHint();
+}
+
+function _ncUpdateGroupHint(){
+  const hint=document.getElementById('nc-group-hint');
+  if(!hint)return;
+  if(!_ncSelGroups.size){hint.textContent='';return;}
+  const names=[..._ncSelGroups].map(k=>_ncGrpData[k]?.name||k).join(' + ');
+  hint.textContent=`${names} seçildi`;
+}
+
 async function showNewCourse(){
   hideBlokQuick();
   document.getElementById('new-course-card').style.display='block';
-  try{
-    const r=await fetch(FB_CFG.databaseURL+'/professors.json');
-    const data=await r.json();
-    if(data&&typeof data==='object')professors=data;
-  }catch(e){}
-  _fillSorumluSelects();
+  _fillClassroomSelect();
+  _ncFillDonem();
+  _ncFillSorumlu();
+  // Reset cascade
+  const donemSel=document.getElementById('nc-donem');if(donemSel)donemSel.value='';
+  ['nc-modul-row','nc-blok-row','nc-final-row','nc-group-row'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  _ncSelGroups.clear();_ncGrpData={};
+  document.getElementById('nc-adv-section').style.display='none';
+  document.getElementById('nc-adv-arrow').style.transform='';
+  setMsg('course-err','','');
 }
 function hideNewCourse(){document.getElementById('new-course-card').style.display='none';}
+function _ncToggleAdv(){
+  const sec=document.getElementById('nc-adv-section');
+  const arr=document.getElementById('nc-adv-arrow');
+  if(!sec)return;
+  const open=sec.style.display==='none'||!sec.style.display;
+  sec.style.display=open?'block':'none';
+  if(arr)arr.style.transform=open?'rotate(90deg)':'';
+}
 async function createCourse(){
-  const name=document.getElementById('nc-name').value.trim();
+  const name=(document.getElementById('nc-name')?.value||'').trim();
   const code=(document.getElementById('nc-code')?.value||'').trim();
-  const dept=(document.getElementById('nc-dept')?.value||'').trim();
-  const sorumluSel=document.getElementById('nc-sorumlu');
-  const sorumlulUid=sorumluSel.value;
-  const sorumluOpt=sorumluSel.options[sorumluSel.selectedIndex];
-  const sorumlulName=sorumlulUid?sorumluOpt.dataset.name||'':'';
-  const sorumlulEmail=sorumlulUid?sorumluOpt.dataset.email||'':'';
+  const classroom=(document.getElementById('nc-classroom')?.value||'')||null;
+  const attDur=parseInt(document.getElementById('nc-att-dur')?.value||'5')||5;
+  const dur=parseInt(document.getElementById('nc-dur')?.value||'90')||90;
+  const pinreq=document.getElementById('nc-pinreq')?.checked!==false;
+  const idreq=!!document.getElementById('nc-idreq')?.checked;
+  const notify=!!document.getElementById('nc-notify')?.checked;
+  // Dönem / Blok / Task
+  const donem=(document.getElementById('nc-donem')?.value||'').trim()||null;
+  const blokName=(document.getElementById('nc-blok')?.value||'').trim()||null;
+  const taskId=(document.getElementById('nc-task')?.value||'').trim()||null;
+  const modul=(document.getElementById('nc-modul')?.value||'').trim()||null;
+  // Sorumlu
+  const sorumluUid=(document.getElementById('nc-sorumlu')?.value||'').trim()||null;
+  const sorumluProf=sorumluUid?professors[sorumluUid]:null;
+  const sorumlulUid=sorumluUid||curUser?.uid||null;
+  const sorumlulName=sorumluProf?.name||curUser?.name||null;
+  const sorumlulEmail=sorumluProf?.email||curUser?.email||null;
+  // Öğrenciler
+  const students={};
+  for(const gkey of _ncSelGroups){
+    const grp=_ncGrpData[gkey];
+    if(grp?.students)Object.entries(grp.students).forEach(([no,n])=>{students[no]=n;});
+  }
   if(!name){setMsg('course-err','alerr','Ders adı gerekli.');return;}
   setMsg('course-err','alinfo','Kaydediliyor…');
   try{
     const id='c'+Date.now();
-    const data={name,code:code||null,dept:dept||null,sorumlulUid:sorumlulUid||null,sorumlulName:sorumlulName||null,sorumlulEmail:sorumlulEmail||null,students:{}};
+    const dept=curUser?.dept||null;
+    const data={name,code:code||null,dept,donem,blokName,taskId,modul,sorumlulUid,sorumlulName,sorumlulEmail,classroom,attDur,dur,pinreq,idreq,notify,students};
     const dbUrl=FB_CFG.databaseURL+'/courses/'+id+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     courses[id]=data;
-    ['nc-name','nc-code','nc-dept'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
-    if(sorumluSel)sorumluSel.value='';
+    // Reset form
+    ['nc-name','nc-code','nc-modul'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    ['nc-donem','nc-blok','nc-task','nc-classroom','nc-sorumlu'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    ['nc-modul-row','nc-blok-row','nc-final-row','nc-group-row'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    _ncSelGroups.clear();_ncGrpData={};
+    const ncAtt=document.getElementById('nc-att-dur');if(ncAtt)ncAtt.value='5';
+    const ncDur=document.getElementById('nc-dur');if(ncDur)ncDur.value='90';
+    const ncPin=document.getElementById('nc-pinreq');if(ncPin)ncPin.checked=true;
+    const ncIdEl=document.getElementById('nc-idreq');if(ncIdEl)ncIdEl.checked=false;
+    const ncNot=document.getElementById('nc-notify');if(ncNot)ncNot.checked=true;
+    document.getElementById('nc-adv-section').style.display='none';
+    document.getElementById('nc-adv-arrow').style.transform='';
+    setMsg('course-err','','');
     populateCourseSelect();
     renderCourses();
     hideNewCourse();
@@ -10787,29 +11501,57 @@ async function myAttDownload(code){
     const attData=sess.attendance||await fbGet('/sessions/'+code+'/attendance')||{};
     if(typeof XLSX==='undefined'){showToast('❌','XLSX yüklenemedi','','err',3500);return;}
     const rows=Object.values(attData).sort((a,b)=>(a.time||0)-(b.time||0));
+    const katilan=rows.filter(a=>!a.absent).length;
+    const devamsiz=rows.filter(a=>a.absent).length;
+    const manuelSay=rows.filter(a=>a.manual).length;
     const cl=x=>(x||'').replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ ]/g,'').replace(/\s+/g,'_');
     const fn=`Yoklama_${cl(sess.name)}_${(sess.date||'').replace(/-/g,'')}.xlsx`;
-    // Başlık satırları
+    const now=new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    // ── Katılanlar sayfası ─────────────────────────────────────────────────
     const header=[
-      ['PAU Tıp Fakültesi — '+(sess.name||'')],
-      [dayN(sess.date)+' '+fmtDate(sess.date)+' '+(sess.time||'')+' — Hoca: '+(sess.profName||'')],
+      ['PAU Tıp Fakültesi — Yoklama Listesi'],
+      ['Ders: '+(sess.name||'—')+'   |   Tarih: '+dayN(sess.date)+' '+fmtDate(sess.date)+'   |   Saat: '+(sess.time||'—')],
+      ['Öğretim Üyesi: '+(sess.profName||'—')+'   |   Oturum Kodu: '+code],
+      ['Katılım: '+katilan+' öğrenci   |   Devamsız: '+devamsiz+'   |   Manuel: '+manuelSay+'   |   Oluşturma: '+now],
       [],
-      ['No','Öğrenci No','Ad Soyad','Saat','Tür','Kimlik']
+      ['Sıra','Öğrenci No','Ad Soyad','Giriş Saati','Tür','Kimlik Doğrulama']
     ];
     const dataRows=rows.map((a,i)=>[
       i+1,
       a.studentNo||'',
       a.studentName||'',
       a.timeStr||'',
-      a.manual?'Manuel':'QR',
-      a.idVerified?'Doğrulandı':'—'
+      a.manual?'Manuel':'QR/PIN',
+      a.idVerified?'✓ Doğrulandı':'—'
     ]);
-    const ws=XLSX.utils.aoa_to_sheet([...header,...dataRows]);
-    // Sütun genişlikleri
-    ws['!cols']=[{wch:5},{wch:14},{wch:30},{wch:10},{wch:10},{wch:12}];
+    // Özet satırı
+    const footer=[
+      [],
+      ['','','','','',''],
+      ['Toplam Katılan: '+katilan,'','Devamsız: '+devamsiz,'','QR: '+(katilan-manuelSay),'Manuel: '+manuelSay]
+    ];
+    const ws=XLSX.utils.aoa_to_sheet([...header,...dataRows,...footer]);
+    ws['!cols']=[{wch:5},{wch:14},{wch:32},{wch:12},{wch:12},{wch:18}];
+    ws['!rows']=[{hpt:18},{hpt:16},{hpt:14},{hpt:14},{hpt:6},{hpt:16}];
+    // ── Devamsızlar sayfası (varsa) ────────────────────────────────────────
+    const absentRows=rows.filter(a=>a.absent);
     const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'Yoklama');
+    XLSX.utils.book_append_sheet(wb,ws,'Katılanlar');
+    if(absentRows.length){
+      const absHeader=[
+        ['PAU Tıp Fakültesi — Devamsızlar'],
+        ['Ders: '+(sess.name||'—')+'   |   Tarih: '+dayN(sess.date)+' '+fmtDate(sess.date)],
+        ['Öğretim Üyesi: '+(sess.profName||'—')+'   |   Devamsız: '+absentRows.length+' öğrenci'],
+        [],
+        ['Sıra','Öğrenci No','Ad Soyad','ABD/Bölüm']
+      ];
+      const absData=absentRows.map((a,i)=>[i+1,a.studentNo||'',a.studentName||'',a.dept||'']);
+      const ws2=XLSX.utils.aoa_to_sheet([...absHeader,...absData]);
+      ws2['!cols']=[{wch:5},{wch:14},{wch:32},{wch:22}];
+      XLSX.utils.book_append_sheet(wb,ws2,'Devamsızlar');
+    }
     XLSX.writeFile(wb,fn);
+    showToast('✅','Excel İndirildi',`${katilan} katılan · ${devamsiz} devamsız`,'ok',3000);
   }catch(e){showToast('❌','Hata',String(e),'err',4000);}
 }
 
@@ -11578,7 +12320,8 @@ function resetStForm(){
 
 async function validateForScan(){
   const code=document.getElementById('st-code').value.trim().toUpperCase();
-  const no=document.getElementById('st-no').value.trim();
+  const no5v=document.getElementById('st-no').value.replace(/\D/g,'');
+  const no=no5v.length===5?no5v.slice(0,2)+'270'+no5v.slice(2):no5v;
   const name=document.getElementById('st-name').value.trim();
   const p=document.getElementById('st-pin').value.trim();
   const vc=(document.getElementById('st-vcode')?.value||'').trim().toUpperCase();
@@ -11757,18 +12500,47 @@ async function finalSubmitAtt(){
     setMsg('stmsg','alerr','Yoklama kaydedilemedi: '+esc(e.message));
   }
 }
+let _attConfirmed2=false;
 async function submitAtt2(){
   const code=document.getElementById('st-code2').value.trim().toUpperCase();
-  const no=document.getElementById('st-no2').value.trim();
+  const no5=document.getElementById('st-no2').value.replace(/\D/g,'');
+  const no=no5.length===5?no5.slice(0,2)+'270'+no5.slice(2):no5;
   // Ad soyad alanı gizli — roster'dan otomatik alınır
   const _rosterName2=_stRosterName(no);
   let name=_rosterName2||(document.getElementById('st-name2')?.value||'').trim();
   const msgEl='stmsg2',btnEl='stbtn2';
+  // Kimlik onay adımı — ilk tıklamada onayla
+  if(!_attConfirmed2){
+    if(!code||code.length!==6){setMsg(msgEl,'alerr','Geçerli oturum kodu girin.');return;}
+    if(!no){setMsg(msgEl,'alerr','Öğrenci no gerekli.');return;}
+    const step2El=document.getElementById('st-step2-fields');
+    const step2Shown=step2El&&step2El.style.display!=='none';
+    if(step2Shown){
+      const p2=(document.getElementById('st-pin2')?.value||'').trim();
+      const vc2=(document.getElementById('st-vcode2')?.value||'').trim();
+      if(!p2||p2.length!==4){setMsg(msgEl,'alerr','4 haneli PIN girin (tahtadaki kod).');return;}
+      if(!vc2||vc2.length!==3){setMsg(msgEl,'alerr','Hocanın ekranındaki 3 harfli kodu girin.');return;}
+    }
+    // Onay ekranını göster
+    _attConfirmed2=true;
+    const btn=document.getElementById(btnEl);
+    if(btn)btn.style.display='none';
+    document.getElementById(msgEl).innerHTML=`<div style="background:rgba(239,68,68,.12);border:1.5px solid rgba(239,68,68,.4);border-radius:12px;padding:14px 16px;margin-bottom:4px;text-align:center">`+
+      `<div style="font-size:.95rem;font-weight:800;color:#fff;margin-bottom:6px">Bu kişinin siz olduğunuza emin misiniz?</div>`+
+      (name?`<div style="font-size:.85rem;color:#4ade80;font-weight:700;margin-bottom:4px">${esc(name)}</div>`+`<div style="font-size:.72rem;color:rgba(255,255,255,.45);margin-bottom:10px">${esc(no)}</div>`:'')+
+      `<div style="font-size:.74rem;color:rgba(255,120,120,.85);margin-bottom:12px;line-height:1.5">⚠️ Başkasının yerine yoklamaya girmek disiplin suçudur.<br>Kimlik bilgileriniz ve konumunuz kayıt altına alınmaktadır.</div>`+
+      `<div style="display:flex;gap:8px">`+
+        `<button class="btn" style="flex:1;font-size:.82rem;padding:10px 0;background:rgba(255,255,255,.1);border-radius:10px" onclick="_attConfirmed2=false;document.getElementById('${btnEl}').style.display='';document.getElementById('${msgEl}').innerHTML=''">Hayır, iptal</button>`+
+        `<button class="btn bp" style="flex:1;font-size:.82rem;padding:10px 0;border-radius:10px" onclick="submitAtt2()">✅ Evet, benim</button>`+
+      `</div></div>`;
+    return;
+  }
+  _attConfirmed2=false;
+  const btn2=document.getElementById(btnEl);
+  if(btn2){btn2.style.display='';btn2.innerHTML='<span class="spin"></span> Gönderiliyor…';btn2.disabled=true;}
   document.getElementById(msgEl).innerHTML='';
-  if(!code||code.length!==6){setMsg(msgEl,'alerr','Geçerli oturum kodu girin.');return;}
-  if(!no){setMsg(msgEl,'alerr','Öğrenci no gerekli.');return;}
-  const btn=document.getElementById(btnEl);
-  btn.innerHTML='<span class="spin"></span> Gönderiliyor…';btn.disabled=true;
+  if(!code||code.length!==6){setMsg(msgEl,'alerr','Geçerli oturum kodu girin.');if(btn2){btn2.innerHTML='Yoklamayı Gönder';btn2.disabled=false;}return;}
+  if(!no){setMsg(msgEl,'alerr','Öğrenci no gerekli.');if(btn2){btn2.innerHTML='Yoklamayı Gönder';btn2.disabled=false;}return;}
   try{
     const sess=await fbGet('/sessions/'+code);
     if(!sess){setMsg(msgEl,'alerr','Oturum bulunamadı.');return;}
@@ -11797,14 +12569,9 @@ async function submitAtt2(){
       const[vcNow2,vcPrev2]=await Promise.all([computeVisualCode(code,0),computeVisualCode(code,-1)]);
       if(vc2!==vcNow2&&vc2!==vcPrev2){setMsg(msgEl,'alerr','🔡 Ekran kodu hatalı. Hocanın ekranındaki 3 harfi doğru girin.');return;}
     }
-    // Halka konumu doğrulaması — QR'deki sektör, gönderim anındaki sektörle eşleşmeli
-    // _hashRingSec=-1 ise eski QR (sektör yok) → doğrulama atla; yeni QR'lerde zorunlu
-    if(_hashRingSec>=0){
-      const _nowSec=_ringPosSector(8);
-      if(_ringSecDist(_hashRingSec,_nowSec,8)>1){
-        setMsg(msgEl,'alerr','⏱ QR kodunun fotoğrafla iletildiği anlaşıldı. Lütfen hocanın ekranındaki güncel QR kodu bizzat okutun.');return;
-      }
-    }
+    // Halka sektör kontrolü kaldırıldı — PIN + ekran kodu zaten gerçek zamanlı doğrulama yapıyor.
+    // Sektör toleransı çok kısıtlıydı ve öğrenciler PIN girmek için harcadıkları sürede sektör
+    // kayarak yanlış pozitif "foto" hatası alıyordu.
     const stCheck2=await checkAgainstStudentList(code,no,name);
     if(!stCheck2.ok){setMsg(msgEl,'alerr','❌ '+stCheck2.reason);return;}
     if(sess.courseId&&!curUser){
@@ -11826,7 +12593,7 @@ async function submitAtt2(){
     const dvId=getDeviceId();
     if((await fbGet('/sessions/'+code+'/devices/'+dvId.slice(0,32)))!==null){setMsg(msgEl,'alwrn','Bu cihazdan zaten yoklama alındı.');return;}
     // IP bazlı duplicate check — önce IP'yi çek, sonra kontrol et
-    btn.innerHTML='<span class="spin"></span> Doğrulanıyor…';
+    if(btn2)btn2.innerHTML='<span class="spin"></span> Doğrulanıyor…';
     const _earlyIp=await _getClientIp().catch(()=>null);
     if(_earlyIp){
       const _ipKey=_earlyIp.replace(/\./g,'_').replace(/:/g,'_').slice(0,40);
@@ -11834,7 +12601,7 @@ async function submitAtt2(){
       if(_ipRec!==null){setMsg(msgEl,'alwrn','Bu ağ bağlantısından zaten yoklama alındı.');return;}
     }
     if(sess.locLat){
-      btn.innerHTML='<span class="spin"></span> Konum…';
+      if(btn2)btn2.innerHTML='<span class="spin"></span> Konum…';
       try{const pos=await getLocationCached(10000);const dist=haversine(sess.locLat,sess.locLng,pos.lat,pos.lng);if(dist>sess.locRadius){setMsg(msgEl,'alerr',`📍 Konumunuz sınıftan uzak.`);return;}}
       catch{setMsg(msgEl,'alwrn','📍 Konum alınamadı.');return;}
     }
@@ -11850,7 +12617,7 @@ async function submitAtt2(){
       return;
     }
     const now=new Date();
-    btn.innerHTML='<span class="spin"></span> Kaydediliyor…';
+    if(btn2)btn2.innerHTML='<span class="spin"></span> Kaydediliyor…';
     // IP zaten _earlyIp'den alındı, loc'u ayrıca al
     const _loc=await Promise.allSettled([
       navigator.geolocation?new Promise(r=>navigator.geolocation.getCurrentPosition(p=>r({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)}),()=>r(null),{timeout:5000,maximumAge:60000})):Promise.resolve(null)
@@ -11876,7 +12643,7 @@ async function submitAtt2(){
     const vbEl2=document.getElementById('st-ok-verified-badge');if(vbEl2)vbEl2.style.display='none';
     fireConfetti();
   }catch(e){setMsg(msgEl,'alerr','Hata: '+esc(e.message));}
-  finally{btn.innerHTML='Yoklamayı Gönder';btn.disabled=false;}
+  finally{if(btn2){btn2.innerHTML='Yoklamayı Gönder';btn2.disabled=false;}}
 }
 
 /* ── STUDENT HISTORY ── */
@@ -12242,17 +13009,27 @@ function buildDeptFilter(){
 
 /* ── 23. LIVE TOAST + CANLI AKIŞ (Prof aktif oturum) ── */
 let _prevAttKeys=new Set();
+const _recentToastNos=new Map();// dedup: studentNo → timestamp
 function checkNewAttendees(){
   if(!curUser)return;
+  const now=Date.now();
   const newKeys=new Set(Object.keys(attendees||{}));
   newKeys.forEach(key=>{
     if(!_prevAttKeys.has(key)){
       const a=attendees[key];
       if(a&&!a.absent){
         const displayNo=a.studentNo||key;
+        // 60 sn içinde aynı öğrenciye tekrar toast gösterme
+        const lastToast=_recentToastNos.get(displayNo)||0;
+        if(now-lastToast<60000)return;
+        _recentToastNos.set(displayNo,now);
         const _sn=a.studentName;const _snStr=typeof _sn==='string'?_sn:(_sn?.name||'');
         const displayName=_snStr?` — ${_snStr}`:'';
-        showToast('✅',`${displayNo}${displayName}`,`Yoklama başarılı · ${a.timeStr||new Date().toTimeString().slice(0,5)}`,'ok',5000);
+        if(a.manual){
+          showToast('📝',`${displayNo}${displayName}`,`Manuel Eklendi · ${a.timeStr||new Date().toTimeString().slice(0,5)}`,'warn',5000);
+        } else {
+          showToast('✅',`${displayNo}${displayName}`,`Yoklama başarılı · ${a.timeStr||new Date().toTimeString().slice(0,5)}`,'ok',5000);
+        }
         addToFsFeed(a); // canlı akışa ekle
       }
     }
@@ -12704,6 +13481,7 @@ function updateProgressRing(present,total){
 
 // ── 2. PROJEKSİYON MODU ──
 let _projPinTimer=null;
+let _projClosesAt=null; // milliseconds timestamp when current session closes
 function openProjFullscreen(){
   const el=document.getElementById('proj-fullscreen');
   if(!el)return;
@@ -12716,9 +13494,12 @@ function openProjFullscreen(){
   _projFeedSeen=new Set(Object.keys(attendees||{}).filter(k=>{const r=attendees[k];return r&&!r.absent&&!r.groupStart;}));
   el.classList.add('open');
   const sess=activeSessions.find(s=>s.code===curActiveCode);
+  _projClosesAt=sess?.closesAt||null;
   const cname=document.getElementById('proj-course-name');
   const dinfo=document.getElementById('proj-date-info');
   if(cname)cname.textContent=sess?.courseName||sess?.courseId||'—';
+  const pname=document.getElementById('proj-prof-name');
+  if(pname)pname.textContent='👨‍🏫 '+(sess?.profName||curUser?.displayName||curUser?.email||'—');
   if(dinfo){const now=new Date();dinfo.textContent=now.toLocaleDateString('tr-TR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
   // Render QR code in projection center panel
   _renderProjQr();
@@ -12727,7 +13508,27 @@ function openProjFullscreen(){
   if(_projPinTimer)clearInterval(_projPinTimer);
   _projPinTimer=setInterval(_updateProjPin,1000);
   updateProjFs();
+  // Roster yoksa Firebase'den çek — activeSessions'da courseId olmayabilir
+  _ensureProjRoster();
   document.body.style.overflow='hidden';
+}
+async function _ensureProjRoster(){
+  if(!curActiveCode)return;
+  try{
+    // Session'dan courseId ve closesAt al
+    const sessData=await fbGet('/sessions/'+curActiveCode);
+    // closesAt güncellemesi (activeSessions'da olmayabilir)
+    if(sessData?.closesAt&&!_projClosesAt){_projClosesAt=sessData.closesAt;}
+    if(Object.keys(courseStudents).length>0)return; // roster zaten var
+    const cid=sessData?.courseId;
+    if(!cid)return;
+    // Dersin öğrencilerini çek
+    const sts=await fbGet('/courses/'+cid+'/students');
+    if(sts&&Object.keys(sts).length>0){
+      courseStudents=sts;
+      updateProjFs();
+    }
+  }catch(e){console.warn('_ensureProjRoster',e);}
 }
 
 function _renderProjQr(){
@@ -12753,6 +13554,28 @@ async function _updateProjPin(){
     if(pinEl)pinEl.textContent=pin;
     if(vcEl)vcEl.textContent=vc;
   }catch(e){}
+  // QR periyodik yenileme — PIN ile aynı pencerede QR URL güncellenir (sektör güncel kalır)
+  if(nowSec===19){_renderProjQr();}
+  // Oturum bitiş geri sayımı
+  const cdEl=document.getElementById('proj-countdown');
+  if(cdEl){
+    if(_projClosesAt){
+      const remMs=_projClosesAt-Date.now();
+      if(remMs>0){
+        const remSec=Math.ceil(remMs/1000);
+        const mm=String(Math.floor(remSec/60)).padStart(2,'0');
+        const ss=String(remSec%60).padStart(2,'0');
+        const txt=`⏱ Bitmesine: ${mm}:${ss}`;
+        cdEl.textContent=txt;
+        cdEl.style.display='';
+        cdEl.style.color=remMs<120000?'#f87171':remMs<300000?'#fbbf24':'rgba(255,255,255,.75)';
+        cdEl.style.borderColor=remMs<120000?'rgba(248,113,113,.4)':remMs<300000?'rgba(251,191,36,.3)':'rgba(255,255,255,.1)';
+        cdEl.style.background=remMs<120000?'rgba(239,68,68,.1)':remMs<300000?'rgba(251,191,36,.07)':'rgba(255,255,255,.06)';
+      } else {
+        cdEl.textContent='⏱ Süre doldu';cdEl.style.display='';cdEl.style.color='#f87171';
+      }
+    } else {cdEl.textContent='⏱ Açık oturum';cdEl.style.display='';cdEl.style.color='rgba(255,255,255,.4)';cdEl.style.borderColor='rgba(255,255,255,.08)';cdEl.style.background='rgba(255,255,255,.04)';}
+  }
   // QR zaman halkası — eski QR ekranı gibi zaman doğrulama rengi
   const ringArc=document.getElementById('proj-qr-ring-arc1');
   if(ringArc){
@@ -12837,29 +13660,45 @@ function _updateProjAttList(){
 function _updateProjFeed(){
   const feedList=document.getElementById('proj-feed-list');
   if(!feedList)return;
-  const newOnes=Object.values(attendees||{}).filter(a=>!a.absent&&!_projFeedSeen.has(a.studentNo));
-  newOnes.forEach(a=>_projFeedSeen.add(a.studentNo));
-  if(!newOnes.length)return;
-  newOnes.forEach(a=>{
-    const _pfSn=a.studentName;
-    const _pfName=typeof _pfSn==='string'?_pfSn:(_pfSn?.name||_pfSn?.ad||'');
-    // Mark all existing cards as "old"
-    feedList.querySelectorAll('.proj-success-card').forEach(c=>c.classList.add('old'));
-    const li=document.createElement('li');
-    li.className='proj-success-card';
-    li.innerHTML=
-      `<div class="psc-header">`+
-        `<span class="psc-icon">✅</span>`+
-        `<span class="psc-badge">Yoklama Başarılı</span>`+
-      `</div>`+
-      `<div class="psc-name">${esc(_pfName||'—')}</div>`+
-      `<div class="psc-sub">`+
-        `<span class="psc-no">${esc(a.studentNo||'')}</span>`+
-        `<span class="psc-time">${a.timeStr||''}</span>`+
-      `</div>`;
-    feedList.prepend(li);
-    while(feedList.children.length>6)feedList.removeChild(feedList.lastChild);
-  });
+  // ── Stats bar helpers (right panel — uses unique proj-rs-* IDs) ──
+  function _setStats(present,absent,total){
+    const sp=document.getElementById('proj-rs-present');if(sp)sp.textContent=present;
+    const sa=document.getElementById('proj-rs-absent');if(sa)sa.textContent=absent;
+    const st=document.getElementById('proj-rs-total');if(st)st.textContent=total;
+  }
+  // ── Build attended map ──
+  const attMap={};
+  Object.values(attendees||{}).forEach(a=>{if(!a.absent&&!a.groupStart&&a.studentNo)attMap[a.studentNo]=a;});
+  const roster=courseStudents||{};
+  const rosterKeys=Object.keys(roster);
+  if(!rosterKeys.length){
+    // No roster → show attended only in 3-col green grid
+    const attended=Object.values(attendees||{}).filter(a=>!a.absent&&!a.groupStart&&a.studentNo);
+    _setStats(attended.length,0,attended.length);
+    if(!attended.length){feedList.innerHTML='<div style="padding:12px;font-size:.75rem;color:rgba(255,255,255,.3);text-align:center">Henüz katılan yok</div>';return;}
+    attended.sort((a,b)=>(a.time||0)-(b.time||0));
+    feedList.innerHTML=
+      `<div class="proj-sec-hdr">Katılanlar (${attended.length})</div>`+
+      `<div class="proj-roster-grid">${attended.map(a=>`<div class="pri-chip pri-present">${esc(a.studentNo)}</div>`).join('')}</div>`;
+    return;
+  }
+  // ── Full roster: Katılanlar + Katılmayanlar ──
+  const presentNos=rosterKeys.filter(no=>attMap[no]);
+  const absentNos=rosterKeys.filter(no=>!attMap[no]);
+  _setStats(presentNos.length,absentNos.length,rosterKeys.length);
+  presentNos.sort((a,b)=>(attMap[a]?.time||0)-(attMap[b]?.time||0));
+  absentNos.sort((a,b)=>a.localeCompare(b,'tr'));
+  // Katılmayanlar önce (sol/üst), Katılanlar sonra (sağ/alt — "en sağdan çıkar")
+  let html='';
+  if(absentNos.length>0){
+    html+=`<div class="proj-sec-hdr">Katılmayanlar (${absentNos.length})</div>`;
+    html+=`<div class="proj-roster-grid">${absentNos.map(no=>`<div class="pri-chip pri-absent">${esc(no)}</div>`).join('')}</div>`;
+  }
+  if(presentNos.length>0){
+    html+=`<div class="proj-sec-hdr" style="color:#4ade80aa">Katılanlar (${presentNos.length})</div>`;
+    html+=`<div class="proj-roster-grid">${presentNos.map(no=>`<div class="pri-chip pri-present">${esc(no)}</div>`).join('')}</div>`;
+  }
+  feedList.innerHTML=html;
 }
 
 // ── 3. DEVAMSIZLIK GEÇMİŞİ ──
@@ -13241,6 +14080,7 @@ function _mtReset(){
   const idEl=document.getElementById('mt-idreq');if(idEl)idEl.checked=false;
   const adEl=document.getElementById('mt-att-dur');if(adEl)adEl.value='5';
   const durEl=document.getElementById('mt-dur');if(durEl)durEl.value='90';
+  const ccEl=document.getElementById('mt-cc-me');if(ccEl)ccEl.checked=false;
   _renderMtSorumluChips();
   const errEl=document.getElementById('mt-err');if(errEl)errEl.innerHTML='';
 }
@@ -13300,8 +14140,9 @@ async function addManualTask(){
           body:`PAÜ Tıp Fakültesi — Task Atama Bildirimi\n\nMerhaba,\n\nAşağıdaki task için Sorumlu Hoca olarak atandınız:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi`
         });}catch(mailErr){console.warn('Task sorumlu mail err',mailErr);}
       }
-      // 2) Ders Anlatacak Öğretim Üyesi'ne mail
+      // 2) Ders Anlatacak Öğretim Üyesi'ne mail (+ "Bana da gönder" seçiliyse)
       const dersHocaEmails=selectedMtSorumluEmails.filter(Boolean);
+      if(document.getElementById('mt-cc-me')?.checked&&curUser?.email&&!dersHocaEmails.includes(curUser.email))dersHocaEmails.push(curUser.email);
       if(dersHocaEmails.length){
         try{await callScriptEmail({
           recipients:dersHocaEmails,
