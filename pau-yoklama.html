@@ -7481,25 +7481,21 @@ function _updateQuickStartCard(){
     card.style.display='block';
   }catch{card.style.display='none';}
 }
-async function _quickStart(){
-  const btn=document.getElementById('qs-btn');
-  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span>';}
-  try{
-    const cid=localStorage.getItem('pau_last_course')||'';
-    const clid=localStorage.getItem('pau_last_classroom')||'';
-    // Pre-fill form fields
-    const courseEl=document.getElementById('new-course');
-    const clEl=document.getElementById('new-classroom');
-    if(courseEl&&cid)[...courseEl.options].forEach(o=>{if(o.value===cid)o.selected=true;});
-    if(clEl&&clid)[...clEl.options].forEach(o=>{if(o.value===clid)o.selected=true;});
-    _onClassroomChange();_onCourseChange();
-    const now=new Date();
-    document.getElementById('new-date').value=now.toLocaleDateString('sv');
-    document.getElementById('new-time').value=now.toTimeString().slice(0,5);
-    await createSession();
-  }finally{
-    if(btn){btn.disabled=false;btn.innerHTML='⚡ Başlat';}
-  }
+function _quickStart(){
+  const cid=localStorage.getItem('pau_last_course')||'';
+  const clid=localStorage.getItem('pau_last_classroom')||'';
+  const courseEl=document.getElementById('new-course');
+  const clEl=document.getElementById('new-classroom');
+  if(courseEl&&cid)[...courseEl.options].forEach(o=>{if(o.value===cid)o.selected=true;});
+  if(clEl&&clid)[...clEl.options].forEach(o=>{if(o.value===clid)o.selected=true;});
+  _onClassroomChange();_onCourseChange();
+  const now=new Date();
+  document.getElementById('new-date').value=now.toLocaleDateString('sv');
+  document.getElementById('new-time').value=now.toTimeString().slice(0,5);
+  // Scroll to the form so hoca can review and change anything before starting
+  const formCard=document.getElementById('crbtn')?.closest('.card')||document.getElementById('crbtn');
+  if(formCard)formCard.scrollIntoView({behavior:'smooth',block:'center'});
+  showToast('⚡','Hızlı Başlat','Form dolduruldu. Değişiklik yapıp "Oturumu Başlat"a basın.','info',4000);
 }
 
 /* ── HAFTALIK ÖZET BAR ── */
@@ -8946,8 +8942,11 @@ async function createSession(){
       renderAtt(code);
     }
     _selGroups.clear();
-    // Hoca için otomatik projeksiyon ekranı — oturum başlar başlamaz büyük ekran
-    setTimeout(()=>openProjFullscreen(),400);
+    // Hoca için otomatik projeksiyon ekranı + tarayıcı tam ekran
+    setTimeout(()=>{
+      openProjFullscreen();
+      try{document.documentElement.requestFullscreen?.();}catch{}
+    },400);
   }catch(e){errEl.textContent='Hata: '+e.message;errEl.style.display='block';}
   finally{btn.innerHTML='Oturumu Başlat';btn.disabled=false;}
 }
@@ -9488,16 +9487,22 @@ async function _doMarkAllPresent(){
   const updates={};
   stuKeys.forEach(no=>{
     const existing=attendees[no];
-    updates['sessions/'+curActiveCode+'/attendance/'+no]={
+    // manual: QR ile gelen kaydın manual değerini koru; yeni eklenenleri manual:false yaz
+    // (??true yerine ??false — toplu işlem mevcut QR katılımlarını "Manuel" yapmasın)
+    const rec={
       studentNo:no,studentName:courseStudents[no]||no,
       time:existing?.time||now.getTime(),
       timeStr:existing?.timeStr||now.toTimeString().slice(0,5),
-      manual:existing?.manual??true,
+      manual:existing?.manual??false,
       absent:false
     };
+    updates['sessions/'+curActiveCode+'/attendance/'+no]=rec;
+    if(!attendees)attendees={};
+    attendees[no]=rec; // yerel güncelleme → sayaç hemen yansısın
   });
   await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
   _auditLog(curActiveCode,'bulk_present',{count:stuKeys.length});
+  renderAtt(curActiveCode); // sayacı ve listeyi hemen yenile
 }
 function markAllPresent(){
   const stuKeys=Object.keys(courseStudents);
@@ -9516,14 +9521,19 @@ async function _doMarkAllAbsent(){
   const now=new Date();
   const updates={};
   stuKeys.forEach(no=>{
-    updates['sessions/'+curActiveCode+'/attendance/'+no]={
+    const existingA=attendees[no];
+    const recA={
       studentNo:no,studentName:courseStudents[no]||no,
       time:now.getTime(),timeStr:now.toTimeString().slice(0,5),
-      manual:true,absent:true
+      manual:existingA?.manual??false,absent:true
     };
+    updates['sessions/'+curActiveCode+'/attendance/'+no]=recA;
+    if(!attendees)attendees={};
+    attendees[no]=recA;
   });
   await Promise.all(Object.entries(updates).map(([path,val])=>fbPut('/'+path,val)));
   _auditLog(curActiveCode,'bulk_absent',{count:stuKeys.length});
+  renderAtt(curActiveCode);
 }
 function delAtt(code,no){
   const name=courseStudents[no]||no;
