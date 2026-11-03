@@ -5268,6 +5268,14 @@ function selectFakulte(fak){
     }).catch(()=>{});
   }
   _updateFakulteSettingsUI();
+  // Fakülte değişince ders/öğrenci/oturum verilerini yeniden filtrele
+  buildStudentMap();
+  populateCourseSelect();
+  applyTermFilter();
+  if(curView==='courses')renderCourses();
+  if(curView==='report'){renderHist();renderChart();}
+  if(curView==='calendar')renderCalendar();
+  renderMyAtt();
   showToast('✅','Fakülte kaydedildi',fak==='tip'?'Tıp Fakültesi seçildi':'Diğer Fakülte seçildi','ok');
 }
 function _updateFakulteSettingsUI(){
@@ -8857,6 +8865,9 @@ async function createSession(){
   }
   const btn=document.getElementById('crbtn');
   btn.innerHTML='<span class="spin"></span> Oluşturuluyor…';btn.disabled=true;
+  // Tarayıcı tam ekran — kullanıcı hareketi (click) senkron zincirindeyken çağrılmalı
+  // setTimeout veya await sonrası çağrılırsa tarayıcı reddeder
+  document.documentElement.requestFullscreen?.().catch(()=>{});
 
   let locData={};
   if(useLoc){
@@ -8942,11 +8953,8 @@ async function createSession(){
       renderAtt(code);
     }
     _selGroups.clear();
-    // Hoca için otomatik projeksiyon ekranı + tarayıcı tam ekran
-    setTimeout(()=>{
-      openProjFullscreen();
-      try{document.documentElement.requestFullscreen?.();}catch{}
-    },400);
+    // Projeksiyon ekranını aç — oturum verileri yüklendikten sonra
+    setTimeout(()=>openProjFullscreen(),400);
   }catch(e){errEl.textContent='Hata: '+e.message;errEl.style.display='block';}
   finally{btn.innerHTML='Oturumu Başlat';btn.disabled=false;}
 }
@@ -9658,7 +9666,7 @@ function filterManuelRoster(){
 function mnrLookup(val){const n=lookupName(val);if(n)document.getElementById('mnr-name').value=n;}
 function mnrAddDialog(no,name){
   document.getElementById('mnr-add-dlg')?.remove();
-  const resolvedName=name||courseStudents[no]||lookupName(no)||no;
+  const nameStr=name||courseStudents[no]||lookupName(no)||no;
   const reasons=[
     {v:'phone',l:'📵 Telefon / Teknik sorun'},
     {v:'battery',l:'🔋 Pil bitti'},
@@ -9666,27 +9674,55 @@ function mnrAddDialog(no,name){
     {v:'network',l:'📶 İnternet sorunu'},
     {v:'other',l:'📝 Diğer'},
   ];
-  const dlg=document.createElement('div');
-  dlg.id='mnr-add-dlg';
-  dlg.style.cssText='position:fixed;inset:0;z-index:9300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)';
-  dlg.innerHTML=`<div style="background:var(--bg2);border-radius:16px;padding:22px 20px;width:min(300px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.5)">
-    <div style="font-size:.95rem;font-weight:800;margin-bottom:4px">📋 Manuel Ekle</div>
-    <div style="font-size:.75rem;color:var(--fg2);margin-bottom:14px">${esc(no)}${resolvedName&&resolvedName!==no?' · '+esc(resolvedName):''}</div>
-    <div style="font-size:.72rem;font-weight:700;color:var(--fg2);margin-bottom:6px">Sebep seç</div>
-    <select id="mnr-add-reason" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:.82rem;margin-bottom:16px">
-      ${reasons.map(r=>`<option value="${r.v}">${r.l}</option>`).join('')}
-    </select>
-    <div style="display:flex;gap:8px">
-      <button class="btn bp" style="flex:1;padding:9px 0" onclick="mnrAddConfirm(${attrJ(no)},${attrJ(resolvedName)})">✓ Ekle</button>
-      <button class="btn bd" style="flex:1;padding:9px 0" onclick="document.getElementById('mnr-add-dlg').remove()">İptal</button>
-    </div>
-  </div>`;
-  document.body.appendChild(dlg);
-}
-function mnrAddConfirm(no,name){
-  const reason=document.getElementById('mnr-add-reason')?.value||'phone';
-  document.getElementById('mnr-add-dlg')?.remove();
-  mnrQuickAdd(no,name,reason);
+  // DOM API kullan — innerHTML onclick encoding sorunlarından kaçın
+  const overlay=document.createElement('div');
+  overlay.id='mnr-add-dlg';
+  overlay.style.cssText='position:fixed;inset:0;z-index:9300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)';
+
+  const box=document.createElement('div');
+  box.style.cssText='background:var(--bg2);border-radius:16px;padding:22px 20px;width:min(300px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.5)';
+
+  const title=document.createElement('div');
+  title.style.cssText='font-size:.95rem;font-weight:800;margin-bottom:4px';
+  title.textContent='📋 Manuel Ekle';
+
+  const sub=document.createElement('div');
+  sub.style.cssText='font-size:.75rem;color:var(--fg2);margin-bottom:14px';
+  sub.textContent=no+(nameStr&&nameStr!==no?' · '+nameStr:'');
+
+  const lbl=document.createElement('div');
+  lbl.style.cssText='font-size:.72rem;font-weight:700;color:var(--fg2);margin-bottom:6px';
+  lbl.textContent='Sebep seç';
+
+  const sel=document.createElement('select');
+  sel.id='mnr-add-reason';
+  sel.style.cssText='width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:.82rem;margin-bottom:16px';
+  reasons.forEach(r=>{const o=document.createElement('option');o.value=r.v;o.textContent=r.l;sel.appendChild(o);});
+
+  const btnRow=document.createElement('div');
+  btnRow.style.cssText='display:flex;gap:8px';
+
+  const btnOk=document.createElement('button');
+  btnOk.className='btn bp';
+  btnOk.style.cssText='flex:1;padding:9px 0';
+  btnOk.textContent='✓ Ekle';
+  btnOk.addEventListener('click',()=>{
+    const reason=sel.value||'phone';
+    overlay.remove();
+    mnrQuickAdd(no,nameStr,reason);
+  });
+
+  const btnCancel=document.createElement('button');
+  btnCancel.className='btn bd';
+  btnCancel.style.cssText='flex:1;padding:9px 0';
+  btnCancel.textContent='İptal';
+  btnCancel.addEventListener('click',()=>overlay.remove());
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+
+  btnRow.appendChild(btnOk);btnRow.appendChild(btnCancel);
+  box.append(title,sub,lbl,sel,btnRow);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
 }
 async function mnrQuickAdd(no,name,reason){
   reason=reason||'phone';
@@ -10429,7 +10465,7 @@ function listenCourses(){
     }catch{}
   });
 }
-function buildStudentMap(){studentMap={};Object.values(courses).forEach(c=>{if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}
+function buildStudentMap(){studentMap={};Object.values(courses).forEach(c=>{if((c.faculty||'tip')!==curUserFaculty)return;if(c.students)Object.entries(c.students).forEach(([no,name])=>{studentMap[no]=name;});});}
 function lookupName(no){const e=studentMap[no];if(!e)return '';return typeof e==='string'?e:(e.name||'');}
 function _stuYearClass(no){const m=(no||'').match(/^(\d{2})270/);if(!m)return'';const yr=parseInt(m[1],10)+2000;const diff=new Date().getFullYear()-yr+1;return(diff>=1&&diff<=6)?(diff+'. Sınıf'):'Tıp Fak.';}
 function lookupSt(no){
@@ -10465,7 +10501,7 @@ async function _getClientIp(){try{const r=await fetch('https://api.ipify.org?for
 function populateCourseSelect(){
   const sel=document.getElementById('new-course');if(!sel)return;
   const cur=sel.value;
-  const sorted=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
+  const sorted=Object.entries(courses).filter(([,c])=>(c.faculty||'tip')===curUserFaculty).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   sel.innerHTML='<option value="">— Ders seçin —</option>'+sorted.map(([id,c])=>`<option value="${esc(id)}">${esc(c.code?c.code+' · ':'')}${esc(c.name)}${c.dept?' ('+esc(c.dept)+')':''}</option>`).join('');
   if(cur)sel.value=cur;
 }
@@ -10486,7 +10522,7 @@ function showBlokQuick(){
   // Ders listesi
   const courseEl=document.getElementById('bq-course');
   if(courseEl){
-    const ce=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
+    const ce=Object.entries(courses).filter(([,c])=>(c.faculty||'tip')===curUserFaculty).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
     courseEl.innerHTML='<option value="">— Ders seçin —</option>'+ce.map(([id,c])=>`<option value="${esc(id)}">${esc(c.name)}</option>`).join('');
   }
   // Blok / modül satırlarını sıfırla
@@ -10658,7 +10694,8 @@ async function _saveInlineCourse(){
     const uid=curUser?.uid||null;
     const cname=curUser?.name||null;
     const cemail=curUser?.email||null;
-    const data={name,code,dept,sorumlulUid:uid,sorumlulName:cname,sorumlulEmail:cemail,students:{}};
+    const faculty=curUserFaculty||'tip';
+    const data={name,code,dept,faculty,sorumlulUid:uid,sorumlulName:cname,sorumlulEmail:cemail,students:{}};
     const resp=await fetch(FB_CFG.databaseURL+'/courses/'+id+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     courses[id]=data;
@@ -10673,7 +10710,7 @@ async function _saveInlineCourse(){
 }
 function renderCourses(){
   const list=document.getElementById('clist');if(!list)return;
-  const entries=Object.entries(courses).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
+  const entries=Object.entries(courses).filter(([,c])=>(c.faculty||'tip')===curUserFaculty).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
   if(!entries.length){list.innerHTML=`<li style="list-style:none"><div class="empty-state"><span class="es-icon">📚</span><div class="es-title">Ders Bulunamadı</div><div class="es-desc">Sisteme henüz ders eklenmemiş. Yukarıdan "Ders Ekle" butonuna tıklayın.</div></div></li>`;return;}
   list.innerHTML=entries.map(([id,c])=>{
     const cnt=c.students?Object.keys(c.students).length:0;
@@ -10883,7 +10920,8 @@ async function createCourse(){
   try{
     const id='c'+Date.now();
     const dept=curUser?.dept||null;
-    const data={name,code:code||null,dept,donem,blokName,taskId,modul,sorumlulUid,sorumlulName,sorumlulEmail,classroom,attDur,dur,pinreq,idreq,notify,students};
+    const faculty=curUserFaculty||'tip';
+    const data={name,code:code||null,dept,faculty,donem,blokName,taskId,modul,sorumlulUid,sorumlulName,sorumlulEmail,classroom,attDur,dur,pinreq,idreq,notify,students};
     const dbUrl=FB_CFG.databaseURL+'/courses/'+id+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -11387,9 +11425,10 @@ async function loadTerms(){
 }
 
 function applyTermFilter(){
+  const fakFiltered=allSessions.filter(function(s){return(s.faculty||'tip')===curUserFaculty;});
   sessions=curTerm
-    ?allSessions.filter(function(s){return s.termId===curTerm;})
-    :allSessions;
+    ?fakFiltered.filter(function(s){return s.termId===curTerm;})
+    :fakFiltered;
 }
 
 function renderTermBar(){
@@ -11424,8 +11463,9 @@ function renderMyAtt(){
   const email=curUser.email||'';
   const uid=curUser.uid||'';
   let mine=allSessions.filter(s=>
-    s.profEmail===email||s.profUid===uid||
-    (s.cohosts&&s.cohosts[uid])
+    ((s.faculty||'tip')===curUserFaculty)&&
+    (s.profEmail===email||s.profUid===uid||
+    (s.cohosts&&s.cohosts[uid]))
   );
   if(_myAttFilter==='active')mine=mine.filter(s=>s.active);
   if(_myAttFilter==='closed')mine=mine.filter(s=>!s.active);
