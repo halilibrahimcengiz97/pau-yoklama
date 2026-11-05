@@ -3017,6 +3017,7 @@ input:focus,select:focus,textarea:focus{
     <!-- Eylemler -->
     <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <button onclick="reviewDownload()" title="CSV olarak indir" style="padding:8px 14px;background:var(--bg3);color:var(--fg);border:1px solid var(--border2);border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer">⬇️ CSV</button>
+      <button onclick="reviewDownloadXlsx()" title="Excel olarak indir" style="padding:8px 14px;background:var(--bg3);color:#217346;border:1px solid #217346;border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer">📊 Excel</button>
       <div style="flex:1"></div>
       <button onclick="closeReviewModal()" style="padding:8px 16px;background:var(--bg3);color:var(--fg2);border:1px solid var(--border);border-radius:9px;font-size:.85rem;cursor:pointer">İptal</button>
       <button onclick="reviewConfirm()" id="rv-confirm-btn" style="padding:9px 20px;background:var(--ok,#22c55e);color:#fff;border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer">✅ Onayla ve Kaydet</button>
@@ -3091,6 +3092,10 @@ input:focus,select:focus,textarea:focus{
   <!-- Tab 1: ID scan -->
   <div class="card" id="stform" style="display:none">
     <div class="card-title">📋 Yoklama Al — Kimlikli</div>
+    <div style="margin-bottom:14px;padding:12px 14px;background:color-mix(in srgb,var(--err,#dc2626) 10%,transparent);border:1.5px solid color-mix(in srgb,var(--err,#dc2626) 45%,transparent);border-radius:10px;font-size:.75rem;line-height:1.6;color:var(--fg)">
+      <div style="font-weight:800;font-size:.8rem;color:var(--err,#dc2626);margin-bottom:4px;letter-spacing:.02em">⚠️ YASAL UYARI — TCK MADDE 204/1</div>
+      Başkası adına yoklamaya katılan veya başkasının yoklamasını kendi adına imzalatan öğrenciler, <strong>resmi belgede sahtecilik</strong> suçu kapsamında <strong>Türk Ceza Kanunu'nun 204/1. maddesi</strong> gereğince yargılanacak ve haklarında cezai soruşturma başlatılacaktır.
+    </div>
     <div class="al alinfo" style="margin-bottom:12px;font-size:.78rem">
       QR kodu okutun veya oturum kodunu yazın.<br>
       <strong>Ad soyad:</strong> Kayıttaki isminizle birebir eşleşmeli. Büyük/küçük harf ve Türkçe karakter (ğ/g, ş/s vb.) farkı önemli değil. Yabancı uyruklu öğrenciler isminin bir bölümünü yazabilir.
@@ -3166,6 +3171,10 @@ input:focus,select:focus,textarea:focus{
   <!-- Tab 2: No ID -->
   <div class="card" id="stform2" style="display:none">
     <div class="card-title">📋 Yoklama Al</div>
+    <div style="margin-bottom:14px;padding:12px 14px;background:color-mix(in srgb,var(--err,#dc2626) 10%,transparent);border:1.5px solid color-mix(in srgb,var(--err,#dc2626) 45%,transparent);border-radius:10px;font-size:.75rem;line-height:1.6;color:var(--fg)">
+      <div style="font-weight:800;font-size:.8rem;color:var(--err,#dc2626);margin-bottom:4px;letter-spacing:.02em">⚠️ YASAL UYARI — TCK MADDE 204/1</div>
+      Başkası adına yoklamaya katılan veya başkasının yoklamasını kendi adına imzalatan öğrenciler, <strong>resmi belgede sahtecilik</strong> suçu kapsamında <strong>Türk Ceza Kanunu'nun 204/1. maddesi</strong> gereğince yargılanacak ve haklarında cezai soruşturma başlatılacaktır.
+    </div>
     <!-- Adım 1: Oturum kodu + Öğrenci no -->
     <div class="form-row">
       <label>Oturum Kodu</label>
@@ -3198,6 +3207,7 @@ input:focus,select:focus,textarea:focus{
     </div>
     <div id="stmsg2" style="margin-bottom:10px"></div>
     <div class="al alwrn" style="font-size:.76rem;margin-bottom:10px;line-height:1.5">⚠️ <strong>Başkası adına yoklama almak yasak ve disiplin suçudur.</strong> IP adresiniz ve konumunuz kayıt altına alınmaktadır.</div>
+    <div class="al" style="font-size:.74rem;margin-bottom:10px;line-height:1.5;background:color-mix(in srgb,var(--pau-285c) 10%,var(--bg));border:1px solid color-mix(in srgb,var(--pau-285c) 30%,transparent);border-radius:10px;padding:8px 12px">📍 <strong>Konum izni zorunludur.</strong> Tarayıcınızın konum iznine izin verin; yoksa yoklamanız kabul edilmez.</div>
     <button class="btn bp bfull" id="stbtn2" onclick="submitAtt2()">Yoklamayı Gönder</button>
   </div>
 
@@ -3376,7 +3386,7 @@ input:focus,select:focus,textarea:focus{
           <select id="new-blok" onchange="_onBlokChange()" style="display:none">
             <option value="">— Blok seçin —</option>
           </select>
-          <select id="new-task-final" style="display:none">
+          <select id="new-task-final" style="display:none" onchange="_saveLastTask(this.value)">
             <option value="">— Task seçin —</option>
           </select>
         </div>
@@ -3572,7 +3582,8 @@ input:focus,select:focus,textarea:focus{
       <button class="btn bp bsm" onclick="startRoundMode()" id="round-mode-btn" title="Tur modu — ekip ekip yoklama al">🔄 Tur</button>
       <button class="btn bwarn bsm" onclick="snapSession()" id="snap-btn">📩 Anlık Bitir</button>
       <button class="btn bd bsm" onclick="closeSession()" id="close-btn">🛑 Tamamen Bitir</button>
-      <button class="btn bg bsm" onclick="exportCsv()">📊 CSV</button>
+      <button class="btn bg bsm" onclick="exportCsv()">📄 CSV</button>
+      <button class="btn bg bsm" style="color:#217346;border-color:#217346" onclick="exportXlsx()">📊 Excel</button>
       <button class="btn bg bsm" onclick="generatePdf()">🖨 PDF</button>
       <button class="btn bg bsm" onclick="showAuditLog(curActiveCode)" title="Aktivite logu">📋 Log</button>
       <button class="btn bd bsm" onclick="clearAttendance()" title="Tüm yoklama kayıtlarını sil" id="clear-att-btn">🗑 Kayıtları Sil</button>
@@ -3766,6 +3777,7 @@ input:focus,select:focus,textarea:focus{
       <ul id="rd-list" style="list-style:none"></ul>
       <div style="margin-top:12px">
         <button class="btn bg bsm" onclick="exportHistCsv()">📄 CSV İndir</button>
+        <button class="btn bg bsm" style="color:#217346;border-color:#217346;margin-left:6px" onclick="exportHistXlsx()">📊 Excel İndir</button>
       </div>
     </div>
   </div>
@@ -4131,8 +4143,12 @@ input:focus,select:focus,textarea:focus{
     </div>
     <div class="form-row"><label>Admin E-posta (ek alıcı)</label><input id="admin-email" placeholder="admin@pau.edu.tr" value="hicengiz@pau.edu.tr"></div>
     <div id="email-settings-msg" style="margin-bottom:10px"></div>
-    <button class="btn bp" onclick="saveEmailSettings()">Kaydet</button>
-    <button class="btn bg bsm" style="margin-left:8px" onclick="testEmail()">Test Gönder</button>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <button class="btn bp" onclick="saveEmailSettings()">Kaydet</button>
+      <button class="btn bg bsm" onclick="testEmail()">📨 Test Gönder</button>
+      <button class="btn bg bsm" onclick="checkMailQuota()" title="Bugün kaç mail hakkınız kaldığını sorgular">📊 Kota Sorgula</button>
+      <span id="mail-quota-badge" style="font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:20px;display:none"></span>
+    </div>
   </div>
   <div class="card">
     <div class="card-title">⚙️ Google Apps Script Kurulumu</div>
@@ -4143,7 +4159,15 @@ input:focus,select:focus,textarea:focus{
       <li>Dağıt → Web uygulaması olarak dağıt → Erişim: <strong>Herkes</strong></li>
       <li>Oluşan URL'yi yukarıya yapıştırın</li>
     </ol>
-    <pre style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-size:.72rem;overflow-x:auto;margin-top:8px;line-height:1.6;white-space:pre-wrap">function doPost(e) {
+    <pre style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-size:.72rem;overflow-x:auto;margin-top:8px;line-height:1.6;white-space:pre-wrap">function doGet(e) {
+  // Kota sorgulama — uygulamadan "?quota=1" ile çağrılır
+  var quota = MailApp.getRemainingDailyQuota();
+  return ContentService
+    .createTextOutput(JSON.stringify({quota: quota}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
     var recipients = data.recipients || [];
@@ -4332,7 +4356,7 @@ input:focus,select:focus,textarea:focus{
           <span id="mt-stu-summary" style="font-size:.78rem;font-weight:700;color:var(--fg2)"></span>
           <button class="btn bg bsm" style="font-size:.7rem;padding:3px 10px" onclick="_toggleMtStuList()">👁 Listeyi Göster</button>
         </div>
-        <div id="mt-stu-list" style="display:none;max-height:200px;overflow-y:auto;margin-top:8px;display:flex;flex-direction:column;gap:3px"></div>
+        <div id="mt-stu-list" style="display:none;max-height:200px;overflow-y:auto;margin-top:8px;flex-direction:column;gap:3px"></div>
       </div>
       <!-- Oturum Ayarları -->
       <div style="border-top:1.5px solid var(--border);padding-top:14px;margin-top:4px">
@@ -4591,6 +4615,14 @@ function profFullName(prof){
   if(n)return prefix?prefix+' '+n:n;
   // name boşsa email göster
   return prof.email||'—';
+}
+// Oturum nesnesindeki profUid/profName/profEmail'den ünvanlı isim döndürür
+function _dispProf(s){
+  if(!s)return'—';
+  if(s.profUid&&professors&&professors[s.profUid])return profFullName(professors[s.profUid]);
+  // profName'den ünvan tahmin et: professors içinde email eşleşmesi dene
+  if(s.profEmail){const p=Object.values(professors||{}).find(x=>x.email===s.profEmail);if(p)return profFullName(p);}
+  return s.profName||s.profEmail||'—';
 }
 /* ── DÖNEM 4 & 5 BLOK/TASK/SORUMLU REFERANSı ── */
 const DONEM_DATA={
@@ -5519,8 +5551,12 @@ function _fillTaskSelect(){
   if(blokSel){blokSel.innerHTML='<option value="">— Blok seçin —</option>';blokSel.style.display='none';}
   if(taskSel){taskSel.innerHTML='<option value="">— Task seçin —</option>';taskSel.style.display='none';}
 }
+function _saveLastDonem(val){if(val!=null)try{localStorage.setItem('pau_last_donem',val);}catch{}}
+function _saveLastBlok(val){if(val!=null)try{localStorage.setItem('pau_last_blok',val);}catch{}}
+function _saveLastTask(val){if(val!=null)try{localStorage.setItem('pau_last_task',val);}catch{}}
 function _onDonemChange(){
   const donem=document.getElementById('new-donem')?.value;
+  _saveLastDonem(donem||'');
   const blokSel=document.getElementById('new-blok');
   const taskSel=document.getElementById('new-task-final');
   const modulInput=document.getElementById('new-modul');
@@ -5553,6 +5589,7 @@ function _onDonemChange(){
 function _onBlokChange(){
   const donem=document.getElementById('new-donem')?.value;
   const blok=document.getElementById('new-blok')?.value;
+  _saveLastBlok(blok||'');
   const taskSel=document.getElementById('new-task-final');
   if(!blok){if(taskSel){taskSel.style.display='none';taskSel.innerHTML='<option value="">— Task seçin —</option>';}return;}
   const filtered=Object.entries(tasks).filter(([,t])=>t.donem===donem&&t.blokName===blok);
@@ -5624,7 +5661,7 @@ function renderTaskPanel(){
       sessList.innerHTML=taskSessions.sort((a,b)=>b.startTime-a.startTime).map(s=>{
         const dt=s.startTime?new Date(s.startTime).toLocaleString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
         const cnt=s.attendees?Object.keys(s.attendees).length:0;
-        return `<li class="lrow"><div class="lname"><div class="n">${esc(s.courseName||'')} ${s.active?'<span class="bdg" style="background:var(--ok-bg);color:var(--ok)">🟢 Aktif</span>':''}</div><div class="m">${esc(s.profName||s.profEmail||'')} · ${dt} · ${cnt} öğrenci</div></div></li>`;
+        return `<li class="lrow"><div class="lname"><div class="n">${esc(s.courseName||'')} ${s.active?'<span class="bdg" style="background:var(--ok-bg);color:var(--ok)">🟢 Aktif</span>':''}</div><div class="m">${esc(_dispProf(s))} · ${dt} · ${cnt} öğrenci</div></div></li>`;
       }).join('');
     }
   }
@@ -7649,6 +7686,9 @@ function _updateQuickStartCard(){
 function _quickStart(){
   const cid=localStorage.getItem('pau_last_course')||'';
   const clid=localStorage.getItem('pau_last_classroom')||'';
+  const did=localStorage.getItem('pau_last_donem')||'';
+  const bid=localStorage.getItem('pau_last_blok')||'';
+  const tid=localStorage.getItem('pau_last_task')||'';
   const courseEl=document.getElementById('new-course');
   const clEl=document.getElementById('new-classroom');
   if(courseEl&&cid)[...courseEl.options].forEach(o=>{if(o.value===cid)o.selected=true;});
@@ -7657,6 +7697,23 @@ function _quickStart(){
   const now=new Date();
   document.getElementById('new-date').value=now.toLocaleDateString('sv');
   document.getElementById('new-time').value=now.toTimeString().slice(0,5);
+  // Dönem → Blok → Task cascade restore
+  const donemEl=document.getElementById('new-donem');
+  if(donemEl&&did){
+    donemEl.value=did;_onDonemChange();
+    if(bid){
+      setTimeout(()=>{
+        const blokEl=document.getElementById('new-blok');
+        if(blokEl){blokEl.value=bid;_onBlokChange();}
+        if(tid){
+          setTimeout(()=>{
+            const taskEl=document.getElementById('new-task-final');
+            if(taskEl)taskEl.value=tid;
+          },60);
+        }
+      },60);
+    }
+  }
   // Scroll to the form so hoca can review and change anything before starting
   const formCard=document.getElementById('crbtn')?.closest('.card')||document.getElementById('crbtn');
   if(formCard)formCard.scrollIntoView({behavior:'smooth',block:'center'});
@@ -8655,7 +8712,7 @@ function openActiveSession(code){
 function updateActiveHeader(sess){
   document.getElementById('act-name').textContent=sess.name||'—';
   document.getElementById('act-code').textContent=sess.code||'';
-  document.getElementById('act-meta-txt').textContent=`${dayN(sess.date)} ${fmtDate(sess.date)} ${sess.time||''} · ${sess.profName||''}`;
+  document.getElementById('act-meta-txt').textContent=`${dayN(sess.date)} ${fmtDate(sess.date)} ${sess.time||''} · ${_dispProf(sess)}`;
   const cnt=sess.attendance?Object.keys(sess.attendance).length:0;
   document.getElementById('act-cnt').textContent=cnt+' kişi';
   // Oturum bilgi paneli
@@ -9087,7 +9144,7 @@ async function createSession(){
       attDuration:attDur||null,attClosesAt:attClosesAt||null,
       profUid:curUser.uid,
       profEmail:curUser.email,
-      profName:curUser.displayName||curUser.email,
+      profName:(professors&&professors[curUser.uid]?profFullName(professors[curUser.uid]):null)||curUser.displayName||curUser.email,
       faculty:curUserFaculty||'tip',
       emailSent:false,
       profEmailNotify:document.getElementById('new-prof-notify')?.checked!==false,
@@ -9167,7 +9224,14 @@ async function closeSession(){
       const resp=await fetch(FB_CFG.databaseURL+'/sessions/'+curActiveCode+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:false,closedAt:Date.now()})});
       if(!resp.ok)throw new Error('HTTP '+resp.status);
       _auditLog(curActiveCode,'session_closed');
-      // Anlık yoklama kopyasını review modalına aç — mail/indirme hoca onayından sonra
+      // Otomatik mail gönder — oturum kapanır kapanmaz
+      try{
+        const attSnap=JSON.parse(JSON.stringify(attendees||{}));
+        const attFiltered={};
+        Object.entries(attSnap).forEach(([no,r])=>{if(!r.absent&&!r.groupStart)attFiltered[no]=r;});
+        sendSessionEmail({...sess,attendance:attFiltered});
+      }catch(_){}
+      // Anlık yoklama kopyasını review modalına aç — ek inceleme/indirme için
       openReviewModal(sess, JSON.parse(JSON.stringify(attendees||{})));
       nav('session');
     }catch(e){showToast('❌','Hata',e.message,'error',4000);}
@@ -9341,6 +9405,12 @@ async function reviewDownload(){
   await doDownload(c,fn);
 }
 
+function reviewDownloadXlsx(){
+  if(!_rvSess)return;
+  const wb=_xlsxRows(_rvSess,_rvAtt);
+  if(wb)XLSX.writeFile(wb,_xlsxFn(_rvSess));
+}
+
 async function reviewConfirm(){
   if(!_rvSess||!_rvAtt)return;
   const btn=document.getElementById('rv-confirm-btn');
@@ -9457,58 +9527,155 @@ async function sendSessionEmail(sess){
   const _GUNLER=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
   const gunFull=sess.date?_GUNLER[new Date(sess.date+'T12:00:00').getDay()]:'—';
   const classroomName=sess.classroomName||(sess.classroomId&&classrooms[sess.classroomId]?.name)||null;
-  const absentRows=Object.values(att).filter(a=>a.absent&&!a.groupStart);
-  const absentList=absentRows.length?absentRows.map((a,i)=>`${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n'):'—';
+  const absentRows=Object.values(att).filter(a=>a.absent&&!a.groupStart).sort((a,b)=>(_sname(a)).localeCompare(_sname(b),'tr'));
   const _sep='─'.repeat(44);
+  const courseName=sess.courseName||course?.name||'—';
+
+  /* ── DÜZ METİN BODY (fallback) ── */
   const _bodyLines=[
-    'PAÜ Tıp Fakültesi — Yoklama Raporu',
-    _sep,
+    'PAÜ Tıp Fakültesi — Yoklama Raporu',_sep,
     `Öğretim Üyesi  : ${openingProfFull}`,
     `TASK Sorumlusu : ${sorumluFullNames.join(', ')||'—'}`,
-    `Ders           : ${sess.courseName||course?.name||'—'}`,
+    `Ders           : ${courseName}`,
     task?.donem?`Dönem          : ${task.donem}`:null,
     task?.blokName?`Blok           : ${task.blokName}`:null,
     task?.name?`TASK           : ${task.name}`:null,
     `Tarih          : ${fmtDate(sess.date)}`,
     `Gün            : ${gunFull}`,
     `Saat           : ${sess.time||'—'}`,
-    `Sınıf / Amfi   : ${classroomName||'—'}`,
-    _sep,
+    `Sınıf / Amfi   : ${classroomName||'—'}`,_sep,
     `Katılan        : ${rows.length} öğrenci`,
-    `Devamsız       : ${absentRows.length} öğrenci`,
-    '',
+    `Katılmayan     : ${absentRows.length} öğrenci`,'',
     `► Katılan Öğrenciler (${rows.length}):`,
-    list||'—',
+    rows.map((a,i)=>`  ${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n')||'  —','',
+    `► Katılmayan Öğrenciler (${absentRows.length}):`,
+    absentRows.length?absentRows.map((a,i)=>`  ${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n'):'  —',
   ].filter(l=>l!==null);
-  if(absentRows.length){_bodyLines.push('',`► Devamsız Öğrenciler (${absentRows.length}):`,absentList);}
   const body=_bodyLines.join('\n');
 
-  // Alıcılar: dersi açan hoca (onayladıysa) + admin e-postaları + task sorumluları
+  /* ── HTML BODY ── */
+  const _infoRow=(label,val)=>val&&val!=='—'?`<tr><td style="padding:4px 12px 4px 0;color:#6b7280;font-size:13px;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:4px 0;font-size:13px;color:#111827;font-weight:600">${val}</td></tr>`:'';
+  const _stuRows=(arr,color)=>arr.length
+    ?arr.map((a,i)=>`<tr style="background:${i%2?'#f9fafb':'#fff'}"><td style="padding:5px 10px;font-size:12px;color:#6b7280;width:36px;text-align:right">${i+1}</td><td style="padding:5px 10px;font-size:13px;color:#111827">${_sname(a)}</td><td style="padding:5px 10px;font-size:12px;color:#6b7280">${a.studentNo||''}</td><td style="padding:5px 10px;font-size:12px;color:#6b7280;text-align:right">${a.time?new Date(a.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):''}</td></tr>`).join('')
+    :`<tr><td colspan="4" style="padding:12px;text-align:center;color:#9ca3af;font-size:13px">—</td></tr>`;
+  const PAU_LOGO_B64='PHN2ZyB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIiB2ZXJzaW9uPSIxLjEiIGlkPSJzdmcyIiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMzQxLjY5MzMzIiBoZWlnaHQ9IjM0MS43ODY2OCIgdmlld0JveD0iMCAwIDM0MS42OTMzMyAzNDEuNzg2NjgiIHNvZGlwb2RpOmRvY25hbWU9ImxvZ28tdHIuZXBzIj48bWV0YWRhdGEgaWQ9Im1ldGFkYXRhOCI+PHJkZjpSREY+PGNjOldvcmsgcmRmOmFib3V0PSIiPjxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PjxkYzp0eXBlIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiLz48L2NjOldvcms+PC9yZGY6UkRGPjwvbWV0YWRhdGE+PGRlZnMgaWQ9ImRlZnM2Ii8+PHNvZGlwb2RpOm5hbWVkdmlldyBwYWdlY29sb3I9IiNmZmZmZmYiIGJvcmRlcmNvbG9yPSIjNjY2NjY2IiBib3JkZXJvcGFjaXR5PSIxIiBvYmplY3R0b2xlcmFuY2U9IjEwIiBncmlkdG9sZXJhbmNlPSIxMCIgZ3VpZGV0b2xlcmFuY2U9IjEwIiBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIgaW5rc2NhcGU6d2luZG93LXdpZHRoPSI2NDAiIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjQ4MCIgaWQ9Im5hbWVkdmlldzQiLz48ZyBpZD0iZzEwIiBpbmtzY2FwZTpncm91cG1vZGU9ImxheWVyIiBpbmtzY2FwZTpsYWJlbD0iaW5rX2V4dF9YWFhYWFgiIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywwLDM0MS43ODY2NykiPjxnIGlkPSJnMTIiIHRyYW5zZm9ybT0ic2NhbGUoMC4xKSI+PHBhdGggZD0ibSA3LjUsMTI4MS4zNCBjIDAsNzAzLjU0IDU3MC4zMTMsMTI3My44NSAxMjczLjg0LDEyNzMuODUgNzAzLjUzLDAgMTI3My44NiwtNTcwLjMxIDEyNzMuODYsLTEyNzMuODUgQyAyNTU1LjIsNTc3LjgyIDE5ODQuODcsNy41MTE3MiAxMjgxLjM0LDcuNTExNzIgNTc3LjgxMyw3LjUxMTcyIDcuNSw1NzcuODIgNy41LDEyODEuMzQiIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMTQiLz48cGF0aCBkPSJtIDcuNSwxMjgxLjM0IGMgMCw3MDMuNTQgNTcwLjMxMywxMjczLjg1IDEyNzMuODQsMTI3My44NSA3MDMuNTMsMCAxMjczLjg2LC01NzAuMzEgMTI3My44NiwtMTI3My44NSBDIDI1NTUuMiw1NzcuODIgMTk4NC44Nyw3LjUxMTcyIDEyODEuMzQsNy41MTE3MiA1NzcuODEzLDcuNTExNzIgNy41LDU3Ny44MiA3LjUsMTI4MS4zNCBaIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMTU0MjgwO3N0cm9rZS13aWR0aDoxNTtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2UtbWl0ZXJsaW1pdDozLjg2MzcxO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiBpZD0icGF0aDE2Ii8+PHBhdGggZD0ibSA0MjMuMDA4LDEyODEuMzQgYyAwLDQ3NC4wNSAzODQuMjg5LDg1OC4zNCA4NTguMzQyLDg1OC4zNCA0NzQuMDUsMCA4NTguMzMsLTM4NC4yOSA4NTguMzMsLTg1OC4zNCAwLC00NzQuMDUxIC0zODQuMjgsLTg1OC4zMiAtODU4LjMzLC04NTguMzIgLTQ3NC4wNTMsMCAtODU4LjM0MiwzODQuMjY5IC04NTguMzQyLDg1OC4zMiIgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgxOCIvPjxwYXRoIGQ9Im0gNDIzLjAwOCwxMjgxLjM0IGMgMCw0NzQuMDUgMzg0LjI4OSw4NTguMzQgODU4LjM0Miw4NTguMzQgNDc0LjA1LDAgODU4LjMzLC0zODQuMjkgODU4LjMzLC04NTguMzQgMCwtNDc0LjA1MSAtMzg0LjI4LC04NTguMzIgLTg1OC4zMywtODU4LjMyIC00NzQuMDUzLDAgLTg1OC4zNDIsMzg0LjI2OSAtODU4LjM0Miw4NTguMzIgeiIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzE1NDI4MDtzdHJva2Utd2lkdGg6MTU7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW1pdGVybGltaXQ6MjIuOTI1NjtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgaWQ9InBhdGgyMCIvPjxwYXRoIGQ9Im0gMjY4Ljg0OCwxMDI3LjI2IC01LjIyMywyMy43OCBjIC0zLjY5MSwxNi44NyAtOS4zMzIsMjguNDUgLTE2LjkyNiwzNC43NiAtNy41Nyw2LjMxIC0xNy43NzcsOC4wNCAtMzAuNjA1LDUuMjIgLTEyLjg0NCwtMi44MiAtMjEuNTI4LC04Ljc5IC0yNi4wNDcsLTE3Ljg2IC00LjUyLC05LjA5IC01LjAxNiwtMjEuNTkgLTEuNTIsLTM3LjU1IGwgNS40NTcsLTI0LjgyIHogbSAxMjEuMTQ4LDI2LjcxIDcuMTMzLC0zMi40NiAtMjI2LjE0NSwtNDkuODE5IC0xMS41MTUsNTIuNDc5IGMgLTMuMjY2LDE0Ljc5IC01LjAwNCwyNi4yMSAtNS4yNTQsMzQuMjUgLTAuMjUsOC4wMiAwLjcwMywxNS4zMyAyLjg0OCwyMS44OCAzLjQxNCwxMC42MSA5LjYwOSwxOS44NCAxOC41NzgsMjcuNyA4Ljk4OCw3LjgzIDE5LjQyNSwxMy4wNSAzMS4zMTIsMTUuNjggMjEuMDE2LDQuNjUgMzkuMzMyLDEuMjQgNTQuOTMsLTEwLjIxIDE1LjU5NCwtMTEuNDEgMjYuMDQzLC0yOS4yNCAzMS4zNjcsLTUzLjQ3IGwgNS43MzQsLTI2LjEgOTEuMDEyLDIwLjA3IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDIyIi8+PHBhdGggZD0ibSAyNjEuODEzLDEyNjkuOTQgLTg2LjU4NiwtMzYuMTQgODkuMTk5LC0yOS42MiB6IG0gMzUuNjU2LC03Ni4zNCA2OC40MTgsLTIzLjMxIDEuNDEsLTM1LjQ0IC0yMzQuOTQyLDgwLjk1IC0xLjMxMiwzMi41OSAyMjcuNzM4LDk5LjgzIDEuNDY1LC0zNi43IC02Ni4zNjMsLTI4LjE2IDMuNTg2LC04OS43NiIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgyNCIvPjxwYXRoIGQ9Im0gMzY0LjY1NiwxMzg2LjI5IC02LjYxMywtMzEuNjEgLTIyNi42MjUsNDcuMTcgMTAuMTkxLDQ4LjczIDE4OC45OTMsMjkuMjIgLTE2MS41MTIsMTAyLjE3IDEwLjA2Miw0OC4xIDIyNi42MDIsLTQ3LjE3IC02LjQ0MSwtMzAuODMgLTE5Ni4yNTQsNDMuMTQgMTgxLjMyNCwtMTE0LjU4IC00Ljg5NSwtMjMuMzcgLTIxMi4wNTgsLTMyLjM2IDE5Ny4yMjYsLTM4LjYxIiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDI2Ii8+PHBhdGggZD0ibSAyMTIuMjExLDE3MTIuMDEgMTQuNTE2LDMwLjI2IDEzMi43NTcsLTYzLjU4IGMgMTguOTExLC05LjA3IDMzLjM5OSwtMTIuNTUgNDMuNDc3LC0xMC40MiAxMC4wNTUsMi4xMSAxOC4zNTksOS45NSAyNC44NzUsMjMuNTMgNi4xODcsMTIuOTEgNi44MjgsMjMuODQgMS44OTEsMzIuNzkgLTQuOTM0LDguOTUgLTE2LjcyNywxNy44OCAtMzUuMzQ4LDI2LjgxIGwgLTEzMi43NDYsNjMuNTggMTQuNTMxLDMwLjI2IDEzMi40NDksLTYzLjQ1IGMgMTQuMTQ5LC02Ljc4IDI0LjYyNSwtMTIuNzcgMzEuNDE0LC0xNy45NSA2Ljc4NiwtNS4yIDEyLjA4MiwtMTAuOTQgMTUuODgzLC0xNy4yMyA2LjUyOCwtMTAuODkgOS45NDIsLTIxLjk1IDEwLjIzMSwtMzMuMiAwLjMwNCwtMTEuMjcgLTIuNDg5LC0yMy4wMSAtOC4zNTIsLTM1LjI2IC02LjQ0MSwtMTMuMzggLTE0LjEwMSwtMjMuNTggLTIyLjk4OCwtMzAuNiAtOC45MDMsLTcuMDMgLTE5Ljc4NSwtMTEuNTkgLTMyLjY1NiwtMTMuNjUgLTcuMzI1LC0xLjA3IC0xNC44MjEsLTAuNzcgLTIyLjQ4OSwwLjkgLTcuNjY0LDEuNjYgLTE5LjMyOCw2LjI1IC0zNC45NzYsMTMuNzcgbCAtMTMyLjQ2OSw2My40NCIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgyOCIvPjxwYXRoIGQ9Im0gNDMxLjc1OCwxODcwLjk5IC00MS4yMzgsMTM5LjYxIDI0LjE0OCwzMi40IDM4LjQzNywtMTQwLjcgMTQ1LjgzNiwwLjcyIC0yNS4yMDMsLTMzLjc5IHogbSA5MS4zOTgsLTY5LjYzIC0yMC4wNTgsLTI2LjkyIC0xODUuNjAyLDEzOC4xOCAyMC4wNTksMjYuOTMgMTg1LjYwMSwtMTM4LjE5IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDMwIi8+PHBhdGggZD0ibSA1NTcuNzYyLDIwMTkuOTEgLTE0LjMyOCwxNDQuODcgMjkuNzk2LDI3LjMxIDExLjM2LC0xNDUuNDIgMTQzLjM2NywtMjYuNjMgLTMxLjA3OCwtMjguNDggeiBtIDc2LjY5OSwtODUuNTQgLTI0Ljc0NiwtMjIuNjkgLTE1Ni4zNzUsMTcwLjU2IDI0Ljc0NiwyMi42NyAxNTYuMzc1LC0xNzAuNTQiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMzIiLz48cGF0aCBkPSJtIDc4MS4wNDMsMjE2OS4wNCAtNzMuNDI2LDU4LjI2IDE3LjA3OCwtOTIuMzkgeiBtIC00OS42NiwtNjguMTggMTIuNTc4LC03MS4xNSAtMzAuMzQsLTE4LjM4IC00Mi40NDEsMjQ0LjggMjcuODc5LDE2LjkgMTk3LjMwOCwtMTUwLjk4IC0zMS40MjYsLTE5LjA1IC01Ni42NzksNDQuNDMgLTc2Ljg3OSwtNDYuNTciIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMzQiLz48cGF0aCBkPSJtIDEwMDkuMjksMjE2MS4xMyAtMTAyLjExLC0zOS40IC04My4yMjcsMjE1Ljg5IDMxLjMxMywxMi4wOCA3MS43MzgsLTE4Ni4wOCA3MC44MDksMjcuMzIgMTEuNDc3LC0yOS44MSIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgzNiIvPjxwYXRoIGQ9Im0gMTE1MC45NSwyMTkzLjA3IC0xMTcuNjYsLTI0Ljg3IC00Ny42OTYsMjI2LjQ0IDExNy42NzYsMjQuODYgNi4zNSwtMzAuMTYgLTg0LjgzLC0xNy45MyAxNC4yNSwtNjcuNjYgODQuODMsMTcuOTMgNi4yMiwtMjkuNTQgLTg0LjgzLC0xNy45MyAxNC4yOCwtNjcuODEgODQuODMsMTcuOTQgNi41OCwtMzEuMjciIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMzgiLz48cGF0aCBkPSJtIDEzODguMTMsMjQ1Ny45OCAyLjY0LDMzLjEyIDI5LjE4LC0yLjMgLTIuNjQsLTMzLjEzIHogbSAtNTYuNDUsNC40MyAyLjY0LDMzLjEzIDI5LjE4LC0yLjMgLTIuNjMsLTMzLjEyIHogbSAtMzMuNjgsLTI4LjI4IDMzLjQ2LC0yLjYzIC0xMS43LC0xNDYuNzUgYyAtMS42NywtMjAuOTEgMC4yOCwtMzUuNjggNS44OCwtNDQuMyA1LjU5LC04LjYzIDE1Ljg4LC0xMy41NCAzMC45LC0xNC43MSAxNC4yNywtMS4xNCAyNC42OSwyLjIyIDMxLjI3LDEwLjA1IDYuNTksNy44MiAxMC43LDIyLjAzIDEyLjM0LDQyLjY0IGwgMTEuNywxNDYuNzQgMzMuNDQsLTIuNjQgLTExLjY3LC0xNDYuNDMgYyAtMS4yNCwtMTUuNjIgLTMuMDcsLTI3LjU1IC01LjQ3LC0zNS43NiAtMi40LC04LjIgLTUuODgsLTE1LjIxIC0xMC4zNywtMjEuMDMgLTcuODIsLTEwLjAxIC0xNi45MywtMTcuMTggLTI3LjMzLC0yMS41MiAtMTAuMzksLTQuMzQgLTIyLjM2LC01Ljk4IC0zNS44OSwtNC45MSAtMTQuODEsMS4xNiAtMjcuMDgsNC42MyAtMzYuODQsMTAuMzkgLTkuNzQsNS43NyAtMTcuODksMTQuMjcgLTI0LjQzLDI1LjUyIC0zLjY1LDYuNDYgLTYuMDYsMTMuNTcgLTcuMjQsMjEuMyAtMS4yMSw3Ljc2IC0xLjEsMjAuMyAwLjI3LDM3LjYyIGwgMTEuNjgsMTQ2LjQyIiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDQwIi8+PHBhdGggZD0ibSAxNDkyLjMyLDIxNzcuNzUgLTMyLjE3LDkuNTkgNjYuNDUsMjIxLjc4IDMzLjA3LC05Ljg3IDU4LjY2LC0yMDAuMzcgNDguNzYsMTY4LjMgMzEuNywtOS40NiAtNjYuNDUsLTIyMS43NyAtMzAuNzYsOS4xOSAtNTkuNjEsMjA2LjEzIC00OS42NSwtMTczLjUyIiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDQyIi8+PHBhdGggZD0ibSAxNzgwLjkxLDIzNTEuNTkgMTUuMzUsMzEuNzkgMjcuNDksLTEzLjIzIC0xNS4zMywtMzEuODEgeiBtIC04NC43MSwtMjQ5LjM4IC0zMC4yNCwxNC41NCAxMDAuNTUsMjA4LjU4IDMwLjIyLC0xNC41NCAtMTAwLjUzLC0yMDguNTgiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNDQiLz48cGF0aCBkPSJtIDE4MDAuMjMsMjA0MC42OCAtMTYuNTIsMTEuMDMgNTQuNTQsMjQyLjAzIDI5LjQ4LC0xOS42OSAtNDMuMDIsLTE3OC43NiAxNDguOTQsMTA4LjA1IDI5LjIxLC0xOS41IC0yMDIuNjMsLTE0My4xNiIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg0NiIvPjxwYXRoIGQ9Im0gMTk2NS42MywxODk4LjQ1IC04Ni4wNCw4My45IDE2MS43MywxNjUuNzUgODYuMDMsLTgzLjg5IC0yMS41NCwtMjIuMDkgLTYyLjAxLDYwLjQ4IC00OC4zMiwtNDkuNTIgNjIuMDIsLTYwLjQ5IC0yMS4xMiwtMjEuNjMgLTYyLjAyLDYwLjUgLTQ4LjQ0LC00OS42MyA2Mi4wNCwtNjAuNSAtMjIuMzMsLTIyLjg4IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDQ4Ii8+PHBhdGggZD0ibSAyMTAxLjIxLDE5MDcuMzIgOS44OSwtMTQuMDEgYyAxMy4zOSwtMTguOTcgMjYuNDQsLTMwLjkgMzkuMTEsLTM1LjgyIDEyLjcsLTQuOTIgMjUuMzMsLTIuOTYgMzcuODgsNS45MiAxMi4yMyw4LjYyIDE4LjM4LDE4LjkzIDE4LjQ2LDMwLjkzIDAuMSwxMi4wMiAtNS45MywyNi42MiAtMTguMSw0My44NCBsIC0xNC40NywyMC41MyB6IG0gLTkwLjk2LC02NC4yMiAtMTkuMzQsMjcuNDEgMTg5LjE4LDEzMy41OCAzOC41LC01NC41NCBjIDE2LjAzLC0yMi42OSAyMy4wMSwtNDMuNyAyMC45NiwtNjMuMDUgLTIuMDQsLTE5LjM0IC0xMi45OSwtMzYuMDIgLTMyLjgzLC01MC4wMyAtMTUuNDEsLTEwLjg4IC0zMS44NCwtMTQuOTkgLTQ5LjI0LC0xMi4zIC0xNy40MSwyLjcxIC0zMi4wNiwxMS42NCAtNDMuOTYsMjYuODUgbCAtMzQuNzgsLTEwNC45MiAtMjQuMiwzNC4yOSA0My41NCwxMjQuNzQgLTg3LjgzLC02Mi4wMyIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg1MCIvPjxwYXRoIGQ9Im0gMjE0Ni41OSwxNzU5LjY5IDEyLjY4LC0yNy4yNSBjIC0xMC42MywtNS41MyAtMTcuODIsLTEyLjc4IC0yMS41NSwtMjEuNzYgLTMuNzIsLTguOTcgLTMuMzgsLTE4LjIyIDEuMDUsLTI3LjczIDQuODcsLTEwLjQ4IDEyLC0xNy4zNiAyMS40MSwtMjAuNjQgOS40NCwtMy4yNyAxOS41NiwtMi4zOSAzMC40MywyLjY3IDkuNTEsNC40MiAxNS44LDEwLjE1IDE4Ljg2LDE3LjE4IDMuMDQsNy4wMyAzLjQsMTguOTQgMS4wOSwzNS43NSAtMC4xNiwwLjg2IC0wLjQzLDIuMzEgLTAuNzksNC4zNyAtMy40NiwxOS43NyAtMS42NCwzNi4xMSA1LjQ2LDQ5IDMuMDYsNS43NSA2Ljg1LDEwLjc1IDExLjM3LDE1IDQuNSw0LjI3IDkuNzgsNy44MSAxNS44NiwxMC42MSAxNy45Niw4LjM4IDM0Ljk3LDkuODEgNTEuMDUsNC4zIDE2LjA0LC01LjUgMjguMTEsLTE2LjkgMzYuMTQsLTM0LjIgNy40NSwtMTYuMDUgOC41LC0zMS4zMyAzLjEzLC00NS44IC01LjM3LC0xNC40OCAtMTYuNDYsLTI2LjI3IC0zMy4yOCwtMzUuMzggbCAtMTMuMiwyOC40MSBjIDguMTMsNC4zNSAxMy42LDEwLjMxIDE2LjM0LDE3Ljg1IDIuNzYsNy41MyAyLjMzLDE1LjE5IC0xLjI4LDIyLjk4IC0zLjksOC4zNiAtOS45MywxMy44MyAtMTguMDcsMTYuNDEgLTguMTYsMi41OCAtMTYuNzQsMS43NiAtMjUuNzksLTIuNDQgLTMuMTksLTEuNDcgLTUuOTIsLTMuMzQgLTguMjYsLTUuNjEgLTIuMzYsLTIuMjUgLTQuMjUsLTQuOTUgLTUuNzIsLTguMDkgLTIuOTksLTYuNCAtMy4xMSwtMTcuMjIgLTAuMzYsLTMyLjQyIDEuMjYsLTcuMDEgMi4xLC0xMi40NyAyLjUxLC0xNi4zNiAxLjIzLC0xNi4yNyAtMS40NCwtMzAuMjcgLTguMDIsLTQyLjAzIC02LjU2LC0xMS43NyAtMTYuNzcsLTIwLjg3IC0zMC42MSwtMjcuMzEgLTIwLjI5LC05LjQ0IC0zOS4zMiwtMTEuMjcgLTU3LjA5LC01LjUxIC0xNy43NSw1Ljc2IC0zMS4wNiwxOC4xNyAtMzkuODksMzcuMTkgLTguMzIsMTcuODcgLTkuMTUsMzUuMTggLTIuNDYsNTEuODkgNi42NywxNi43MiAxOS42OCwyOS43IDM4Ljk5LDM4LjkyIiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDUyIi8+PHBhdGggZD0ibSAyNDAwLjkxLDE2NTcuNDQgMzMuNjMsMTAuODQgOS4zNCwtMjkuMDUgLTMzLjYxLC0xMC44NCB6IG0gLTIzOS4wOCwtMTEwLjYxIC0xMC4yNywzMS45NCAyMjAuNCw3MS4wMyAxMC4yNywtMzEuOTQgLTIyMC40LC03MS4wMyIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg1NCIvPjxwYXRoIGQ9Im0gMjE4NS40MiwxNDQ5Ljc0IC02Ljc0LDMyLjg1IDE5Ni4yOSw0MC4zNCAtOC43MSw0Mi41MyAzMC41Miw2LjI3IDI0LjEyLC0xMTcuNzQgLTMwLjUzLC02LjI4IC04LjY3LDQyLjM1IC0xOTYuMjgsLTQwLjMyIiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDU2Ii8+PHBhdGggZD0ibSAyMjAyLjM1LDEyNjcuMjIgLTUuNzQsMTIwLjA5IDIzMS4yNiwxMS4yNCA1LjcyLC0xMjAuMDcgLTMwLjgsLTEuNDkgLTQuMTMsODYuNTUgLTY5LjA5LC0zLjM2IDQuMTMsLTg2LjU1IC0zMC4xNywtMS40OCAtNC4xNSw4Ni41NyAtNjkuMjMsLTMuMzggNC4xMiwtODYuNTUgLTMxLjkyLC0xLjU3IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDU4Ii8+PHBhdGggZD0ibSAyMjY4LjQzLDEyMzIuODkgLTMuNjQsLTI5Ljg0IGMgLTExLjk1LDAuOTEgLTIxLjg2LC0xLjQ2IC0yOS43NiwtNy4xNCAtNy45LC01LjY2IC0xMi40OSwtMTMuNzEgLTEzLjc1LC0yNC4xMyAtMS40LC0xMS40NiAxLjA0LC0yMS4wNyA3LjI5LC0yOC44MyA2LjI3LC03Ljc0IDE1LjM1LC0xMi4zMyAyNy4yMywtMTMuNzcgMTAuNDQsLTEuMjQgMTguNzksMC4yOCAyNS4wOSw0LjY3IDYuMjgsNC4zNCAxMi44OSwxNC4zIDE5LjgxLDI5Ljc5IDAuMjgsMC44MSAwLjg0LDIuMiAxLjYxLDQuMTMgNy41LDE4LjYzIDE3LjY4LDMxLjU2IDMwLjUsMzguNzcgNS42MiwzLjI3IDExLjQ5LDUuNTMgMTcuNTYsNi43NyA2LjA3LDEuMjUgMTIuNDQsMS40NiAxOS4wNiwwLjY2IDE5LjY4LC0yLjM3IDM0Ljg4LC0xMC4xMyA0NS42MywtMjMuMjkgMTAuNzMsLTEzLjE0IDE0Ljk0LC0yOS4yIDEyLjYyLC00OC4xMiAtMi4xMywtMTcuNTggLTkuMywtMzEuMTEgLTIxLjUsLTQwLjU5IC0xMi4yMSwtOS40NSAtMjcuODUsLTEzLjYzIC00Ni45NCwtMTIuNTIgbCAzLjc5LDMxLjEgYyA5LjIxLC0wLjU4IDE3LDEuNiAyMy4yOSw2LjU2IDYuMzEsNC45OCAxMC4wMSwxMS43IDExLjA0LDIwLjIxIDEuMTIsOS4xNyAtMS4xMiwxNi45OSAtNi42OCwyMy40OCAtNS41Niw2LjQ5IC0xMy4yNywxMC4zMyAtMjMuMTgsMTEuNTMgLTMuNDcsMC40MSAtNi43OSwwLjI5IC05Ljk4LC0wLjQgLTMuMTcsLTAuNjggLTYuMjIsLTEuOTYgLTkuMTIsLTMuODggLTUuOTEsLTMuODYgLTExLjcxLC0xMi45OSAtMTcuNDIsLTI3LjM1IC0yLjYyLC02LjYyIC00Ljc5LC0xMS43MSAtNi40OSwtMTUuMjQgLTcuNTMsLTE0LjQ3IC0xNy4yLC0yNC45OCAtMjksLTMxLjUgLTExLjc3LC02LjUyIC0yNS4yNSwtOC44OCAtNDAuMzksLTcuMDUgLTIyLjIxLDIuNjkgLTM5LjM0LDExLjE0IC01MS4zNywyNS40MSAtMTIuMDQsMTQuMjcgLTE2LjgsMzEuODQgLTE0LjI1LDUyLjY3IDIuMzcsMTkuNTggMTAuODEsMzQuNzEgMjUuMjksNDUuNCAxNC40OSwxMC42OCAzMi4zOCwxNC44NCA1My42NiwxMi41IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDYwIi8+PHBhdGggZD0ibSAyNDMwLjU4LDEwMTIuMjggMzQuMjYsLTguNDcgLTcuMzQsLTI5LjYzIC0zNC4yNiw4LjQ0OSB6IG0gLTI2MS40NCwzMS41NyA4LjA3LDMyLjU3IDIyNC43NCwtNTUuNDQgLTguMDgsLTMyLjU3IC0yMjQuNzMsNTUuNDQiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNjIiLz48cGF0aCBkPSJtIDgzOS44NDQsMjE4LjgwMSAzMS40NTMsLTExLjg3MSBjIDE5LjkwNiwtNy40ODkgMzcuODM2LC03LjYyOSA1My44MDgsLTAuMzk5IDE1Ljk1LDcuMjMxIDI3LjY4OCwyMC44MDkgMzUuMTgsNDAuNzMxIDcuNzcsMjAuNjM2IDcuNzE1LDM5LjExNyAtMC4xOTEsNTUuMzg2IC03LjkxLDE2LjI5MyAtMjIuNzE1LDI4LjUxMiAtNDQuNDE4LDM2LjY5MiBsIC0yNi42NzIsMTAuMDM5IHogbSAxNi4wMzUsLTMzLjQzIC01MC4yNSwxOC45MyA2Ny4zOTQsMTc5LjA1MSA1Ny42MzcsLTIxLjcyMyBjIDI2Ljg3NSwtMTAuMTE3IDQ1LjQyNiwtMjYuNjE3IDU1LjY2OCwtNDkuNDg4IDEwLjI0NiwtMjIuODYgMTAuMzIsLTQ3LjcgMC4yMjcsLTc0LjQ5MyAtNS43MzksLTE1LjI1NyAtMTQuMDYzLC0yNy45ODggLTI0Ljk4MSwtMzguMTk5IC0xMC44OTgsLTEwLjIxOSAtMjMuNzM4LC0xNy4zMDEgLTM4LjUxNSwtMjEuMjY5IC0xMCwtMi43MTEgLTE5LjkyMiwtMy42MDIgLTI5Ljc4MiwtMi42OTIgLTkuODQzLDAuOTAzIC0yMi4zMjgsNC4yMDMgLTM3LjM5OCw5Ljg4MyIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg2NCIvPjxwYXRoIGQ9Im0gMTEwOC4xMywxMTUuODk4IC05Ny40MSwxOS4xOTIgMzYuOTgsMTg3LjcxOSA5Ny4zOSwtMTkuMTg4IC00LjkyLC0yNS4wMTkgLTcwLjIsMTMuODQ3IC0xMS4wNiwtNTYuMDkgNzAuMjIsLTEzLjgyOCAtNC44MywtMjQuNTExIC03MC4yMSwxMy44NTkgLTExLjA4LC01Ni4yMDcgNzAuMiwtMTMuODYzIC01LjA4LC0yNS45MTEiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNjYiLz48cGF0aCBkPSJtIDEyMDIuODMsMTA1LjUxMiAtMjcuNjksMC43OTcgNS41NywxOTEuMjMgMjguNDgsLTAuODI4IDg5LjYzLC0xNDcuNDMgMi45MSwxNDQuNzc4IDI3LjMsLTAuODA5IC01LjU3LC0xOTEuMjE5IC0yNi41LDAuNzcgLTkxLjYyLDE1MS44NDcgLTIuNTEsLTE0OS4xMzYiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNjgiLz48cGF0aCBkPSJtIDE0MTEuOTgsMTEwLjkzIC0yNy41NywtMi43ODkgLTE5LjE2LDE5MC4zMzkgMjcuNTYsMi43ODIgeiBtIC00Ny45LDIxMi4yNSAtMi45MywyOS4wMTkgMjUuMDksMi41MzkgMi45MywtMjkuMDI3IC0yNS4wOSwtMi41MzEiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNzAiLz48cGF0aCBkPSJtIDE1NzEuMDQsMTM5LjAyIC0xMTQuODgsLTIzLjY0OSAtNS40NSwyNi42NDEgNTQuMzYsMTUxLjIyNiAtNzYuNjcsLTE1Ljc2OSAtNS40LDI2LjM3MSAxMDguMDMsMjIuMjUgNC44NywtMjMuNjggLTU2LjYzLC0xNTUuMzIgODYuNDYsMTcuNzg5IDUuMzEsLTI1Ljg1OSIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg3MiIvPjxwYXRoIGQ9Im0gMTcwMy44OSwxODIuNzgxIC04NS40LC0yOS40OTIgLTYyLjI3LDE4MC44NTkgMjYuMTksOS4wNDMgNTMuNjksLTE1NS44OSA1OS4yMywyMC40NjEgOC41NiwtMjQuOTgxIiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDc0Ii8+PHBhdGggZD0ibSAxNzY5LjQ4LDIxMi4yNyAtMjUuMjUsLTExLjUgLTc5LjEzLDE3NC4xMjggMjUuMjIsMTEuNDczIHogbSAtMTEzLjM5LDE4NS42NTIgLTEyLjA4LDI2LjU1OCAyMi45NSwxMC40NSAxMi4wOCwtMjYuNTUxIC0yMi45NSwtMTAuNDU3IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDc2Ii8+PHBhdGggZD0ibSAxMDE2LjAyLDE4NjAuOCBoIDczMi43MyB2IC03MzIuNzIgaCAtMjAyLjgzIGwgLTAuNSwyODUuOSBjIDAuMjEsMzIuNTQgLTEwNy4wOSw1Ny4xNiAtMjM4LjY5LDU3LjE2IC0yMiwwIC00My4zMiwtMC42OSAtNjMuNTcsLTEuOTcgLTE2LjA3LDMzLjI2IC03NS4wMiw1OC4wNiAtMTQ0LjkzLDU4LjA2IC0yMS4yNiwwIC01MC41MSwtNS41MyAtODIuMjEsLTEzLjcyIHYgMzQ3LjI5IiBzdHlsZT0iZmlsbDojMjg3YWM4O2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDc4Ii8+PHBhdGggZD0ibSA4MTMuOTQ1LDcwMS44OTEgMC4xNjgsNTUxLjE4OSBoIDMxMS45OTcgYyAyNi4yOSwtMi45OSA1NC4zNywtNC42NyA4My4xNSwtNC42NyAxMzEuNjEsMCAyMjkuNjIsMzUuMTQgMjI5LjYyLDcwLjcyIDAsMTcuMjQgLTI1LjIsMzIuOTQgLTY2LjE1LDQ0LjU0IDk2LjQ5LDYuMzkgMTY4LjIxLDI2LjQgMTcyLjY5LDUwLjMxIGwgMS4yNSwtNzEyLjA4OSBIIDgxMy45NDUiIHN0eWxlPSJmaWxsOiMxNTQyODA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIGlkPSJwYXRoODAiLz48cGF0aCBkPSJtIDExNDYuMDYsNTA3LjA3IGggLTE3LjY2IHYgMTA2LjUgaCAtMjEuMDcgdiAxNC4yNyBoIDM4LjczIFYgNTA3LjA3IiBzdHlsZT0iZmlsbDojMTU0MjgwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDgyIi8+PHBhdGggZD0ibSAxMjU4LjEzLDU4Ni4zNTkgYyAwLDcuNDY5IC0yLjQ0LDEzLjc4OSAtNy4zLDE4Ljk2MSAtNC44Nyw1LjE2IC0xMC43Niw3Ljc1IC0xNy42Nyw3Ljc1IC03LjU4LDAgLTEzLjY2LC0yLjM0IC0xOC4yNSwtNy4wNSAtNC41OSwtNC43IC02Ljg5LC0xMC45NSAtNi44OSwtMTguNzM5IDAsLTcuNDcyIDIuMzEsLTEzLjU5IDYuOTMsLTE4LjM4MyA0LjYyLC00Ljc3NyAxMC41MiwtNy4xNjggMTcuNzEsLTcuMTY4IDcuMTQsMCAxMy4xNiwyLjQxMSAxOC4wOCw3LjIxMSA0LjkzLDQuODIxIDcuMzksMTAuNjI5IDcuMzksMTcuNDE4IHogbSAtMjcuODcsLTc5LjI4OSBoIC0xOS41OCBsIDI3LjM3LDQwLjk2OSBjIC0xLjcxLC0wLjcxOSAtMy4zNCwtMS4yMzggLTQuODksLTEuNTcgLTEuNTUsLTAuMzI4IC0zLjAyLC0wLjUgLTQuNCwtMC41IC0xMC41NiwwIC0xOS41NCwzLjk3MiAtMjYuOTYsMTEuOTAyIC03LjQsNy45MzggLTExLjExLDE3LjQ4OCAtMTEuMTEsMjguNjYgMCwzLjc1OCAwLjUyLDcuNTQ3IDEuNTgsMTEuMzY3IDEuMDUsMy44MTMgMi42Miw3LjU4MiA0LjcyLDExLjI4MiAzLjcxLDYuNzQyIDguNjcsMTEuOTQxIDE0Ljg5LDE1LjU5IDYuMjIsMy42NTIgMTMuMiw1LjQ2OCAyMC45NSw1LjQ2OCA1LjY5LDAgMTEuMDMsLTEuMDI3IDE2LC0zLjA5NyA0Ljk4LC0yLjA4MiA5LjQzLC01LjEyOSAxMy4zNiwtOS4xNzIgMy45MiwtNC4wMzkgNi45OCwtOC41NzEgOS4xNiwtMTMuNjEgMi4xOSwtNS4wMzEgMy4yOCwtMTAuMTIxIDMuMjgsLTE1LjI1NyAwLC0xMC4zMzIgLTUuODEsLTI0LjE5MiAtMTcuNDIsLTQxLjU1MSBsIC0wLjQxLC0wLjY3MiAtMjYuNTQsLTM5LjgwOSIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg4NCIvPjxwYXRoIGQ9Im0gMTM1NS4yNiw1ODYuMzU5IGMgMCw3LjQ2OSAtMi40MywxMy43ODkgLTcuMywxOC45NjEgLTQuODcsNS4xNiAtMTAuNzYsNy43NSAtMTcuNjcsNy43NSAtNy41OCwwIC0xMy42NiwtMi4zNCAtMTguMjUsLTcuMDUgLTQuNTksLTQuNyAtNi44OSwtMTAuOTUgLTYuODksLTE4LjczOSAwLC03LjQ3MiAyLjMyLC0xMy41OSA2Ljk0LC0xOC4zODMgNC42MiwtNC43NzcgMTAuNTEsLTcuMTY4IDE3LjcsLTcuMTY4IDcuMTQsMCAxMy4xNywyLjQxMSAxOC4wOSw3LjIxMSA0LjkyLDQuODIxIDcuMzgsMTAuNjI5IDcuMzgsMTcuNDE4IHogbSAtMjcuODcsLTc5LjI4OSBoIC0xOS41OCBsIDI3LjM3LDQwLjk2OSBjIC0xLjcxLC0wLjcxOSAtMy4zNCwtMS4yMzggLTQuODksLTEuNTcgLTEuNTQsLTAuMzI4IC0zLjAxLC0wLjUgLTQuMzksLTAuNSAtMTAuNTcsMCAtMTkuNTYsMy45NzIgLTI2Ljk2LDExLjkwMiAtNy40Miw3LjkzOCAtMTEuMTIsMTcuNDg4IC0xMS4xMiwyOC42NiAwLDMuNzU4IDAuNTMsNy41NDcgMS41OCwxMS4zNjcgMS4wNSwzLjgxMyAyLjYyLDcuNTgyIDQuNzMsMTEuMjgyIDMuNyw2Ljc0MiA4LjY2LDExLjk0MSAxNC44OCwxNS41OSA2LjIyLDMuNjUyIDEzLjIsNS40NjggMjAuOTUsNS40NjggNS42OSwwIDExLjAzLC0xLjAyNyAxNiwtMy4wOTcgNC45OCwtMi4wODIgOS40NCwtNS4xMjkgMTMuMzUsLTkuMTcyIDMuOTMsLTQuMDM5IDcuMDEsLTguNTcxIDkuMTgsLTEzLjYxIDIuMTksLTUuMDMxIDMuMjYsLTEwLjEyMSAzLjI2LC0xNS4yNTcgMCwtMTAuMzMyIC01LjgsLTI0LjE5MiAtMTcuNDEsLTQxLjU1MSBsIC0wLjQxLC0wLjY3MiAtMjYuNTQsLTM5LjgwOSIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg4NiIvPjxwYXRoIGQ9Im0gMTQ2NS4wNyw1MDcuMDcgaCAtNzYuMzkgdiAxNi44MjggbCA0Mi4zLDQwLjU3MSAwLjY3LDAuNjYgYyAxMS4xMSwxMC43MyAxNi42NywxOS42MzMgMTYuNjcsMjYuNzExIDAsNi4xOTEgLTIuMDcsMTEuMzU5IC02LjIyLDE1LjUxMiAtNC4xNCw0LjE0OCAtOS4zOCw2LjIxOCAtMTUuNjgsNi4yMTggLTYuNjksMCAtMTEuOSwtMi4xMjkgLTE1LjYzLC02LjM5IC0zLjczLC00LjI1IC01LjYxLC0xMC4xNjggLTUuNjEsLTE3Ljc1IHYgLTEuMzI4IGggLTE2LjUgdiAwLjMyOCBjIDAsMTIuNTU4IDMuNTksMjIuNjQgMTAuNzgsMzAuMjUgNy4xOSw3LjYwMSAxNi42OCwxMS4zOSAyOC40NiwxMS4zOSAxMC41LDAgMTkuMzksLTMuNjYgMjYuNjcsLTEwLjk4IDcuMjYsLTcuMzI4IDEwLjksLTE2LjE5MiAxMC45LC0yNi41NzggMCwtNS44NzEgLTEuMzcsLTExLjQzNCAtNC4xMSwtMTYuNjg0IC0yLjczLC01LjI1OCAtNy4xOSwtMTAuNzc3IC0xMy40LC0xNi41OSBsIC0zNy41NiwtMzUuMzQgaCA1NC42NSBWIDUwNy4wNyIgc3R5bGU9ImZpbGw6IzE1NDI4MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg4OCIvPjwvZz48L2c+PC9zdmc+';
+  const htmlBody=`<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:24px 0">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
+  <!-- HEADER -->
+  <tr><td style="background:linear-gradient(135deg,#003865 0%,#0072CE 100%);border-radius:12px 12px 0 0;padding:0">
+    <table width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="padding:16px 16px 16px 20px;width:72px;vertical-align:middle">
+        <img src="data:image/svg+xml;base64,${PAU_LOGO_B64}" width="60" height="60" alt="PAÜ" style="display:block;border-radius:50%;background:#fff;padding:4px;border:2px solid rgba(255,255,255,0.25)">
+      </td>
+      <td style="padding:16px 20px 16px 4px;vertical-align:middle">
+        <div style="color:#93c5fd;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Pamukkale Üniversitesi · Tıp Fakültesi</div>
+        <div style="color:#fff;font-size:20px;font-weight:700;margin-bottom:3px">📋 Yoklama Raporu</div>
+        <div style="color:#bfdbfe;font-size:12px">${subject}</div>
+      </td>
+    </tr></table>
+  </td></tr>
+  <!-- DERS BİLGİLERİ -->
+  <tr><td style="background:#fff;padding:24px 32px 16px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9ca3af;margin-bottom:12px">Oturum Bilgileri</div>
+    <table cellpadding="0" cellspacing="0">
+      ${_infoRow('Öğretim Üyesi',openingProfFull)}
+      ${sorumluFullNames.length?_infoRow('TASK Sorumlusu',sorumluFullNames.join(', ')):''}
+      ${_infoRow('Ders',courseName)}
+      ${task?.donem?_infoRow('Dönem',task.donem):''}
+      ${task?.blokName?_infoRow('Blok',task.blokName):''}
+      ${task?.name?_infoRow('TASK',task.name):''}
+      ${_infoRow('Tarih',`${gunFull}, ${fmtDate(sess.date)}`)}
+      ${_infoRow('Saat',sess.time||'—')}
+      ${_infoRow('Sınıf / Amfi',classroomName||'—')}
+    </table>
+  </td></tr>
+  <!-- ÖZET KARTLAR -->
+  <tr><td style="background:#fff;padding:0 32px 24px">
+    <table width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td width="48%" style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px 20px;text-align:center">
+        <div style="font-size:32px;font-weight:800;color:#16a34a">${rows.length}</div>
+        <div style="font-size:12px;color:#15803d;font-weight:600;margin-top:2px">✅ Katılan Öğrenci</div>
+      </td>
+      <td width="4%"></td>
+      <td width="48%" style="background:#fff7f7;border:1.5px solid #fecaca;border-radius:10px;padding:16px 20px;text-align:center">
+        <div style="font-size:32px;font-weight:800;color:#dc2626">${absentRows.length}</div>
+        <div style="font-size:12px;color:#b91c1c;font-weight:600;margin-top:2px">❌ Katılmayan Öğrenci</div>
+      </td>
+    </tr></table>
+  </td></tr>
+  <!-- KATILAN LİSTESİ -->
+  <tr><td style="background:#fff;padding:0 32px 8px">
+    <div style="background:#f0fdf4;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 16px;margin-bottom:12px">
+      <span style="font-size:13px;font-weight:700;color:#15803d">✅ Katılan Öğrenciler (${rows.length})</span>
+    </div>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
+      <tr style="background:#f9fafb"><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:right;width:36px">#</th><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:left">Öğrenci</th><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:left">No</th><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:right">Saat</th></tr>
+      ${_stuRows(rows,'#f0fdf4')}
+    </table>
+  </td></tr>
+  <!-- KATILMAYAN LİSTESİ -->
+  <tr><td style="background:#fff;padding:16px 32px 24px">
+    <div style="background:#fff7f7;border-left:4px solid #ef4444;border-radius:0 8px 8px 0;padding:10px 16px;margin-bottom:12px">
+      <span style="font-size:13px;font-weight:700;color:#b91c1c">❌ Katılmayan Öğrenciler (${absentRows.length})</span>
+    </div>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
+      <tr style="background:#f9fafb"><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:right;width:36px">#</th><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:left">Öğrenci</th><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:left">No</th><th style="padding:7px 10px;font-size:11px;color:#6b7280;text-align:right"></th></tr>
+      ${_stuRows(absentRows,'#fff7f7')}
+    </table>
+  </td></tr>
+  <!-- FOOTER -->
+  <tr><td style="background:#1e3a5f;border-radius:0 0 12px 12px;padding:16px 32px;text-align:center">
+    <div style="color:#93c5fd;font-size:11px">PAÜ Tıp Fakültesi Yoklama Sistemi · Otomatik oluşturulmuştur</div>
+  </td></tr>
+</table>
+</td></tr></table></body></html>`;
+
+  /* ── ALICILAR ── */
   const recipients=new Set();
-  // D4/D5'te açan hocanın e-posta alması profEmailNotify bayrağına bağlı (D1-3'te her zaman alır)
-  if(sess.profEmailNotify!==false){
+  // Tek sorumlu varsa ve hoca ile aynıysa, hocanın ayrı mail almasını engelle
+  const _profIsSorumlu=sorumluEmails.length===1&&sess.profEmail&&sorumluEmails[0]===sess.profEmail;
+  if(!_profIsSorumlu&&sess.profEmailNotify!==false){
     const _profInPool=Object.values(professors||{}).find(p=>p.email===sess.profEmail);
     if(_profInPool){recipients.add(_profInPool.email);}
     else if(sess.profEmail){recipients.add(sess.profEmail);}
   }
   ADMIN_EMAILS.forEach(e=>recipients.add(e));
   sorumluEmails.forEach(e=>recipients.add(e));
-  // Per-dönem bildirim: task'ın dönemi varsa ilgili koordinatör de alır
   const _sessDonem=task?.donem||'';
   if(_sessDonem&&DONEM_NOTIFY_EMAILS[_sessDonem]){
     DONEM_NOTIFY_EMAILS[_sessDonem].forEach(e=>recipients.add(e));
   }
-  const excelRows=rows.map((a,i)=>({
-    sira:i+1,
-    no:a.studentNo||'',
-    ad:_sname(a),
-    saat:a.time?new Date(a.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'-'
-  }));
+  /* Excel: katılanlar + ayraç + katılmayanlar */
+  const excelRows=[
+    ...rows.map((a,i)=>({sira:i+1,durum:'Katılan',no:a.studentNo||'',ad:_sname(a),saat:a.time?new Date(a.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'-'})),
+    ...absentRows.map((a,i)=>({sira:i+1,durum:'Katılmayan',no:a.studentNo||'',ad:_sname(a),saat:'—'})),
+  ];
   try{
-    await callScriptEmail({recipients:[...recipients],subject,body,rows:excelRows,
+    await callScriptEmail({recipients:[...recipients],subject,body,htmlBody,rows:excelRows,
       sheetName:`Yoklama_${(sess.courseName||sess.name||'').replace(/\s+/g,'_')}_${fmtDate(sess.date)}`});
     await fbPatch('/sessions/'+sess.code,{emailSent:true});
   }catch(e){console.warn('Email error',e);}
+}
+
+async function checkMailQuota(){
+  const badge=document.getElementById('mail-quota-badge');
+  if(!emailCfg.scriptUrl){setMsg('email-settings-msg','alerr','Önce Script URL girin ve kaydedin.');return;}
+  if(badge){badge.style.display='inline-block';badge.style.background='var(--bg3)';badge.style.color='var(--fg2)';badge.textContent='⏳ Sorgulanıyor…';}
+  try{
+    const r=await fetch(emailCfg.scriptUrl+'?quota=1',{method:'GET'});
+    const d=await r.json();
+    const q=d.quota??null;
+    if(q===null)throw new Error('Kota bilgisi alınamadı');
+    const color=q>50?'#15803d':q>10?'#b45309':'#b91c1c';
+    const bg=q>50?'rgba(21,128,61,.1)':q>10?'rgba(180,83,9,.1)':'rgba(185,28,28,.1)';
+    if(badge){badge.style.display='inline-block';badge.style.background=bg;badge.style.color=color;badge.textContent=`📧 ${q} mail hakkı kaldı`;}
+    setMsg('email-settings-msg',q>50?'alok':q>10?'alwrn':'alerr',`Bugün ${q} mail hakkınız kaldı (Google günlük limit: 100).`);
+  }catch(e){
+    if(badge){badge.style.display='none';}
+    setMsg('email-settings-msg','alerr','Kota sorgulanamadı: '+esc(e.message)+' — Script\'te doGet fonksiyonu olmayabilir, kodu güncelleyin.');
+  }
 }
 
 async function testEmail(){
@@ -9641,7 +9808,7 @@ function renderAtt(code){
         <span style="font-size:1.1rem;font-weight:700;color:${color};width:22px;text-align:center;flex-shrink:0">${icon}</span>
         ${isPresent?verifyBadge(item.rec):''}
         <div class="lname">
-          <div class="n">${esc(item.name)}${absBadge}${warnIco}</div>
+          <div class="n" title="${esc(item.name)}">${esc(item.name)}${absBadge}${warnIco}</div>
           <div class="m">${esc(item.no)}${timeLabel}${isExcused?' · <span style="color:var(--warn,#f59e0b);font-size:.72rem">Mazeret</span>':''}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
@@ -9665,7 +9832,7 @@ function renderAtt(code){
           return`<li class="lrow" style="border-left:3px solid ${vs.color}">
           ${(()=>{const r=8,circ=2*Math.PI*r,dash=pct*circ,gap=circ-dash;return`<svg width="22" height="22" viewBox="0 0 22 22" style="flex-shrink:0" title="${vs.label}${distTxt}"><circle cx="11" cy="11" r="${r}" fill="none" stroke="rgba(128,128,128,.2)" stroke-width="3"/><circle cx="11" cy="11" r="${r}" fill="none" stroke="${vs.color}" stroke-width="3" stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-linecap="round" transform="rotate(-90 11 11)"/></svg>`;})()}
           <div class="av" style="background:${_avBg(a.studentNo||a.studentName)}">${_initials(a.studentName)}</div>
-          <div class="lname"><div class="n">${esc(a.studentName||'—')}</div><div class="m">${esc(a.studentNo||'')}${a.ip?` · <span style="font-family:monospace;font-size:.68rem;opacity:.75">IP: ${esc(a.ip)}</span>`:''}${a.lat?` · <span style="font-size:.68rem;opacity:.65;color:${vs.color}" title="${a.lat.toFixed(5)},${a.lng.toFixed(5)}">${vs.icon}${distTxt?distTxt:''}±${a.locAcc||'?'}m</span>`:' · <span style="font-size:.68rem;opacity:.5">📍 Konum yok</span>'}</div></div>
+          <div class="lname"><div class="n" title="${esc(a.studentName||'')}">${esc(a.studentName||'—')}</div><div class="m">${esc(a.studentNo||'')}${a.ip?` · <span style="font-family:monospace;font-size:.68rem;opacity:.75">IP: ${esc(a.ip)}</span>`:''}${a.lat?` · <span style="font-size:.68rem;opacity:.65;color:${vs.color}" title="${a.lat.toFixed(5)},${a.lng.toFixed(5)}">${vs.icon}${distTxt?distTxt:''}±${a.locAcc||'?'}m</span>`:' · <span style="font-size:.68rem;opacity:.5">📍 Konum yok</span>'}</div></div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
             <span class="ltime">${a.timeStr||''}</span>
             ${a.manual?`<span class="bdg bwrn" style="font-size:.6rem" title="${esc((_MA_REASON_LABELS[a.manualReason]||'Manuel')+(a.manualNote?' — '+a.manualNote:''))}">${_MA_REASON_LABELS[a.manualReason]||'📝 Manuel'}</span>`:''}
@@ -10650,7 +10817,7 @@ function renderHist(){
     return`<li class="lrow" style="cursor:pointer" onclick="showRptDetail(${attrJ(s.code)})">
       <div class="lname">
         <div class="n">${esc(s.name||'—')}${s.dept?`<span class="bdg binfo" style="font-size:.58rem;margin-left:6px;vertical-align:middle">${esc(s.dept)}</span>`:''}${s.emailSent?'<span class="bdg bacc" style="font-size:.58rem;margin-left:4px;vertical-align:middle">✉ Mail</span>':''}</div>
-        <div class="m">${dayN(s.date)} ${fmtDate(s.date)} ${s.time||''} · ${esc(s.profName||'')}</div>
+        <div class="m">${dayN(s.date)} ${fmtDate(s.date)} ${s.time||''} · ${esc(_dispProf(s))}</div>
       </div>
       <span class="bdg bacc" style="flex-shrink:0">${cnt} kişi</span>
     </li>`;
@@ -11460,6 +11627,65 @@ async function doDownload(content,filename){
 }
 async function exportCsv(){const sess=activeSessions.find(s=>s.code===curActiveCode);if(sess)await doDownload(csvRows(sess,attendees),csvFn(sess));}
 async function exportHistCsv(){if(histDetSess)await doDownload(csvRows(histDetSess,histDetAtt),csvFn(histDetSess));}
+
+function _xlsxRows(sess,att){
+  if(typeof XLSX==='undefined'){showToast('❌','XLSX kütüphanesi yüklenemedi','','err',3500);return null;}
+  const sessLoc=sess.locLat?{lat:sess.locLat,lng:sess.locLng}:null;
+  const rows=Object.values(att).sort((a,b)=>(a.time||0)-(b.time||0));
+  // Başlık satırı
+  const header=['#','Öğrenci No','Ad Soyad','Saat','Tür','Kimlik','Enlem','Boylam','Konum Doğruluğu (m)','Uzaklık (m)','IP'];
+  const data=[header];
+  rows.forEach((a,i)=>{
+    let distM='';
+    if(sessLoc&&a.lat&&a.lng){distM=Math.round(haversineM(a.lat,a.lng,sessLoc.lat,sessLoc.lng));}
+    data.push([
+      i+1,
+      a.studentNo||'',
+      a.studentName||'',
+      a.timeStr||'',
+      a.manual?'Manuel':'QR',
+      a.idVerified?'Doğrulandı':'—',
+      a.lat!=null?a.lat:'',
+      a.lng!=null?a.lng:'',
+      a.locAcc!=null?a.locAcc:'',
+      distM!==''?distM:'',
+      a.ip||''
+    ]);
+  });
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  // Sütun genişlikleri
+  ws['!cols']=[{wch:4},{wch:14},{wch:28},{wch:7},{wch:8},{wch:12},{wch:12},{wch:12},{wch:18},{wch:13},{wch:16}];
+  // Başlık stili (sadece görünüm — xlsx.full.min supports cell styles via !merges/aoa but not full formatting without pro)
+  XLSX.utils.book_append_sheet(wb,ws,'Yoklama');
+  // Oturum bilgisi sayfası
+  const info=[
+    ['Ders',sess.name||''],
+    ['Tarih',fmtDate(sess.date)],
+    ['Saat',sess.time||''],
+    ['Hoca',sess.profName||''],
+    ['Kod',sess.code||''],
+    ['Toplam Katılan',rows.length],
+    ['Konum Kilidi',sessLoc?`${sessLoc.lat.toFixed(5)}, ${sessLoc.lng.toFixed(5)} (±${sess.locRadius||'?'}m)`:'Yok'],
+    ['Dışa Aktarma',new Date().toLocaleString('tr-TR')]
+  ];
+  const wsInfo=XLSX.utils.aoa_to_sheet(info);
+  wsInfo['!cols']=[{wch:18},{wch:40}];
+  XLSX.utils.book_append_sheet(wb,wsInfo,'Oturum Bilgisi');
+  return wb;
+}
+function _xlsxFn(sess){const cl=x=>(x||'').replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ ]/g,'').replace(/\s+/g,'_');return`Yoklama_${cl(sess.name)}_${(sess.date||'').replace(/-/g,'')}.xlsx`;}
+function exportXlsx(){
+  const sess=activeSessions.find(s=>s.code===curActiveCode);
+  if(!sess)return;
+  const wb=_xlsxRows(sess,attendees);
+  if(wb)XLSX.writeFile(wb,_xlsxFn(sess));
+}
+function exportHistXlsx(){
+  if(!histDetSess)return;
+  const wb=_xlsxRows(histDetSess,histDetAtt);
+  if(wb)XLSX.writeFile(wb,_xlsxFn(histDetSess));
+}
 async function exportMatrix(){
   const cid=document.getElementById('mx-course').value;
   const filtered=sessions.filter(s=>!s.active&&(!cid||s.courseId===cid));
@@ -12094,11 +12320,11 @@ async function renderTaskSorumluTab(dk){
                 <input id="ts-inp-${dk}-${bi}-${ti}" type="text" autocomplete="off" placeholder="Hoca ara…"
                   style="border:1.5px solid var(--border);border-radius:20px;background:var(--bg2);color:var(--fg);font-size:.78rem;padding:5px 12px 5px 27px;outline:none;min-width:120px;width:155px;transition:border-color .18s,box-shadow .18s"
                   onfocus="this.style.borderColor='var(--pau-285c)';this.style.boxShadow='0 0 0 3px rgba(0,114,206,.13)';_tsPositionDd(${attrJ(dk)},${bi},${ti});tsSearch(${attrJ(dk)},${bi},${ti},this.value)"
-                  onblur="this.style.borderColor='';this.style.boxShadow='';setTimeout(()=>{if(!_tsSavingKeys.has('${dk}_${bi}_${ti}'))tsHideDd('${dk}',${bi},${ti});},300)"
+                  onblur="this.style.borderColor='';this.style.boxShadow=''"
                   oninput="tsSearch(${attrJ(dk)},${bi},${ti},this.value)"
                   onkeydown="tsKey(event,${attrJ(dk)},${bi},${ti})">
               </div>
-              <div id="ts-dd-${dk}-${bi}-${ti}" style="display:none;position:fixed;z-index:100000;background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;box-shadow:0 8px 28px rgba(0,56,101,.18),0 2px 8px rgba(0,0,0,.08);min-width:260px;max-height:230px;overflow-y:auto;padding:4px 0"></div>
+              <div id="ts-dd-${dk}-${bi}-${ti}" style="display:none;position:fixed;z-index:100000;background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;box-shadow:0 8px 28px rgba(0,56,101,.18),0 2px 8px rgba(0,0,0,.08);min-width:260px;overflow-y:auto;padding:4px 0"></div>
             </div>
             <span id="ts-saved-${dk}-${bi}-${ti}" style="font-size:.8rem;color:var(--ok);opacity:0;transition:opacity .4s;font-weight:700">✓</span>
           </div>
@@ -12132,8 +12358,22 @@ function _tsPositionDd(dk,bi,ti){
   const dd=document.getElementById(`ts-dd-${dk}-${bi}-${ti}`);
   if(!inp||!dd)return;
   const r=inp.getBoundingClientRect();
-  dd.style.top=(r.bottom+5)+'px';
-  dd.style.left=r.left+'px';
+  const vH=window.innerHeight;
+  const spaceBelow=vH-r.bottom-8;
+  const spaceAbove=r.top-8;
+  const preferredH=230;
+  if(spaceBelow>=80||spaceBelow>=spaceAbove){
+    // position below input
+    dd.style.top=(r.bottom+4)+'px';
+    dd.style.bottom='auto';
+    dd.style.maxHeight=Math.max(spaceBelow,80)+'px';
+  }else{
+    // dropup — position above input
+    dd.style.top='auto';
+    dd.style.bottom=(vH-r.top+4)+'px';
+    dd.style.maxHeight=Math.max(spaceAbove,80)+'px';
+  }
+  dd.style.left=Math.max(4,Math.min(r.left,window.innerWidth-270))+'px';
   dd.style.width=Math.max(260,r.width)+'px';
 }
 function tsSearch(dk,bi,ti,q){
@@ -12157,14 +12397,13 @@ function tsSearch(dk,bi,ti,q){
   const nq=norm(q||'');
   const filtered=profs.filter(p=>!cur.includes(p.uid)&&(!nq||norm(profFullName(p)).includes(nq)||norm(p.email).includes(nq)));
   if(!filtered.length){dd.style.display='none';return;}
-  _tsPositionDd(dk,bi,ti);
   _tsDdIdx=-1;
   dd.innerHTML=filtered.slice(0,30).map((p,i)=>{
     const label=profFullName(p)||p.email||p.uid;
     const initials=(label||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
     const emailLine=p.email&&p.email!==label?`<div style="font-size:.7rem;color:var(--fg3);margin-top:1px;line-height:1.2">${esc(p.email)}</div>`:'';
     return `<div class="ts-dd-item" data-idx="${i}" data-uid="${esc(p.uid)}"
-      onpointerdown="event.preventDefault();tsPick(${attrJ(dk)},${bi},${ti},${attrJ(p.uid)})"
+      onclick="tsPick(${attrJ(dk)},${bi},${ti},${attrJ(p.uid)})"
       style="padding:7px 11px;font-size:.8rem;cursor:pointer;color:var(--fg);display:flex;align-items:center;gap:9px;border-radius:8px;margin:2px 4px;transition:background .1s"
       onmouseover="this.style.background='color-mix(in srgb,var(--pau-285c) 10%,var(--bg))'"
       onmouseout="this.style.background=''">
@@ -12173,12 +12412,37 @@ function tsSearch(dk,bi,ti,q){
     </div>`;
   }).join('');
   dd.style.display='block';
+  _tsPositionDd(dk,bi,ti); // reposition after content is set (height now known)
 }
 function tsHideDd(dk,bi,ti){
   const dd=document.getElementById(`ts-dd-${dk}-${bi}-${ti}`);
   if(dd)dd.style.display='none';
   _tsDdIdx=-1;
 }
+// Reposition any visible ts-dropdown on scroll/resize
+(function(){
+  function _tsReposAll(){
+    document.querySelectorAll('[id^="ts-dd-"]').forEach(dd=>{
+      if(dd.style.display==='none')return;
+      const id=dd.id.replace('ts-dd-','');
+      const parts=id.split('-');
+      if(parts.length<3)return;
+      const dk=parts.slice(0,-2).join('-');
+      const bi=parts[parts.length-2];
+      const ti=parts[parts.length-1];
+      _tsPositionDd(dk,bi,ti);
+    });
+  }
+  window.addEventListener('scroll',_tsReposAll,{passive:true,capture:true});
+  window.addEventListener('resize',_tsReposAll,{passive:true});
+})();
+// Global click-outside: close any open ts-dropdown when clicking outside input or dropdown
+document.addEventListener('mousedown',function(e){
+  if(!e.target.closest('[id^="ts-dd-"]')&&!e.target.closest('[id^="ts-inp-"]')){
+    document.querySelectorAll('[id^="ts-dd-"]').forEach(dd=>{if(dd.style.display!=='none')dd.style.display='none';});
+    _tsDdIdx=-1;
+  }
+},true);
 function tsKey(e,dk,bi,ti){
   const dd=document.getElementById(`ts-dd-${dk}-${bi}-${ti}`);
   if(!dd||dd.style.display==='none')return;
@@ -12886,16 +13150,22 @@ async function finalSubmitAtt(){
   const{code,no,name,sess,dvId}=pendingAtt;
   try{
     const now=new Date();
-    const [_ip2,_loc2]=await Promise.allSettled([
-      _getClientIp(),
-      navigator.geolocation?new Promise(r=>navigator.geolocation.getCurrentPosition(p=>r({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)}),()=>r(null),{timeout:5000,maximumAge:60000})):Promise.resolve(null)
-    ]);
+    const [_ip2]=await Promise.allSettled([_getClientIp()]);
     const ipVal2=_ip2.status==='fulfilled'?_ip2.value:null;
-    const locVal2=_loc2.status==='fulfilled'?_loc2.value:null;
+    // Konum zorunlu — her zaman
+    let locVal2;
+    try{
+      if(!navigator.geolocation)throw new Error('Tarayıcınız konum desteklemiyor');
+      locVal2=await getLocationCached(10000);
+      if(!locVal2||!locVal2.lat)throw new Error('Konum boş');
+    }catch(e){
+      setMsg('stmsg','alerr','📍 Konum izni gerekli. Lütfen tarayıcınızda/uygulama ayarlarında konum iznine izin verin ve tekrar deneyin.');
+      return;
+    }
     const updates={};
     const attRec2={studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:false,idVerified:true};
     if(ipVal2)attRec2.ip=ipVal2;
-    if(locVal2&&locVal2.lat){attRec2.lat=locVal2.lat;attRec2.lng=locVal2.lng;attRec2.locAcc=locVal2.acc;}
+    attRec2.lat=locVal2.lat;attRec2.lng=locVal2.lng;attRec2.locAcc=Math.round(locVal2.acc||0);
     updates[`sessions/${code}/attendance/${no}`]=attRec2;
     if(dvId)updates[`sessions/${code}/devices/${dvId.slice(0,32)}`]={no,time:now.getTime()};
     if(ipVal2){const _ipKey2=ipVal2.replace(/\./g,'_').replace(/:/g,'_').slice(0,40);updates[`sessions/${code}/ips/${_ipKey2}`]={no,time:now.getTime()};}
@@ -12908,7 +13178,7 @@ async function finalSubmitAtt(){
     document.getElementById('st-ok-student-no').textContent=no||'';
     document.getElementById('st-ok-course').textContent='📚 '+(sess.name||sess.courseName||'—');
     document.getElementById('st-ok-time').textContent='🕐 '+now.toTimeString().slice(0,5);
-    document.getElementById('st-ok-headline').textContent=locVal2&&locVal2.lat?`📍 ${locVal2.lat.toFixed(4)}, ${locVal2.lng.toFixed(4)} (±${locVal2.acc}m)  ·  Yoklamanız kaydedilmiştir.`:'Yoklamanız başarıyla kaydedilmiştir.';
+    document.getElementById('st-ok-headline').textContent=`📍 ${locVal2.lat.toFixed(4)}, ${locVal2.lng.toFixed(4)} (±${Math.round(locVal2.acc||0)}m)  ·  Yoklamanız kaydedilmiştir.`;
     const grEl2=document.getElementById('st-ok-greeting');if(grEl2)grEl2.textContent='🎓 İyi dersler!';
     try{localStorage.setItem('pau_last_att_code',code);}catch{}
     const vbEl=document.getElementById('st-ok-verified-badge');if(vbEl)vbEl.style.display='';
@@ -13034,17 +13304,24 @@ async function submitAtt2(){
       return;
     }
     const now=new Date();
+    // Konum zorunlu — her zaman
+    if(btn2)btn2.innerHTML='<span class="spin"></span> Konum alınıyor…';
+    let locVal;
+    try{
+      if(!navigator.geolocation)throw new Error('Tarayıcınız konum desteklemiyor');
+      locVal=await getLocationCached(10000);
+      if(!locVal||!locVal.lat)throw new Error('Konum boş');
+    }catch(e){
+      setMsg(msgEl,'alerr','📍 Konum izni gerekli. Lütfen tarayıcınızda/uygulama ayarlarında konum iznine izin verin ve tekrar deneyin.');
+      if(btn2){btn2.innerHTML='Yoklamayı Gönder';btn2.disabled=false;}
+      return;
+    }
     if(btn2)btn2.innerHTML='<span class="spin"></span> Kaydediliyor…';
-    // IP zaten _earlyIp'den alındı, loc'u ayrıca al
-    const _loc=await Promise.allSettled([
-      navigator.geolocation?new Promise(r=>navigator.geolocation.getCurrentPosition(p=>r({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)}),()=>r(null),{timeout:5000,maximumAge:60000})):Promise.resolve(null)
-    ]);
     const ipVal=_earlyIp||null;
-    const locVal=_loc[0].status==='fulfilled'?_loc[0].value:null;
     const updates={};
     const attRec={studentNo:no,studentName:name,time:now.getTime(),timeStr:now.toTimeString().slice(0,5),manual:false};
     if(ipVal)attRec.ip=ipVal;
-    if(locVal&&locVal.lat){attRec.lat=locVal.lat;attRec.lng=locVal.lng;attRec.locAcc=locVal.acc;}
+    attRec.lat=locVal.lat;attRec.lng=locVal.lng;attRec.locAcc=Math.round(locVal.acc||0);
     updates[`sessions/${code}/attendance/${no}`]=attRec;
     updates[`sessions/${code}/devices/${dvId.slice(0,32)}`]={no,time:now.getTime()};
     if(ipVal){const _ipKey=ipVal.replace(/\./g,'_').replace(/:/g,'_').slice(0,40);updates[`sessions/${code}/ips/${_ipKey}`]={no,time:now.getTime()};}
@@ -13056,7 +13333,7 @@ async function submitAtt2(){
     document.getElementById('st-ok-student-no').textContent=no||'';
     document.getElementById('st-ok-course').textContent='📚 '+(sess.name||sess.courseName||'—');
     document.getElementById('st-ok-time').textContent='🕐 '+now.toTimeString().slice(0,5);
-    document.getElementById('st-ok-headline').textContent=locVal&&locVal.lat?`📍 ${locVal.lat.toFixed(4)}, ${locVal.lng.toFixed(4)} (±${locVal.acc}m)  ·  Yoklamanız kaydedilmiştir.`:'Yoklamanız başarıyla kaydedilmiştir.';
+    document.getElementById('st-ok-headline').textContent=`📍 ${locVal.lat.toFixed(4)}, ${locVal.lng.toFixed(4)} (±${Math.round(locVal.acc||0)}m)  ·  Yoklamanız kaydedilmiştir.`;
     const grEl=document.getElementById('st-ok-greeting');if(grEl)grEl.textContent='🎓 İyi dersler!';
     try{localStorage.setItem('pau_last_att_code',code);}catch{}
     const vbEl2=document.getElementById('st-ok-verified-badge');if(vbEl2)vbEl2.style.display='none';
