@@ -2276,12 +2276,13 @@ body{
 }
 /* Buttons on dark hero */
 .act-card .btn.bg{
-  background:rgba(255,255,255,.12)!important;
-  color:rgba(255,255,255,.92)!important;
-  border:1.5px solid rgba(255,255,255,.26)!important;
-  box-shadow:none!important;
+  background:rgba(255,255,255,.22)!important;
+  color:#fff!important;
+  border:1.5px solid rgba(255,255,255,.50)!important;
+  box-shadow:0 1px 6px rgba(0,0,0,.18)!important;
+  font-weight:600!important;
 }
-.act-card .btn.bg:hover:not(:disabled){background:rgba(255,255,255,.22)!important}
+.act-card .btn.bg:hover:not(:disabled){background:rgba(255,255,255,.34)!important}
 .act-card .btn.bp{
   background:rgba(255,255,255,.94)!important;
   color:#003865!important;
@@ -3591,7 +3592,7 @@ input:focus,select:focus,textarea:focus{
       <div id="round-picker-list"><span class="spin"></span></div>
       <button class="btn bg bsm" style="margin-top:8px" onclick="document.getElementById('round-picker').style.display='none'">İptal</button>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;overflow-x:auto;padding-bottom:2px">
       <button class="btn bg bsm" onclick="downloadQr()">⬇ QR İndir</button>
       <button class="btn bp bsm" style="font-weight:700;padding:0 18px" onclick="openProjFullscreen()" title="QR + Projeksiyon tam ekran">📺 QR &amp; Projeksiyon</button>
       <button class="btn bp bsm" onclick="startRoundMode()" id="round-mode-btn" title="Tur modu — ekip ekip yoklama al">🔄 Tur</button>
@@ -4188,6 +4189,7 @@ function doPost(e) {
     var recipients = data.recipients || [];
     var subject = data.subject || 'Yoklama Raporu';
     var body = data.body || '';
+    var htmlBody = data.htmlBody || '';
     var rows = data.rows || [];
     var sheetName = data.sheetName || 'Yoklama';
 
@@ -4195,20 +4197,23 @@ function doPost(e) {
     var attachments = [];
     if (rows.length > 0) {
       var csv = '﻿'; // UTF-8 BOM (Excel için)
-      csv += 'Sıra,Öğrenci No,Ad Soyad,Giriş Saati\n';
+      csv += 'Sıra,Durum,Öğrenci No,Ad Soyad,Giriş Saati\n';
       rows.forEach(function(r) {
-        csv += r.sira + ',' + r.no + ',"' + r.ad + '",' + r.saat + '\n';
+        csv += r.sira + ',' + (r.durum||'') + ',' + r.no + ',"' + r.ad + '",' + r.saat + '\n';
       });
       var blob = Utilities.newBlob(csv, 'text/csv; charset=utf-8', sheetName + '.csv');
       attachments.push(blob);
     }
 
+    var mailOpts = {
+      attachments: attachments,
+      name: 'PAÜ Tıp Fakültesi Yoklama Sistemi'
+    };
+    if (htmlBody) mailOpts.htmlBody = htmlBody;
+
     recipients.forEach(function(email) {
       try {
-        GmailApp.sendEmail(email, subject, body, {
-          attachments: attachments,
-          name: 'PAÜ Tıp Fakültesi Yoklama Sistemi'
-        });
+        GmailApp.sendEmail(email, subject, body, mailOpts);
       } catch(err) {}
     });
 
@@ -4756,6 +4761,7 @@ let classrooms={};         // derslik profilleri
 let objections={};         // öğrenci itiraz kayıtları
 let profTemplates={};      // hocaya ait adlandırılmış oturum şablonları
 let activeSessions=[];  // professor's active sessions
+let _newSessData=null;  // just-created session fallback for openProjFullscreen
 let curActiveCode=null;  // which session is displayed in view-active
 let curTaskId=null;       // selected task in task panel
 let attendees={};
@@ -9144,7 +9150,7 @@ function _getStuMap(){
   for(const key of sourceKeys){
     const grp=_grpData[key];
     if(!grp?.students)continue;
-    Object.entries(grp.students).forEach(([no,name])=>{map[no]=name;});
+    Object.entries(grp.students).forEach(([no,s])=>{const nm=typeof s==='string'?s:(s?.name||s?.ad||s?.no||no);map[no]=nm;});
   }
   return map;
 }
@@ -9156,9 +9162,20 @@ function _refreshStuPreview(){
   if(!prev)return;
   const map=_getStuMap();
   const total=Object.keys(map).length;
-  if(!total){prev.style.display='none';return;}
+  if(!total){prev.style.display='none';
+    // Grup kaldırıldıysa chip'i ders sayısına döndür
+    const chip=document.getElementById('course-info-chip');
+    if(chip&&chip.dataset.grpCount){delete chip.dataset.grpCount;const cid=document.getElementById('new-course')?.value;if(cid)_onCourseChange();}
+    return;}
   prev.style.display='';
   if(summary)summary.textContent=`Bu oturumda ${total} öğrencinin yoklaması alınacak — listeyi kontrol edin`;
+  // Chip'teki öğrenci sayısını seçili grup sayısıyla güncelle
+  const chip=document.getElementById('course-info-chip');
+  if(chip&&chip.style.display!=='none'){
+    chip.dataset.grpCount=total;
+    // Sadece 👥 <sayı> kısmını güncelle, hoca ve bölüm bilgisini koru
+    chip.innerHTML=chip.innerHTML.replace(/<span[^>]*>👥[^<]*<\/span>/,`<span style="display:inline-flex;align-items:center;gap:4px;">👥 <strong>${total}</strong> öğrenci</span>`);
+  }
   // Liste kapalı başlar; sadece önce render et ama gösterme
   if(list&&(list.style.display==='block')){_renderStuList(map,list);}
   _updateStuToggleBtn();
@@ -9167,7 +9184,8 @@ function _refreshStuPreview(){
 function _renderStuList(map,list){
   const sorted=Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0]));
   let html='<div style="display:flex;flex-direction:column;gap:2px">';
-  sorted.forEach(([no,name])=>{
+  sorted.forEach(([no,val])=>{
+    const name=typeof val==='string'?val:(val?.name||val?.ad||val?.no||'');
     html+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 4px;border-radius:5px">
       <span style="font-family:monospace;font-size:.78rem;color:var(--fg2);min-width:80px">${esc(no)}</span>
       <span style="font-size:.82rem">${esc(name)}</span>
@@ -9391,13 +9409,15 @@ async function createSession(){
     const ae=document.getElementById('act-att-cdown');if(ae)ae.style.display='none';
     if(attClosesAt){updateAttCdown(attClosesAt);attCdownTimer=setInterval(()=>updateAttCdown(attClosesAt),1000);}
     listenAtt(code);
-    // Seçilen grupları ön yükle
-    if(_selGroups.size>0){
+    // Projeksiyon ekranını aç — grup yüklemesinden önce, her durumda çalışsın
+    _newSessData=sess;
+    setTimeout(()=>openProjFullscreen(),600);
+    // Seçilen grupları ön yükle — ayrı try/catch: hata projeksiyon açılmasını engellemesin
+    if(_selGroups.size>0){try{
       const now2=new Date();const ts2=now2.toTimeString().slice(0,5);const t2=now2.getTime();
       const grpNames=[..._selGroups].map(k=>_grpData[k]?.name||k).filter(Boolean);
-      const stuToAdd=_getStuMap(); // ekip filtresi aktifse otomatik filtreler
+      const stuToAdd=_getStuMap();
       for(const [no,sname] of Object.entries(stuToAdd)){
-        // sname string veya object olabilir — güvenli string'e çevir
         const snameStr=typeof sname==='string'?sname:(sname?.name||sname?.ad||sname?.displayName||String(sname||''));
         const entry={studentNo:no,studentName:snameStr,time:t2,timeStr:ts2,manual:true,groupStart:true};
         await fbPut('/sessions/'+code+'/attendance/'+no,entry);
@@ -9405,10 +9425,8 @@ async function createSession(){
       }
       if(grpNames.length)_auditLog(code,'bulk_group_start',{groups:grpNames,count:Object.keys(stuToAdd).length});
       renderAtt(code);
-    }
+    }catch(ge){console.warn('Group pre-load error',ge);}}
     _selGroups.clear();
-    // Projeksiyon ekranını aç — oturum verileri yüklendikten sonra
-    setTimeout(()=>openProjFullscreen(),400);
   }catch(e){errEl.textContent='Hata: '+e.message;errEl.style.display='block';}
   finally{btn.innerHTML='Oturumu Başlat';btn.disabled=false;}
 }
@@ -9442,13 +9460,7 @@ async function closeSession(){
       const resp=await fetch(FB_CFG.databaseURL+'/sessions/'+curActiveCode+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:false,closedAt:Date.now()})});
       if(!resp.ok)throw new Error('HTTP '+resp.status);
       _auditLog(curActiveCode,'session_closed');
-      // Otomatik mail gönder — oturum kapanır kapanmaz
-      try{
-        const attSnap=JSON.parse(JSON.stringify(attendees||{}));
-        const attFiltered={};
-        Object.entries(attSnap).forEach(([no,r])=>{if(!r.absent&&!r.groupStart)attFiltered[no]=r;});
-        sendSessionEmail({...sess,attendance:attFiltered});
-      }catch(_){}
+      // Mail sadece reviewConfirm() içinden gönderilir — çift mail olmaması için burada gönderilmiyor
       // Anlık yoklama kopyasını review modalına aç — ek inceleme/indirme için
       openReviewModal(sess, JSON.parse(JSON.stringify(attendees||{})));
       nav('session');
@@ -9765,7 +9777,7 @@ async function sendSessionEmail(sess){
   const _bodyLines=[
     'PAÜ Tıp Fakültesi — Yoklama Raporu',_sep,
     `Öğretim Üyesi  : ${openingProfFull}`,
-    `TASK Sorumlusu : ${sorumluFullNames.join(', ')||'—'}`,
+    sorumluFullNames.length?`TASK Sorumlusu : ${sorumluFullNames.join(', ')}`:null,
     `Ders           : ${courseName}`,
     task?.donem?`Dönem          : ${task.donem}`:null,
     task?.blokName?`Blok           : ${task.blokName}`:null,
@@ -14620,7 +14632,8 @@ function openProjFullscreen(){
   // groupStart olanları "görüldü" listesine alma — gerçek yoklama yapınca feed'e girsin
   _projFeedSeen=new Set(Object.keys(attendees||{}).filter(k=>{const r=attendees[k];return r&&!r.absent&&!r.groupStart;}));
   el.classList.add('open');
-  const sess=activeSessions.find(s=>s.code===curActiveCode);
+  // activeSessions henüz yüklenmemişse _newSessData fallback kullan
+  const sess=activeSessions.find(s=>s.code===curActiveCode)||_newSessData;
   _projClosesAt=sess?.closesAt||null;
   const cname=document.getElementById('proj-course-name');
   const dinfo=document.getElementById('proj-date-info');
