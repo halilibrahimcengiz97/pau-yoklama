@@ -3087,7 +3087,6 @@ input:focus,select:focus,textarea:focus{
   <button id="nav-stats" onclick="nav('stats')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>İstatistik</button>
   <button id="nav-courses" onclick="nav('courses')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>Dersler</button>
   <button id="nav-profs" onclick="nav('profs')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Hocalar</button>
-  <button id="nav-registry" onclick="nav('registry')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></span>Merkez Kayıt</button>
 
   <button id="nav-calendar" onclick="nav('calendar')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Takvim</button>
   <button id="nav-myatt" onclick="nav('myatt')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Yoklamalarım</button>
@@ -4134,51 +4133,6 @@ input:focus,select:focus,textarea:focus{
   </div>
 </div>
 
-<!-- ═══ REGISTRY VIEW (admin only) ═══ -->
-<div class="view" id="view-registry">
-  <div class="card">
-    <div class="sec-hd">
-      <h2>🗄️ Merkez Öğrenci Kaydı</h2>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn bp bsm" onclick="showAddCentralStudent()">+ Öğrenci Ekle</button>
-        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:7px 12px;background:color-mix(in srgb,var(--ok) 15%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--ok) 35%,transparent);border-radius:var(--rad-xs);font-size:.8rem;font-weight:600;color:var(--ok)">
-          📥 CSV/Excel İçe Aktar
-          <input type="file" accept=".csv,.txt,.xlsx" style="display:none" onchange="importCentralStudents(this)">
-        </label>
-      </div>
-    </div>
-    <p class="hint" style="margin-bottom:10px">Bu merkezde saklanan öğrenci isimleri tüm derslerdeki yoklamalara yansır. Bir öğrencinin adını burada güncellediğinizde her yerde güncellenir.</p>
-    <!-- Tek öğrenci ekleme formu -->
-    <div id="add-cs-form" style="display:none;padding:12px;border:1px dashed var(--border);border-radius:var(--rad-sm);margin-bottom:12px">
-      <div class="form-row"><label>Öğrenci No *</label><input id="cs-no" placeholder="20230001" type="text"></div>
-      <div class="form-row"><label>Ad Soyad *</label><input id="cs-name" placeholder="AHMET YILMAZ"></div>
-      <div class="form-row"><label>Bölüm/Program</label><input id="cs-dept" placeholder="Tıp Fakültesi, Dönem 1"></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn bp bsm" onclick="saveCentralStudent()">Kaydet</button>
-        <button class="btn bg bsm" onclick="document.getElementById('add-cs-form').style.display='none'">İptal</button>
-      </div>
-      <div id="cs-err" style="margin-top:8px"></div>
-    </div>
-    <!-- CSV format hint -->
-    <div id="cs-import-msg" style="margin-bottom:8px;font-size:.8rem"></div>
-    <!-- Arama + istatistik -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-      <input id="cs-search" type="search" placeholder="🔍 Öğrenci no veya isim ara…" oninput="renderRegistry()" style="flex:1;min-width:180px">
-      <span id="cs-count" style="font-size:.8rem;color:var(--fg3)"></span>
-    </div>
-    <div id="cs-list" style="font-size:.85rem"></div>
-    <!-- Format açıklaması -->
-    <div class="dvd" style="margin-top:14px"></div>
-    <div class="card-title" style="font-size:.82rem">CSV Format</div>
-    <p class="hint">Her satıra bir öğrenci. Desteklenen formatlar:</p>
-    <ul style="font-size:.78rem;color:var(--fg3);margin:4px 0 0 16px;line-height:1.8">
-      <li><code>Öğrenci No TAB Ad Soyad</code></li>
-      <li><code>Öğrenci No TAB Ad Soyad TAB Bölüm</code></li>
-      <li><code>Öğrenci No;Ad Soyad;Bölüm</code> (noktalı virgülle)</li>
-    </ul>
-  </div>
-</div>
-
 <!-- ═══ SETTINGS VIEW ═══ -->
 <div class="view" id="view-settings">
   <!-- Alt sekme çubuğu -->
@@ -5189,7 +5143,7 @@ async function downloadQr(){
 /* ── NAV ── */
 function nav(v){
   curView=v;
-  ['student','session','active','report','courses','profs','settings','calendar','stats','audit','dl','registry'].forEach(x=>{
+  ['student','session','active','report','courses','profs','settings','calendar','stats','audit','dl'].forEach(x=>{
     const el=document.getElementById('view-'+x);
     if(el){el.classList.toggle('on',x===v);el.style.display='';}
     const nb=document.getElementById('nav-'+x);
@@ -5199,7 +5153,7 @@ function nav(v){
   if(v==='myatt'){renderMyAtt();}
   if(v==='courses'){renderCourses();populateSorumluSelects();}
   if(v==='profs')renderProfs();
-  if(v==='registry'){loadCentralStudents().then(renderRegistry);}
+
   if(v==='settings'){
     loadEmailSettings();
     if(isAdmin){loadSystemPinDisplay();loadTaskSorumluCard();renderTermMgr();loadImportedBlocks();renderTaskMgmt();}
@@ -5532,8 +5486,6 @@ function applyRole(){
   });
   const pb=document.getElementById('nav-profs');
   if(pb)pb.style.display=isAdmin?'':'none';
-  const rb=document.getElementById('nav-registry');
-  if(rb)rb.style.display=isAdmin?'':'none';
   const pr=document.getElementById('sess-login-prompt');
   const pv=document.getElementById('sess-prof-view');
   if(pr)pr.style.display=(!curUser)?'block':'none';
@@ -5598,6 +5550,20 @@ function mergeCentralNames(){
 }
 
 /** Öğrenci adı: önce merkez, sonra courseStudents, sonra no */
+// Öğrenci ekleme/düzenleme sonrası merkez kayıt /students güncelle
+async function _syncToCentral(students){
+  if(!students||!Object.keys(students).length)return;
+  const updates={};
+  Object.entries(students).forEach(([no,s])=>{
+    const name=typeof s==='string'?s:(s.name||s.ad||'');
+    const dept=s.dept||s.group||s.bolum||'';
+    if(no&&name)updates[no]={name,dept};
+  });
+  if(Object.keys(updates).length){
+    try{await fbPatch('/students',updates);Object.assign(centralStudents,updates);}catch(e){}
+  }
+}
+
 function csName(no,fallback){
   const c=centralStudents[no];
   if(c){const n=typeof c==='string'?c:(c.name||c.ad||'');if(n)return n;}
@@ -5626,7 +5592,7 @@ async function saveCentralStudent(){
     centralStudents[no]=data;
     document.getElementById('add-cs-form').style.display='none';
     showToast('✅','Kaydedildi',`${no} - ${name} merkeze eklendi.`,'ok',3000);
-    renderRegistry();
+    if(typeof renderRegistry==='function')renderRegistry();
     // Aktif courseStudents varsa güncelle
     if(courseStudents[no]!==undefined)courseStudents[no]=name;
   }catch(e){errEl.innerHTML='<div class="al alerr">Hata: '+esc(String(e))+'</div>';}
@@ -5640,7 +5606,7 @@ Emin misiniz?`))return;
   try{
     await fbDel('/students/'+no);
     delete centralStudents[no];
-    renderRegistry();
+    if(typeof renderRegistry==='function')renderRegistry();
     showToast('🗑','Silindi',no+' merkezden silindi.','warn',3000);
   }catch(e){showToast('❌','Hata',String(e),'err',4000);}
 }
@@ -5670,7 +5636,7 @@ async function saveCentralStudentEdit(no){
     await fbPut('/students/'+no,data);
     centralStudents[no]=data;
     if(courseStudents[no]!==undefined)courseStudents[no]=name;
-    renderRegistry();
+    if(typeof renderRegistry==='function')renderRegistry();
     showToast('✅','Güncellendi',`${no} güncellendi.`,'ok',2500);
   }catch(e){showToast('❌','Hata',String(e),'err',4000);}
 }
@@ -5702,7 +5668,7 @@ async function importCentralStudents(input){
     if(added){
       // Batch write to Firebase
       await fbPatch('/students',updates);
-      renderRegistry();
+      if(typeof renderRegistry==='function')renderRegistry();
       if(msgEl)msgEl.innerHTML=`<span style="color:var(--ok)">✅ ${added} öğrenci aktarıldı${skipped?' ('+skipped+' satır atlandı)':''}.</span>`;
       showToast('✅','Aktarıldı',added+' öğrenci merkeze eklendi.','ok',4000);
     } else {
@@ -6347,7 +6313,7 @@ function _onCourseChange(){
         const liveCount=sts?Object.keys(sts).length:0;
         // Cache'e yaz ki sonraki renderlar da doğru göstersin
         if(!courses[cid])return;
-        if(!courses[cid].students&&sts)courses[cid].students=sts;
+        if(sts)courses[cid].students=sts;  // her zaman taze listeyle güncelle
         // Hâlâ aynı ders seçiliyse chip'i güncelle
         const selNow=document.getElementById('new-course')?.value;
         if(selNow===cid&&chip&&chip.style.display!=='none'){
@@ -6951,6 +6917,7 @@ async function dlSaveGrid(donem,dk){
   if(msgEl)msgEl.innerHTML='<div class="al alinfo"><span class="spin"></span> Kaydediliyor…</div>';
   try{
     await fbPut('/donem-lists/'+dk,{students,updatedAt:Date.now(),count:cnt,updatedBy:curUser?.email||''});
+    _syncToCentral(students);
     const dirtyEl=document.getElementById('dl-dirty-'+dk);if(dirtyEl)dirtyEl.style.display='none';
     if(msgEl)msgEl.innerHTML='';
     showToast('✅','Kaydedildi',`${cnt} öğrenci.`,'ok',3000);
@@ -7091,6 +7058,7 @@ async function importGroupStudents(inp,donem,gid){
   try{
     const students=await _parseStudentFile(file);
     await fbPatch('/donem-groups/'+_dk(donem)+'/'+gid,{students,updatedAt:Date.now(),count:Object.keys(students).length});
+    _syncToCentral(students);
     showToast('✅','Liste yüklendi',`${Object.keys(students).length} öğrenci kaydedildi.`,'ok',4000);
     renderDonemGroupsUI(donem);
   }catch(e){showToast('❌','Yükleme başarısız',String(e),'err',5000);}
@@ -7121,6 +7089,7 @@ async function dlGrpPasteImport(donem,gid){
   });
   if(!added){showToast('⚠️','Yeni Yok','Tüm numaralar zaten listede.','warn',2500);return;}
   await fbPatch('/donem-groups/'+dk+'/'+gid,{students:existing,updatedAt:Date.now(),count:Object.keys(existing).length});
+  _syncToCentral(existing);
   showToast('✅','Eklendi',`${added} öğrenci gruba eklendi.`,'ok',3500);
   renderDonemGroupsUI(donem);
 }
@@ -9190,8 +9159,8 @@ function _refreshStuPreview(){
   if(!total){prev.style.display='none';return;}
   prev.style.display='';
   if(summary)summary.textContent=`Bu oturumda ${total} öğrencinin yoklaması alınacak — listeyi kontrol edin`;
-  // Grup seçilince listeyi otomatik aç
-  if(list){_renderStuList(map,list);list.style.display='block';}
+  // Liste kapalı başlar; sadece önce render et ama gösterme
+  if(list&&(list.style.display==='block')){_renderStuList(map,list);}
   _updateStuToggleBtn();
 }
 
@@ -14837,7 +14806,7 @@ function _updateProjFeed(){
     attended.sort((a,b)=>(a.time||0)-(b.time||0));
     feedList.innerHTML=
       `<div class="proj-sec-hdr">Katılanlar (${attended.length})</div>`+
-      `<div class="proj-roster-grid">${attended.map(a=>`<div class="pri-chip pri-present">${esc(a.studentNo)}</div>`).join('')}</div>`;
+      `<div class="proj-roster-grid">${attended.map(a=>{const _n=courseStudents[a.studentNo];const _nm=typeof _n==='string'?_n:(_n?.name||_n?.ad||a.studentName||'');return`<div class="pri-chip pri-present" title="${_nm?esc(_nm)+'\n':''}">${esc(a.studentNo)}</div>`;}).join('')}</div>`;
     return;
   }
   // ── Full roster: Katılanlar + Katılmayanlar ──
@@ -14850,11 +14819,11 @@ function _updateProjFeed(){
   let html='';
   if(absentNos.length>0){
     html+=`<div class="proj-sec-hdr">Katılmayanlar (${absentNos.length})</div>`;
-    html+=`<div class="proj-roster-grid">${absentNos.map(no=>`<div class="pri-chip pri-absent">${esc(no)}</div>`).join('')}</div>`;
+    html+=`<div class="proj-roster-grid">${absentNos.map(no=>{const _n=courseStudents[no];const _nm=typeof _n==='string'?_n:(_n?.name||_n?.ad||'');return`<div class="pri-chip pri-absent" title="${_nm?esc(_nm)+'\n':''}">${esc(no)}</div>`;}).join('')}</div>`;
   }
   if(presentNos.length>0){
     html+=`<div class="proj-sec-hdr" style="color:#4ade80aa">Katılanlar (${presentNos.length})</div>`;
-    html+=`<div class="proj-roster-grid">${presentNos.map(no=>`<div class="pri-chip pri-present">${esc(no)}</div>`).join('')}</div>`;
+    html+=`<div class="proj-roster-grid">${presentNos.map(no=>{const _n=courseStudents[no];const _nm=typeof _n==='string'?_n:(_n?.name||_n?.ad||'');return`<div class="pri-chip pri-present" title="${_nm?esc(_nm)+'\n':''}">${esc(no)}</div>`;}).join('')}</div>`;
   }
   feedList.innerHTML=html;
 }
