@@ -3012,8 +3012,23 @@ input:focus,select:focus,textarea:focus{
         <button onclick="reviewAdd()" style="padding:7px 16px;background:var(--pau-285c);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap">+ Ekle</button>
       </div>
     </div>
+    <!-- Sekme seçici -->
+    <div style="display:flex;border-bottom:1px solid var(--border);background:var(--bg3)">
+      <button id="rv-tab-list" onclick="setRvTab('list')" style="flex:1;padding:9px 0;font-size:.8rem;font-weight:700;border:none;cursor:pointer;background:var(--bg2);color:var(--pau-285c,#005f9e);border-bottom:2px solid var(--pau-285c,#005f9e)">📋 Liste</button>
+      <button id="rv-tab-map" onclick="setRvTab('map')" style="flex:1;padding:9px 0;font-size:.8rem;font-weight:700;border:none;cursor:pointer;background:transparent;color:var(--fg3);border-bottom:2px solid transparent">📍 Harita</button>
+    </div>
     <!-- Liste -->
     <div id="rv-list" style="max-height:52vh;overflow-y:auto;padding:4px 0"></div>
+    <!-- Harita -->
+    <div id="rv-map-section" style="display:none;padding:12px 14px">
+      <div id="rv-map-wrap" style="position:relative;width:100%;height:300px;border-radius:12px;overflow:hidden;background:#1a2332">
+        <canvas id="rv-map-canvas" style="display:block;width:100%;height:100%"></canvas>
+        <div id="rv-map-popup" style="display:none;position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:10px 12px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.18);pointer-events:none;z-index:5">
+          <div id="rv-map-popup-content"></div>
+        </div>
+      </div>
+      <div id="rv-map-noloc" style="margin-top:8px;font-size:.75rem;color:var(--fg3);line-height:1.6;min-height:16px"></div>
+    </div>
     <!-- Eylemler -->
     <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <button onclick="reviewDownload()" title="CSV olarak indir" style="padding:8px 14px;background:var(--bg3);color:var(--fg);border:1px solid var(--border2);border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer">⬇️ CSV</button>
@@ -3072,6 +3087,7 @@ input:focus,select:focus,textarea:focus{
   <button id="nav-stats" onclick="nav('stats')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>İstatistik</button>
   <button id="nav-courses" onclick="nav('courses')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>Dersler</button>
   <button id="nav-profs" onclick="nav('profs')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>Hocalar</button>
+  <button id="nav-registry" onclick="nav('registry')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></span>Merkez Kayıt</button>
 
   <button id="nav-calendar" onclick="nav('calendar')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Takvim</button>
   <button id="nav-myatt" onclick="nav('myatt')" style="display:none"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Yoklamalarım</button>
@@ -4118,6 +4134,51 @@ input:focus,select:focus,textarea:focus{
   </div>
 </div>
 
+<!-- ═══ REGISTRY VIEW (admin only) ═══ -->
+<div class="view" id="view-registry">
+  <div class="card">
+    <div class="sec-hd">
+      <h2>🗄️ Merkez Öğrenci Kaydı</h2>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn bp bsm" onclick="showAddCentralStudent()">+ Öğrenci Ekle</button>
+        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:7px 12px;background:color-mix(in srgb,var(--ok) 15%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--ok) 35%,transparent);border-radius:var(--rad-xs);font-size:.8rem;font-weight:600;color:var(--ok)">
+          📥 CSV/Excel İçe Aktar
+          <input type="file" accept=".csv,.txt,.xlsx" style="display:none" onchange="importCentralStudents(this)">
+        </label>
+      </div>
+    </div>
+    <p class="hint" style="margin-bottom:10px">Bu merkezde saklanan öğrenci isimleri tüm derslerdeki yoklamalara yansır. Bir öğrencinin adını burada güncellediğinizde her yerde güncellenir.</p>
+    <!-- Tek öğrenci ekleme formu -->
+    <div id="add-cs-form" style="display:none;padding:12px;border:1px dashed var(--border);border-radius:var(--rad-sm);margin-bottom:12px">
+      <div class="form-row"><label>Öğrenci No *</label><input id="cs-no" placeholder="20230001" type="text"></div>
+      <div class="form-row"><label>Ad Soyad *</label><input id="cs-name" placeholder="AHMET YILMAZ"></div>
+      <div class="form-row"><label>Bölüm/Program</label><input id="cs-dept" placeholder="Tıp Fakültesi, Dönem 1"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn bp bsm" onclick="saveCentralStudent()">Kaydet</button>
+        <button class="btn bg bsm" onclick="document.getElementById('add-cs-form').style.display='none'">İptal</button>
+      </div>
+      <div id="cs-err" style="margin-top:8px"></div>
+    </div>
+    <!-- CSV format hint -->
+    <div id="cs-import-msg" style="margin-bottom:8px;font-size:.8rem"></div>
+    <!-- Arama + istatistik -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <input id="cs-search" type="search" placeholder="🔍 Öğrenci no veya isim ara…" oninput="renderRegistry()" style="flex:1;min-width:180px">
+      <span id="cs-count" style="font-size:.8rem;color:var(--fg3)"></span>
+    </div>
+    <div id="cs-list" style="font-size:.85rem"></div>
+    <!-- Format açıklaması -->
+    <div class="dvd" style="margin-top:14px"></div>
+    <div class="card-title" style="font-size:.82rem">CSV Format</div>
+    <p class="hint">Her satıra bir öğrenci. Desteklenen formatlar:</p>
+    <ul style="font-size:.78rem;color:var(--fg3);margin:4px 0 0 16px;line-height:1.8">
+      <li><code>Öğrenci No TAB Ad Soyad</code></li>
+      <li><code>Öğrenci No TAB Ad Soyad TAB Bölüm</code></li>
+      <li><code>Öğrenci No;Ad Soyad;Bölüm</code> (noktalı virgülle)</li>
+    </ul>
+  </div>
+</div>
+
 <!-- ═══ SETTINGS VIEW ═══ -->
 <div class="view" id="view-settings">
   <!-- Alt sekme çubuğu -->
@@ -4734,6 +4795,7 @@ let db,curUser=null,isAdmin=false,isProfessor=false,isSorumlu=false;
 let curUserFaculty='tip'; // 'tip' | 'diger'
 let terms=[],curTerm=null,allSessions=[];
 let courses={},professors=Object.assign({},PROFS_SEED),sessions=[],studentMap={};
+let centralStudents={};  // {no: {name, dept}} – merkezi öğrenci kayıt defteri
 let tasks={},myTasks=[];   // task/blok hierarchy
 let selectedSorumluEmails=[];  // multi-select in task modal
 let classrooms={};         // derslik profilleri
@@ -5127,7 +5189,7 @@ async function downloadQr(){
 /* ── NAV ── */
 function nav(v){
   curView=v;
-  ['student','session','active','report','courses','profs','settings','calendar','stats','audit','dl'].forEach(x=>{
+  ['student','session','active','report','courses','profs','settings','calendar','stats','audit','dl','registry'].forEach(x=>{
     const el=document.getElementById('view-'+x);
     if(el){el.classList.toggle('on',x===v);el.style.display='';}
     const nb=document.getElementById('nav-'+x);
@@ -5137,6 +5199,7 @@ function nav(v){
   if(v==='myatt'){renderMyAtt();}
   if(v==='courses'){renderCourses();populateSorumluSelects();}
   if(v==='profs')renderProfs();
+  if(v==='registry'){loadCentralStudents().then(renderRegistry);}
   if(v==='settings'){
     loadEmailSettings();
     if(isAdmin){loadSystemPinDisplay();loadTaskSorumluCard();renderTermMgr();loadImportedBlocks();renderTaskMgmt();}
@@ -5469,6 +5532,8 @@ function applyRole(){
   });
   const pb=document.getElementById('nav-profs');
   if(pb)pb.style.display=isAdmin?'':'none';
+  const rb=document.getElementById('nav-registry');
+  if(rb)rb.style.display=isAdmin?'':'none';
   const pr=document.getElementById('sess-login-prompt');
   const pv=document.getElementById('sess-prof-view');
   if(pr)pr.style.display=(!curUser)?'block':'none';
@@ -5507,6 +5572,188 @@ function listenProfessors(){
   _poll('professors',30000,async()=>{
     try{const d=await fbGet('/professors');professors=Object.assign({},PROFS_SEED,d||{});renderProfs();populateSorumluSelects();}catch{}
   });
+}
+
+
+/* ══════════════════════════════════════════════════════
+   MERKEZİ ÖĞRENCİ KAYIT DEFTERİ
+   ══════════════════════════════════════════════════════ */
+
+async function loadCentralStudents(){
+  try{
+    const d=await fbGet('/students');
+    centralStudents=d||{};
+  }catch(e){centralStudents={};}
+  return centralStudents;
+}
+
+/** Merkezi kayıt → courseStudents isimlerini güncelle */
+function mergeCentralNames(){
+  Object.keys(courseStudents).forEach(no=>{
+    const c=centralStudents[no];
+    if(!c)return;
+    const name=typeof c==='string'?c:(c.name||c.ad||'');
+    if(name)courseStudents[no]=name;
+  });
+}
+
+/** Öğrenci adı: önce merkez, sonra courseStudents, sonra no */
+function csName(no,fallback){
+  const c=centralStudents[no];
+  if(c){const n=typeof c==='string'?c:(c.name||c.ad||'');if(n)return n;}
+  return fallback||courseStudents[no]||no;
+}
+
+function showAddCentralStudent(){
+  const f=document.getElementById('add-cs-form');
+  if(!f)return;
+  f.style.display='block';
+  ['cs-no','cs-name','cs-dept'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('cs-err').innerHTML='';
+  document.getElementById('cs-no').focus();
+}
+
+async function saveCentralStudent(){
+  const no=(document.getElementById('cs-no').value||'').trim();
+  const name=(document.getElementById('cs-name').value||'').trim().toUpperCase();
+  const dept=(document.getElementById('cs-dept').value||'').trim();
+  const errEl=document.getElementById('cs-err');
+  if(!no||!name){errEl.innerHTML='<div class="al alerr">Öğrenci no ve ad soyad zorunludur.</div>';return;}
+  const data={name};
+  if(dept)data.dept=dept;
+  try{
+    await fbPut('/students/'+no,data);
+    centralStudents[no]=data;
+    document.getElementById('add-cs-form').style.display='none';
+    showToast('✅','Kaydedildi',`${no} - ${name} merkeze eklendi.`,'ok',3000);
+    renderRegistry();
+    // Aktif courseStudents varsa güncelle
+    if(courseStudents[no]!==undefined)courseStudents[no]=name;
+  }catch(e){errEl.innerHTML='<div class="al alerr">Hata: '+esc(String(e))+'</div>';}
+}
+
+async function delCentralStudent(no){
+  if(!confirm(`${no} numaralı öğrenci merkez kayıttan silinecek.
+Ders listelerinden manuel temizleme gerekebilir.
+
+Emin misiniz?`))return;
+  try{
+    await fbDel('/students/'+no);
+    delete centralStudents[no];
+    renderRegistry();
+    showToast('🗑','Silindi',no+' merkezden silindi.','warn',3000);
+  }catch(e){showToast('❌','Hata',String(e),'err',4000);}
+}
+
+function editCentralStudentInline(no){
+  const row=document.getElementById('cs-row-'+no);
+  if(!row)return;
+  const c=centralStudents[no]||{};
+  const curName=typeof c==='string'?c:(c.name||c.ad||'');
+  const curDept=typeof c==='object'?(c.dept||''):'';
+  row.innerHTML=`<td style="padding:6px 4px"><code>${esc(no)}</code></td>
+    <td style="padding:4px"><input id="cse-name-${no}" value="${esc(curName)}" style="width:100%;font-size:.82rem"></td>
+    <td style="padding:4px"><input id="cse-dept-${no}" value="${esc(curDept)}" style="width:100%;font-size:.82rem"></td>
+    <td style="padding:4px;white-space:nowrap">
+      <button class="btn bp bsm" style="padding:4px 10px;font-size:.75rem" onclick="saveCentralStudentEdit('${no}')">💾</button>
+      <button class="btn bg bsm" style="padding:4px 10px;font-size:.75rem" onclick="renderRegistry()">İptal</button>
+    </td>`;
+}
+
+async function saveCentralStudentEdit(no){
+  const name=(document.getElementById('cse-name-'+no)?.value||'').trim().toUpperCase();
+  const dept=(document.getElementById('cse-dept-'+no)?.value||'').trim();
+  if(!name){showToast('⚠️','Hata','Ad soyad boş olamaz.','warn');return;}
+  const data={name};
+  if(dept)data.dept=dept;
+  try{
+    await fbPut('/students/'+no,data);
+    centralStudents[no]=data;
+    if(courseStudents[no]!==undefined)courseStudents[no]=name;
+    renderRegistry();
+    showToast('✅','Güncellendi',`${no} güncellendi.`,'ok',2500);
+  }catch(e){showToast('❌','Hata',String(e),'err',4000);}
+}
+
+async function importCentralStudents(input){
+  const file=input.files[0];
+  if(!file)return;
+  const msgEl=document.getElementById('cs-import-msg');
+  if(msgEl)msgEl.innerHTML='⏳ Okunuyor…';
+  input.value='';
+  try{
+    const text=await file.text();
+    const rows=text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
+    let added=0,skipped=0;
+    const updates={};
+    for(const row of rows){
+      // Try tab, then semicolon, then comma
+      const parts=row.includes('\t')?row.split('\t'):row.includes(';')?row.split(';'):row.split(',');
+      const no=(parts[0]||'').trim().replace(/[^0-9]/g,'');
+      const name=(parts[1]||'').trim().toUpperCase();
+      const dept=(parts[2]||'').trim();
+      if(!no||!name){skipped++;continue;}
+      const data={name};
+      if(dept)data.dept=dept;
+      updates[no]=data;
+      centralStudents[no]=data;
+      added++;
+    }
+    if(added){
+      // Batch write to Firebase
+      await fbPatch('/students',updates);
+      renderRegistry();
+      if(msgEl)msgEl.innerHTML=`<span style="color:var(--ok)">✅ ${added} öğrenci aktarıldı${skipped?' ('+skipped+' satır atlandı)':''}.</span>`;
+      showToast('✅','Aktarıldı',added+' öğrenci merkeze eklendi.','ok',4000);
+    } else {
+      if(msgEl)msgEl.innerHTML='<span style="color:var(--warn)">⚠️ Hiçbir öğrenci okunamadı. Format: No TAB Ad Soyad</span>';
+    }
+  }catch(e){
+    if(msgEl)msgEl.innerHTML='<span style="color:var(--err)">❌ Hata: '+esc(String(e))+'</span>';
+  }
+}
+
+function renderRegistry(){
+  const listEl=document.getElementById('cs-list');
+  const cntEl=document.getElementById('cs-count');
+  if(!listEl)return;
+  const q=(document.getElementById('cs-search')?.value||'').toLowerCase();
+  const entries=Object.entries(centralStudents).filter(([no,v])=>{
+    if(!q)return true;
+    const name=typeof v==='string'?v:(v?.name||v?.ad||'');
+    const dept=typeof v==='object'?(v?.dept||''):'';
+    return no.includes(q)||name.toLowerCase().includes(q)||dept.toLowerCase().includes(q);
+  }).sort(([,a],[,b])=>{
+    const na=typeof a==='string'?a:(a?.name||'');
+    const nb=typeof b==='string'?b:(b?.name||'');
+    return na.localeCompare(nb,'tr');
+  });
+  if(cntEl)cntEl.textContent=entries.length+' öğrenci'+(q?' (filtrelenmiş)':'');
+  if(!entries.length){
+    listEl.innerHTML='<div class="al alinfo">Kayıt bulunamadı.'+(q?` "${q}" için eşleşme yok.`:'')+'</div>';
+    return;
+  }
+  listEl.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:.82rem">
+    <thead><tr style="border-bottom:2px solid var(--bor);text-align:left">
+      <th style="padding:6px 4px;width:110px">No</th>
+      <th style="padding:6px 4px">Ad Soyad</th>
+      <th style="padding:6px 4px">Bölüm</th>
+      <th style="padding:6px 4px;width:80px"></th>
+    </tr></thead>
+    <tbody>${entries.map(([no,v])=>{
+      const name=typeof v==='string'?v:(v?.name||v?.ad||'');
+      const dept=typeof v==='object'?(v?.dept||''):'';
+      return `<tr id="cs-row-${esc(no)}" style="border-bottom:1px solid var(--bor)">
+        <td style="padding:6px 4px;font-family:monospace;font-size:.78rem">${esc(no)}</td>
+        <td style="padding:6px 4px;font-weight:600">${esc(name)}</td>
+        <td style="padding:6px 4px;color:var(--fg3);font-size:.78rem">${esc(dept)}</td>
+        <td style="padding:4px;white-space:nowrap">
+          <button class="btn bg bsm" style="padding:3px 8px;font-size:.72rem" onclick="editCentralStudentInline('${esc(no)}')">✏️</button>
+          <button class="btn bg bsm" style="padding:3px 8px;font-size:.72rem;color:var(--err)" onclick="delCentralStudent('${esc(no)}')">🗑</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
 }
 
 /* ── TASKS ── */
@@ -8654,12 +8901,14 @@ function openActiveSession(code){
   // Load course students if session has a course
   if(sess.courseId&&courses[sess.courseId]&&courses[sess.courseId].students){
     courseStudents=courses[sess.courseId].students||{};
+    mergeCentralNames();
   }
   // Öğrenci listesi boşsa Firebase'den canlı çek (nested öğrenciler tam listede gelmeyebilir)
   if(sess.courseId&&!Object.keys(courseStudents).length){
     fbGet('/courses/'+sess.courseId+'/students').then(sts=>{
       if(sts){
         courseStudents=sts;
+        mergeCentralNames();
         if(!courses[sess.courseId])courses[sess.courseId]={};
         courses[sess.courseId].students=sts;
         const stuCount=Object.keys(courseStudents).length;
@@ -9265,6 +9514,9 @@ function openReviewModal(sess, att){
     profEl.textContent=[pName,taskLabel].filter(Boolean).join(' · ');
   }
   _renderReviewList();
+  // Harita tabını sıfırla → Liste sekmesini aktif yap
+  _rvMapClickedNo=null;_rvMapInitDone=false;
+  setRvTab('list');
   const modal=document.getElementById('review-modal');
   modal.style.display='flex';
   document.body.style.overflow='hidden';
@@ -9527,7 +9779,16 @@ async function sendSessionEmail(sess){
   const _GUNLER=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
   const gunFull=sess.date?_GUNLER[new Date(sess.date+'T12:00:00').getDay()]:'—';
   const classroomName=sess.classroomName||(sess.classroomId&&classrooms[sess.classroomId]?.name)||null;
-  const absentRows=Object.values(att).filter(a=>a.absent&&!a.groupStart).sort((a,b)=>(_sname(a)).localeCompare(_sname(b),'tr'));
+  // Yoklamaya katılmayan öğrenciler:
+  // 1) att içinde absent:true işaretlenenler
+  // 2) courseStudents listesinde olup rows (katılanlar) içinde bulunmayanlar
+  const _presentNos=new Set(rows.map(r=>r.studentNo));
+  const _attAbsent=Object.values(att).filter(a=>a.absent&&!a.groupStart);
+  const _attAbsentNos=new Set(_attAbsent.map(a=>a.studentNo));
+  const _rosterAbsent=Object.entries(courseStudents||{})
+    .filter(([no])=>!_presentNos.has(no)&&!_attAbsentNos.has(no))
+    .map(([no,raw])=>({studentNo:no,studentName:typeof raw==='string'?raw:(raw?.name||raw?.ad||no)}));
+  const absentRows=[..._attAbsent,..._rosterAbsent].sort((a,b)=>(_sname(a)).localeCompare(_sname(b),'tr'));
   const _sep='─'.repeat(44);
   const courseName=sess.courseName||course?.name||'—';
 
@@ -9838,7 +10099,6 @@ function renderAtt(code){
             ${a.manual?`<span class="bdg bwrn" style="font-size:.6rem" title="${esc((_MA_REASON_LABELS[a.manualReason]||'Manuel')+(a.manualNote?' — '+a.manualNote:''))}">${_MA_REASON_LABELS[a.manualReason]||'📝 Manuel'}</span>`:''}
             ${a.idVerified?'<span class="bdg bacc" style="font-size:.6rem">🪪</span>':''}
           </div>
-          ${canEdit?`<button class="btn bd bsm" onclick="delAtt(${attrJ(code)},${attrJ(a.studentNo)})">✕</button>`:''}
         </li>`;}).join('')
       :'<li class="empty">Henüz yoklama yok.</li>';
   }
@@ -14185,6 +14445,172 @@ function roundRect(ctx,x,y,w,h,r){
 }
 
 let _lastDotData=[];
+
+// ══════════════════════════════════════════════════════
+// ONAY MODALİ — Sekme & Harita
+// ══════════════════════════════════════════════════════
+
+function setRvTab(tab){
+  const listEl=document.getElementById('rv-list');
+  const mapEl=document.getElementById('rv-map-section');
+  const tabList=document.getElementById('rv-tab-list');
+  const tabMap=document.getElementById('rv-tab-map');
+  if(!listEl||!mapEl)return;
+  if(tab==='map'){
+    listEl.style.display='none';
+    mapEl.style.display='block';
+    if(tabList){tabList.style.background='transparent';tabList.style.color='var(--fg3)';tabList.style.borderBottom='2px solid transparent';}
+    if(tabMap){tabMap.style.background='var(--bg2)';tabMap.style.color='var(--pau-285c,#005f9e)';tabMap.style.borderBottom='2px solid var(--pau-285c,#005f9e)';}
+    setTimeout(renderReviewMap,80);
+  }else{
+    listEl.style.display='';
+    mapEl.style.display='none';
+    if(tabList){tabList.style.background='var(--bg2)';tabList.style.color='var(--pau-285c,#005f9e)';tabList.style.borderBottom='2px solid var(--pau-285c,#005f9e)';}
+    if(tabMap){tabMap.style.background='transparent';tabMap.style.color='var(--fg3)';tabMap.style.borderBottom='2px solid transparent';}
+  }
+}
+
+let _rvMapClickedNo=null;
+let _rvLastDotData=[];
+let _rvMapInitDone=false;
+
+function renderReviewMap(){
+  const canvas=document.getElementById('rv-map-canvas');
+  if(!canvas)return;
+  const wrap=document.getElementById('rv-map-wrap');
+  if(!wrap)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=wrap.clientWidth||320;
+  const H=wrap.clientHeight||300;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const CX=W/2,CY=H/2;
+
+  // Merkez: oturum locLat/locLng yoksa mevcut global _mapCenter
+  const sessLat=_rvSess&&_rvSess.locLat;
+  const sessLng=_rvSess&&_rvSess.locLng;
+  const rvCenter=(sessLat&&sessLng)?{lat:sessLat,lng:sessLng}:_mapCenter;
+  const rvRadius=(_rvSess&&_rvSess.locRadius)||_mapRadius;
+
+  const entries=Object.values(_rvAtt||{}).filter(a=>a.lat&&a.lng);
+
+  let maxDist=rvRadius*1.6;
+  entries.forEach(a=>{const d=_distMeters(rvCenter.lat,rvCenter.lng,a.lat,a.lng);if(d>maxDist)maxDist=d*1.2;});
+  const pxPerMeter=Math.min(CX,CY)*0.85/maxDist;
+
+  const latPerM=1/111320;
+  const lngPerM=1/(111320*Math.cos(rvCenter.lat*Math.PI/180));
+  function toXY(lat,lng){
+    const dx=(lng-rvCenter.lng)/lngPerM*pxPerMeter;
+    const dy=-(lat-rvCenter.lat)/latPerM*pxPerMeter;
+    return[CX+dx,CY+dy];
+  }
+
+  ctx.fillStyle='#1a2332';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  for(let x=CX%60;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=CY%60;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const rPx=rvRadius*pxPerMeter;
+  ctx.beginPath();ctx.arc(CX,CY,rPx*2,0,Math.PI*2);
+  ctx.fillStyle='rgba(248,113,113,.04)';ctx.fill();
+  ctx.beginPath();ctx.arc(CX,CY,rPx,0,Math.PI*2);
+  ctx.fillStyle='rgba(74,222,128,.07)';ctx.fill();
+  ctx.strokeStyle='rgba(74,222,128,.35)';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(74,222,128,.55)';ctx.font='11px system-ui';ctx.textAlign='left';
+  ctx.fillText(rvRadius+'m',CX+rPx*Math.cos(-0.4)+4,CY+rPx*Math.sin(-0.4));
+
+  const scaleM=Math.pow(10,Math.floor(Math.log10(maxDist*0.4)));
+  const scalePx=scaleM*pxPerMeter;
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillRect(16,H-26,scalePx,2);
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='10px system-ui';ctx.textAlign='left';
+  ctx.fillText(scaleM+'m',16,H-30);
+
+  ctx.beginPath();ctx.arc(CX,CY,8,0,Math.PI*2);
+  ctx.fillStyle='#0072CE';ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(CX-14,CY);ctx.lineTo(CX+14,CY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(CX,CY-14);ctx.lineTo(CX,CY+14);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='bold 11px system-ui';ctx.textAlign='center';
+  ctx.fillText('Dershane',CX,CY-16);
+
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='bold 11px system-ui';ctx.textAlign='right';
+  ctx.fillText('N ↑',W-12,22);
+
+  const dotData=[];
+  entries.forEach(a=>{
+    const dist=_distMeters(rvCenter.lat,rvCenter.lng,a.lat,a.lng);
+    const inRange=dist<=rvRadius;
+    const[x,y]=toXY(a.lat,a.lng);
+    const isSelected=_rvMapClickedNo===a.studentNo;
+    const col=inRange?'#4ade80':'#f87171';
+    const r=isSelected?11:8;
+    if(isSelected){ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fillStyle=col+'33';ctx.fill();}
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+    ctx.strokeStyle='#1a2332';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font=`bold ${r-1}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(_initials(a.studentName).slice(0,2),x,y);
+    ctx.textBaseline='alphabetic';
+    dotData.push({x,y,r:r+4,a,dist,inRange});
+  });
+
+  const popup=document.getElementById('rv-map-popup');
+  const found=dotData.find(d=>d.a.studentNo===_rvMapClickedNo);
+  if(found&&popup){
+    const{a,dist,inRange}=found;
+    const pc=document.getElementById('rv-map-popup-content');
+    if(pc){
+      pc.innerHTML=`<div style="font-weight:700;font-size:.88rem;margin-bottom:4px">${esc(a.studentName||'—')}</div>
+        <div style="color:#666;font-size:.75rem">${esc(a.studentNo||'')}</div>
+        <div style="margin-top:6px;font-size:.78rem"><span style="font-weight:600">${a.timeStr||'—'}</span></div>
+        <div style="margin-top:4px;font-size:.8rem;color:${inRange?'#16a34a':'#dc2626'};font-weight:700">${inRange?'✓ Dershane içi':'✗ Dışarıdan'} · ${Math.round(dist)}m</div>
+        ${a.locAcc?`<div style="font-size:.7rem;color:#999;margin-top:2px">GPS hassasiyeti ±${a.locAcc}m</div>`:''}`;
+    }
+    let px=found.x+16,py=found.y-20;
+    if(px+170>W)px=found.x-176;
+    if(py<10)py=10;
+    popup.style.left=px+'px';popup.style.top=py+'px';popup.style.display='block';
+  }else if(popup){popup.style.display='none';}
+
+  const inCount=dotData.filter(d=>d.inRange).length;
+  const outCount=dotData.filter(d=>!d.inRange).length;
+  if(entries.length>0){
+    ctx.fillStyle='rgba(0,0,0,.55)';
+    const bw=160,bh=46;
+    roundRect(ctx,12,12,bw,bh,8);ctx.fill();
+    ctx.fillStyle='#4ade80';ctx.font='bold 13px system-ui';ctx.textAlign='left';
+    ctx.fillText(`✓ ${inCount} dershane içi`,22,30);
+    ctx.fillStyle='#f87171';ctx.font='12px system-ui';
+    ctx.fillText(`✗ ${outCount} dışarıdan`,22,48);
+  }
+
+  const noLocEntries=Object.values(_rvAtt||{}).filter(a=>!a.lat||!a.lng);
+  const noLocEl=document.getElementById('rv-map-noloc');
+  if(noLocEl){
+    noLocEl.innerHTML=noLocEntries.length
+      ?`<span style="opacity:.6">Konum verisi olmayan ${noLocEntries.length} öğrenci:</span> ${noLocEntries.map(a=>`<span style="background:var(--bg2);border-radius:6px;padding:2px 7px;margin:2px;display:inline-block;font-size:.75rem">${esc(a.studentName||a.studentNo||'—')}</span>`).join('')}`
+      :(entries.length?'':'<span style="opacity:.5">Henüz konum verisi olan yoklama yok.</span>');
+  }
+
+  if(!_rvMapInitDone){
+    _rvMapInitDone=true;
+    canvas.addEventListener('click',e=>{
+      const rect=canvas.getBoundingClientRect();
+      const mx=e.clientX-rect.left;const my=e.clientY-rect.top;
+      _rvLastDotData.forEach(d=>{
+        if(Math.hypot(mx-d.x,my-d.y)<d.r*1.5){
+          _rvMapClickedNo=(_rvMapClickedNo===d.a.studentNo)?null:d.a.studentNo;
+          renderReviewMap();
+        }
+      });
+    });
+  }
+  _rvLastDotData=dotData.map(d=>({...d}));
+}
 
 function setMapCenterHere(){
   // Merkezi mevcut öğrenci konumlarının ortalamasına ayarla
