@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>PAÜ Tıp — Yoklama Sistemi</title>
+<title>PAÜ Tıp — Yoklama Sistemi v99</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
 <style>
 /* ══════════════════════════════════════════
@@ -9993,6 +9993,20 @@ async function createSession(){
     if(attClosesAt){updateAttCdown(attClosesAt);attCdownTimer=setInterval(()=>updateAttCdown(attClosesAt),1000);}
     listenAtt(code);
     _newSessData=sess;
+    // Grup seçiliyse: projeksiyon açılmadan ÖNCE courseStudents ve in-memory groupRoster'ı set et
+    // (openProjFullscreen → _ensureProjRoster async çalışırken doğru veriyi görmesi için)
+    if(_selGroups.size>0){
+      const _earlyMap=_getStuMap();
+      const _earlyRoster={};
+      for(const [no,sname] of Object.entries(_earlyMap)){
+        const snameStr=typeof sname==='string'?sname:(sname?.name||sname?.ad||sname?.displayName||String(sname||''));
+        _earlyRoster[no]=snameStr;
+      }
+      courseStudents=_earlyRoster;
+      _newSessData.groupRoster=_earlyRoster; // _ensureProjRoster fallback için
+      const _mSess0=activeSessions.find(s=>s.code===code);
+      if(_mSess0)_mSess0.groupRoster=_earlyRoster;
+    }
     openProjFullscreen();
     // Seçilen grupları ön yükle — ayrı try/catch: hata projeksiyon açılmasını engellemesin
     if(_selGroups.size>0){try{
@@ -10007,6 +10021,9 @@ async function createSession(){
       }
       try{await fbPatch('/sessions/'+code,{groupRoster:rosterPatch});}catch{}
       courseStudents=rosterPatch; // aktif oturum için hemen uygula
+      // Bellekteki activeSessions'ı da güncelle — openActiveSession anında görsün
+      const _mSess=activeSessions.find(s=>s.code===code);
+      if(_mSess)_mSess.groupRoster=rosterPatch;
       for(const [no,sname] of Object.entries(stuToAdd)){
         const snameStr=typeof sname==='string'?sname:(sname?.name||sname?.ad||sname?.displayName||String(sname||''));
         const entry={studentNo:no,studentName:snameStr,time:t2,timeStr:ts2,manual:true,groupStart:true};
@@ -15704,6 +15721,20 @@ async function _ensureProjRoster(){
   try{
     const sessData=await fbGet('/sessions/'+curActiveCode);
     if(!_projClosesAt){_projClosesAt=sessData?.attClosesAt||sessData?.closesAt||null;}
+
+    // groupRoster varsa: sadece grup öğrencilerini göster, dönem listesini çekme
+    // Firebase'deki groupRoster'ı VEYA bellekteki activeSessions'dakini VEYA
+    // yeni oluşturulan oturum için _newSessData'dakini kontrol et
+    // (_newSessData: activeSessions listener henüz tetiklenmemişken kullanılır)
+    const _inMemSess=(activeSessions||[]).find(s=>s.code===curActiveCode);
+    const _newSessGr=(_newSessData?.code===curActiveCode)?(_newSessData?.groupRoster||null):null;
+    const _gr=sessData?.groupRoster||_inMemSess?.groupRoster||_newSessGr;
+    if(_gr&&Object.keys(_gr).length>0){
+      courseStudents=_gr;
+      mergeCentralNames();
+      updateProjFs();
+      return;
+    }
 
     // Donem'i birden fazla kaynaktan bul (önce bellekte ara, Firebase çağrısından önce)
     const tid=sessData?.taskId||null;
