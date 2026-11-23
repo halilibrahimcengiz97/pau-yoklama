@@ -10131,12 +10131,15 @@ let _rvSess=null, _rvAtt={};
 
 function openReviewModal(sess, att){
   _rvSess=sess;
-  _rvLateStash={};
+  _rvLateStash={};_rvSpot=null;_rvSpotStash={};
+  _rvMailWarn=[];
+  _mailProblems(sess).then(list=>{if(_rvSess!==sess)return;_rvMailWarn=list||[];if(_rvMailWarn.length)_renderReviewList();}).catch(()=>{});
   // Sadece gerçek katılanlar (groupStart değil, absent değil)
   _rvAtt={};
   Object.entries(att).forEach(([no,r])=>{
     if(!r.absent&&!r.groupStart) _rvAtt[no]=r;
   });
+  _rvSeenKeys=new Set(Object.keys(_rvAtt)); // hocanın bu ekranda gördüğü kayıtlar
   // Meta bilgi
   const metaEl=document.getElementById('rv-meta');
   if(metaEl){
@@ -10176,6 +10179,76 @@ function _rvName(raw){
 }
 
 let _rvLateStash={}; // reddedilen geç girişler (yanlışlıkla reddedilirse geri alınabilsin)
+// ── Rastgele yoklama: "katıldı" görünenlerden rastgele 3 kişi seçilir, hoca sınıfa seslenir ──
+let _rvSpot=null;        // {at, picks:[{no,name,result:null|'ok'|'fail'}]}
+let _rvSeenKeys=new Set(); // kontrol ekranı açıldığında listede olan öğrenciler
+let _rvMailWarn=[];       // e-postanın ulaşmayacağı kişilerle ilgili uyarılar
+function _rvMailWarnHtml(){
+  if(!_rvMailWarn||!_rvMailWarn.length)return'';
+  return `<div style="padding:10px 14px;background:#fef2f2;border-bottom:1px solid #fca5a5;border-left:4px solid #dc2626">
+    <div style="font-size:.74rem;font-weight:800;color:#b91c1c;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">❌ E-posta hatası · eksik alıcı</div>
+    ${_rvMailWarn.map(t=>`<div style="font-size:.82rem;color:#7f1d1d;line-height:1.45">• ${esc(t)}</div>`).join('')}
+  </div>`;
+}
+let _rvSpotStash={};     // "Yok" denilenlerin özgün kaydı (geri al için)
+const RV_SPOT_N=3;
+function _rvSpotEligible(){
+  const done=new Set((_rvSpot?.picks||[]).map(p=>p.no));
+  // Hocanın elle eklediği öğrenciler ve karar bekleyen geç girişler seçilmez
+  return Object.entries(_rvAtt).filter(([no,a])=>!_isLatePending(a)&&!a.manual&&!done.has(no));
+}
+function reviewSpotDraw(){
+  const pool=_rvSpotEligible();
+  if(!pool.length){showToast('🎲','Seçilecek öğrenci kalmadı','','info',2500);return;}
+  // Tarafsız karıştırma (Fisher–Yates, tarayıcının güvenli rastgele sayı üreteci ile)
+  const rnd=n=>{try{const u=new Uint32Array(1);crypto.getRandomValues(u);return u[0]%n;}catch{return Math.floor(Math.random()*n);}};
+  for(let i=pool.length-1;i>0;i--){const j=rnd(i+1);[pool[i],pool[j]]=[pool[j],pool[i]];}
+  const picks=pool.slice(0,RV_SPOT_N).map(([no,a])=>({no,name:_snameRv(a),result:null}));
+  if(!_rvSpot)_rvSpot={at:Date.now(),picks:[]};
+  _rvSpot.picks.push(...picks);
+  _renderReviewList();
+  const ul=document.getElementById('rv-list');if(ul)ul.scrollTop=0;
+}
+function reviewSpotSet(no,result){
+  const p=(_rvSpot?.picks||[]).find(x=>x.no===no);if(!p)return;
+  // önce önceki kararı geri al
+  if(p.result==='fail'&&_rvSpotStash[no]){_rvAtt[no]=_rvSpotStash[no];delete _rvSpotStash[no];}
+  if(_rvAtt[no])delete _rvAtt[no].spotChecked;
+  p.result=result;
+  if(result==='ok'&&_rvAtt[no]){_rvAtt[no].spotChecked=true;}
+  if(result==='fail'&&_rvAtt[no]){_rvSpotStash[no]=_rvAtt[no];delete _rvAtt[no];showToast('🎲','Sınıfta yok',`${p.name} katılmayanlara alındı.`,'warn',2500);}
+  _renderReviewList();
+}
+function _rvSpotHtml(){
+  const _b='border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:800;cursor:pointer;color:#fff';
+  const elig=_rvSpotEligible().length;
+  if(!_rvSpot||!_rvSpot.picks.length){
+    return `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 14px;background:rgba(0,114,206,.07);border-bottom:1px solid var(--border)">
+      <span style="flex:1;min-width:170px;font-size:.78rem;color:var(--fg2);line-height:1.35"><b style="color:var(--fg)">🎲 Rastgele yoklama</b> · Katıldı görünenlerden ${Math.min(RV_SPOT_N,elig)||RV_SPOT_N} kişi seçilir, adlarını sınıfa okursunuz.</span>
+      <button onclick="reviewSpotDraw()" ${elig?'':'disabled'} style="${_b};background:#0072CE;${elig?'':'opacity:.5;cursor:not-allowed'}">🎲 ${Math.min(RV_SPOT_N,elig)||RV_SPOT_N} kişi seç</button></div>`;
+  }
+  const open=_rvSpot.picks.filter(p=>!p.result).length;
+  const fails=_rvSpot.picks.filter(p=>p.result==='fail').length;
+  let h=`<div style="padding:10px 14px 12px;background:rgba(0,114,206,.07);border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <span style="flex:1;min-width:150px;font-size:.67rem;font-weight:800;color:#0056a8;text-transform:uppercase;letter-spacing:.07em">🎲 Rastgele yoklama · adını okuyun${open?` (${open} bekliyor)`:fails?` · ${fails} kişi yok`:' · hepsi burada'}</span>
+      <button onclick="reviewSpotDraw()" ${elig?'':'disabled'} style="${_b};padding:4px 10px;font-size:.72rem;background:#475569;${elig?'':'opacity:.5;cursor:not-allowed'}">+ ${Math.min(RV_SPOT_N,elig)||RV_SPOT_N} kişi daha</button>
+    </div>`;
+  h+=_rvSpot.picks.map(p=>{
+    const no=esc(p.no),nm=esc(p.name);
+    const bg=p.result==='ok'?'rgba(21,128,61,.10)':p.result==='fail'?'rgba(220,38,38,.10)':'var(--bg2,#fff)';
+    const bd=p.result==='ok'?'#86efac':p.result==='fail'?'#fca5a5':'var(--border)';
+    const right=p.result
+      ?`<span style="font-size:.82rem;font-weight:800;color:${p.result==='ok'?'#15803d':'#b91c1c'};white-space:nowrap">${p.result==='ok'?'✓ Burada':'✗ Yok'}</span>
+         <button onclick="reviewSpotSet('${no}',null)" style="background:none;border:none;color:var(--fg3);font-size:.72rem;text-decoration:underline;cursor:pointer;padding:4px">geri al</button>`
+      :`<button onclick="reviewSpotSet('${no}','ok')" style="${_b};background:#15803d">✓ Burada</button>
+         <button onclick="reviewSpotSet('${no}','fail')" style="${_b};background:#b91c1c">✗ Yok</button>`;
+    return `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;margin-top:6px;border:1.5px solid ${bd};border-radius:10px;background:${bg}">
+      <span style="flex:1;min-width:150px"><span style="display:block;font-size:1.08rem;font-weight:800;color:var(--fg);line-height:1.2">${nm}</span><span style="font-size:.76rem;color:var(--fg2)">${no}</span></span>
+      ${right}</div>`;
+  }).join('');
+  return h+'</div>';
+}
 function reviewLateAccept(no){const r=_rvAtt[no];if(!r)return;r.lateStatus='ok';_renderReviewList();}
 function reviewLateReject(no){const r=_rvAtt[no];if(!r)return;_rvLateStash[no]=r;delete _rvAtt[no];_renderReviewList();}
 function reviewLateAll(ok){
@@ -10195,7 +10268,7 @@ function _renderReviewList(){
 
   const ul=document.getElementById('rv-list');
   const secHdr=(label,color,bg)=>`<div style="position:sticky;top:0;z-index:1;padding:5px 14px 4px;font-size:.67rem;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.07em;background:linear-gradient(${bg},${bg}),var(--bg2,#fff);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">${label}</div>`;
-  let html='';
+  let html=_rvMailWarnHtml()+_rvSpotHtml();
 
   // ── Geç gelenler — hoca onayı bekliyor ──
   if(pendRows.length){
@@ -10231,6 +10304,7 @@ function _renderReviewList(){
         <span style="font-size:.71rem;color:var(--fg3);min-width:32px;text-align:right">${a.timeStr||''}</span>
         ${a.manual?'<span style="font-size:.64rem;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 4px">M</span>':''}
         ${a.late?`<span style="font-size:.64rem;background:#fff7e6;color:#b45309;border:1px solid #f5c26b;border-radius:4px;padding:1px 5px;font-weight:700;white-space:nowrap">GEÇ${a.lateMin?' +'+a.lateMin+' dk':''} ✓</span>`:''}
+        ${a.spotChecked?'<span title="Rastgele yoklamada sınıfta olduğu doğrulandı" style="font-size:.64rem;background:rgba(0,114,206,.1);color:#0056a8;border:1px solid rgba(0,114,206,.35);border-radius:4px;padding:1px 5px;font-weight:700;white-space:nowrap">🎲 ✓</span>':''}
         <span style="font-size:.8rem;color:#dc2626;opacity:.45">✕</span>
       </div>`;
     }).join('');
@@ -10272,6 +10346,8 @@ function reviewRemove(no, name){
 
 function reviewAddByNo(no, name){
   if(!no)return;
+  // Rastgele yoklamada "Yok" denmiş biri geri ekleniyorsa özgün kaydı koru ve kararı sıfırla
+  if(_rvSpotStash[no]){_rvAtt[no]=_rvSpotStash[no];delete _rvSpotStash[no];const sp=(_rvSpot?.picks||[]).find(x=>x.no===no);if(sp)sp.result=null;_renderReviewList();showToast('✅','Katıldı',`${name||no} katılanlar listesine geri alındı.`,'ok',2000);return;}
   // Reddedilmiş bir geç giriş geri alınıyorsa özgün kaydı (saat, konum, GEÇ damgası) koru
   if(_rvLateStash[no]){_rvAtt[no]={..._rvLateStash[no],lateStatus:'ok'};delete _rvLateStash[no];_renderReviewList();showToast('✅','Katıldı',`${name||no} geç giriş olarak kabul edildi.`,'ok',2000);return;}
   const now=new Date();
@@ -10352,16 +10428,34 @@ async function reviewConfirm(){
         .filter(([no,rec])=>rec&&rec.groupStart&&!rec.manual&&!_rvAtt[no])
         .map(([no])=>fbPut('/sessions/'+code+'/attendance/'+no,null));
       writes.push(...removeWrites);
+      // Kontrol ekranında katılanlardan çıkarılan (elle çıkarılan, reddedilen geç giriş, rastgele yoklamada "Yok" denilen)
+      // öğrencilerin kaydı veritabanında "katıldı" olarak kalmasın. Çıkarılan kayıt denetim için ayrı yerde saklanır.
+      Object.entries(existAtt).forEach(([no,rec])=>{
+        if(!rec||rec.absent||rec.groupStart||_rvAtt[no])return;
+        if(!_rvSeenKeys.has(no))return; // hocanın görmediği (son anda gelen) kayda dokunma
+        const reason=_rvSpotStash[no]?'spot_check_absent':_rvLateStash[no]?'late_rejected':'removed_in_review';
+        writes.push(fbPut('/sessions/'+code+'/reviewRemoved/'+no,{...rec,removedReason:reason,removedAt:Date.now(),removedBy:curUser?.email||''}));
+        writes.push(fbPut('/sessions/'+code+'/attendance/'+no,null));
+        try{_auditLog(code,'att_removed_in_review',{studentNo:no,reason});}catch{}
+      });
     }
+    // Rastgele yoklama sonucu oturuma yazılır
+    const _spotSum=_rvSpot&&_rvSpot.picks.length?{at:_rvSpot.at,picks:_rvSpot.picks.map(p=>({no:p.no,name:p.name,result:p.result||'unanswered'}))}:null;
     // Oturumu onaylandı olarak işaretle
-    writes.push(fbPatch('/sessions/'+code,{confirmed:true,confirmedAt:Date.now()}));
+    writes.push(fbPatch('/sessions/'+code,{confirmed:true,confirmedAt:Date.now(),...(_spotSum?{spotCheck:_spotSum}:{})}));
     await Promise.all(writes);
     showToast('✅','Onaylandı','Yoklama Firebase\'e kaydedildi.','ok',3500);
     // Otomatik mail gönder (emailCfg.scriptUrl yoksa sessizce geçer)
     try{
       await sendSessionEmail({..._rvSess,attendance:_rvAtt});
       if(emailCfg.scriptUrl)showToast('📩','Mail Gönderildi','Yoklama raporu ilgili kişilere gönderildi.','ok',4000);
-    }catch(mailErr){console.warn('Auto mail error',mailErr);}
+    }catch(mailErr){
+      console.warn('Auto mail error',mailErr);
+      showToast('❌','E-posta gönderilemedi',(mailErr&&mailErr.message?mailErr.message+' · ':'')+'Yoklama kaydedildi ama rapor e-postası gitmemiş olabilir; alıcılara sorun.','err',12000);
+    }
+    if(_rvMailWarn&&_rvMailWarn.length){
+      showToast('❌','E-posta eksik gitti',_rvMailWarn.join(' '),'err',12000);
+    }
     closeReviewModal();
   }catch(e){
     showToast('❌','Hata','Kayıt sırasında hata: '+e.message,'err',4000);
@@ -10421,11 +10515,34 @@ async function loadEmailSettings(){
 
 async function callScriptEmail(payload){
   if(!emailCfg.scriptUrl)return;
-  await fetch(emailCfg.scriptUrl,{
+  const r=await fetch(emailCfg.scriptUrl,{
     method:'POST',
     body:JSON.stringify(payload),
     headers:{'Content-Type':'text/plain'} // Apps Script CORS needs text/plain
   });
+  // Betik açıkça hata bildirdiyse sessizce geçme
+  if(r&&r.ok===false&&r.status)throw new Error('E-posta betiği HTTP '+r.status+' döndürdü');
+  let j=null;
+  try{j=await r.clone().json();}catch{} // yanıt JSON değilse (ya da okunamıyorsa) sorun sayma
+  if(j&&(j.ok===false||j.success===false||j.error))throw new Error(String(j.error||j.message||'E-posta betiği hata bildirdi'));
+}
+
+// Oturumun e-postası derse giren hocaya ve task sorumlusuna ulaşacak mı? Ulaşmayacaksa nedenlerini döndürür.
+async function _mailProblems(sess){
+  const out=[];
+  if(!sess)return out;
+  if(!emailCfg.scriptUrl){out.push('E-posta ayarı yapılmamış (Ayarlar › E-posta). Bu oturum için hiç e-posta gitmeyecek.');return out;}
+  let task=sess.taskId&&tasks[sess.taskId]?tasks[sess.taskId]:null;
+  if(!task&&sess.taskId){try{task=await fbGet('/tasks/'+sess.taskId);}catch{}}
+  const sorumlu=task?(task.sorumluEmails&&task.sorumluEmails.length?task.sorumluEmails:[task.sorumluEmail]).filter(Boolean):[];
+  // Derse giren hoca
+  if(!sess.profEmail)out.push('Derse giren hocanın e-posta adresi kayıtlı değil; ona e-posta gitmeyecek.');
+  else if(sess.profEmailNotify===false&&!sorumlu.includes(sess.profEmail))out.push('Oturum açılırken hocaya e-posta bildirimi kapatılmış; derse giren hocaya ('+sess.profEmail+') e-posta gitmeyecek.');
+  // Task sorumlusu
+  if(!sess.taskId)out.push('Oturum bir task\'a bağlı değil; task sorumlusuna e-posta gitmeyecek.');
+  else if(!task)out.push('Oturumun bağlı olduğu task bulunamadı; task sorumlusuna e-posta gitmeyecek.');
+  else if(!sorumlu.length)out.push('"'+(task.name||sess.taskId)+'" task\'ının sorumlusu tanımlı değil; task sorumlusuna e-posta gitmeyecek.');
+  return out;
 }
 
 async function sendSessionEmail(sess){
