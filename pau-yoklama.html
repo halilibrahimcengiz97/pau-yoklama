@@ -3239,6 +3239,7 @@ html.pk-kiosk,html.pk-kiosk *{cursor:none!important}
       <button onclick="reviewDownloadXlsx()" title="Excel olarak indir" style="padding:8px 14px;background:var(--bg3);color:#217346;border:1px solid #217346;border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer">📊 Excel</button>
       <div style="flex:1"></div>
       <button onclick="closeReviewModal()" style="padding:8px 16px;background:var(--bg3);color:var(--fg2);border:1px solid var(--border);border-radius:9px;font-size:.85rem;cursor:pointer">İptal</button>
+      <button onclick="reviewSendEmail()" id="rv-mail-btn" title="Raporu hocaya/sorumlulara mail ile gönder" style="padding:8px 14px;background:var(--bg3);color:var(--pau-285c);border:1.5px solid var(--pau-285c);border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer">✉ Mail Gönder</button>
       <button onclick="reviewConfirm()" id="rv-confirm-btn" style="padding:9px 20px;background:var(--ok,#22c55e);color:#fff;border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer">✅ Onayla ve Kaydet</button>
     </div>
   </div>
@@ -6198,12 +6199,14 @@ function _onDonemChange(){
 function _courseIdsForTask(taskId){
   if(!taskId)return null;
   const ids=new Set((sessions||[]).filter(s=>(s.taskId===taskId||s.taskIds?.includes(taskId))&&s.courseId).map(s=>s.courseId));
+  Object.entries(courses||{}).forEach(([id,c])=>{if(c&&c.taskId===taskId)ids.add(id)});
   return ids.size>0?ids:null;
 }
 function _courseIdsForBlok(donem,blok){
   if(!blok)return null;
   const tids=new Set(Object.entries(tasks).filter(([,t])=>t.donem===donem&&t.blokName===blok).map(([id])=>id));
   const ids=new Set((sessions||[]).filter(s=>(tids.has(s.taskId)||s.taskIds?.some(id=>tids.has(id)))&&s.courseId).map(s=>s.courseId));
+  Object.entries(courses||{}).forEach(([id,c])=>{if(c&&((c.taskId&&tids.has(c.taskId))||(c.blokName===blok&&(!c.donem||c.donem===donem))))ids.add(id)});
   return ids.size>0?ids:null;
 }
 function _populateCourseSelectFiltered(allowedIds){
@@ -10239,6 +10242,9 @@ function openReviewModal(sess, att){
     const course=sess.courseId&&courses[sess.courseId]?courses[sess.courseId]:null;
     metaEl.innerHTML=`<span>${esc(sess.courseName||course?.name||sess.name||'—')}</span> &nbsp;·&nbsp; <span>${dayN(sess.date)} ${fmtDate(sess.date)}</span>${sess.time?' · '+esc(sess.time):''}`;
   }
+  if(metaEl&&sess.code&&!sess.confirmed){
+    metaEl.insertAdjacentHTML('beforeend',' <button type="button" class="btn bsm" style="margin-left:8px;font-size:.72rem;padding:3px 10px;border:1.5px solid #f59e0b;color:#b45309;background:#fffbeb;border-radius:14px;cursor:pointer" onclick="closeReviewModal();reopenSession('+attrJ(sess.code)+')">↩ Yanlışlıkla kapattım — yeniden aç</button>');
+  }
   // Prof satırı
   const profEl=document.getElementById('rv-prof-line');
   if(profEl){
@@ -10469,8 +10475,8 @@ async function reviewSendEmail(){
   try{
     const sess={..._rvSess, attendance:_rvAtt};
     // _rvAtt zaten groupStart filtreli — sendSessionEmail de filtreler ama zarar vermez
-    await sendSessionEmail(sess);
-    showToast('📩','Mail Gönderildi','Yoklama raporu ilgili kişilere gönderildi.','ok',5000);
+    const _ok=await sendSessionEmail(sess);
+    if(_ok!==false)showToast('📩','Mail Gönderildi','Yoklama raporu ilgili kişilere gönderildi.','ok',5000);
   }catch(e){
     showToast('❌','Hata',e.message,'err',4000);
   }finally{
@@ -13645,6 +13651,7 @@ function renderMyAtt(){
           ${s.active
             ?`<button class="btn bp bsm" style="font-size:.75rem;padding:5px 12px" onclick="continueMyAtt(${attrJ(s.code)})">▶ Devam Et</button>`
             :isOwner?`<button class="btn bp bsm" style="font-size:.75rem;padding:5px 12px" onclick="reopenSession(${attrJ(s.code)})">🔄 Yeniden Aç</button>`:''}
+          <button class="btn bp bsm" style="font-size:.75rem;padding:5px 12px" onclick="myAttReview(${attrJ(s.code)})">👁 İncele / ✉ Mail</button>
           <button class="btn bg bsm" style="font-size:.75rem;padding:5px 12px" onclick="myAttDownload(${attrJ(s.code)})">⬇ Excel</button>
         </div>
       </div>
@@ -13692,6 +13699,15 @@ async function reopenSession(code){
   });
 }
 
+async function myAttReview(code){
+  let sess=allSessions.find(s=>s.code===code);
+  try{
+    const full=await fbGet('/sessions/'+code);
+    if(full)sess={...(sess||{}),...full,code};
+  }catch(e){}
+  if(!sess){showToast('❌','Hata','Oturum bulunamadı.','err');return;}
+  openReviewModal(sess,JSON.parse(JSON.stringify(sess.attendance||{})));
+}
 async function myAttDownload(code){
   const sess=allSessions.find(s=>s.code===code);
   if(!sess){showToast('❌','Hata','Oturum bulunamadı.','err');return;}
@@ -17570,6 +17586,74 @@ safe('footer',()=>{
   const f=document.createElement('div');f.style.cssText='text-align:center;font-size:.68rem;color:var(--fg3);padding:10px 0 80px';
   f.textContent='Sürüm '+PK_VER+' · '+new Date().toLocaleDateString('tr-TR')+' · Kısayollar için ? tuşu';
   document.body.appendChild(f);
+});
+})();
+
+/* ═══ Öğrenci satırına tıklayıp düzenleme ═══ */
+(function(){
+const $=id=>document.getElementById(id);
+const css=document.createElement('style');
+css.textContent='#cd-list .lrow,#stlist-table tbody tr{cursor:pointer}#cd-list .lrow:hover,#stlist-table tbody tr:hover{background:rgba(0,114,206,.09)}'+
+'#pk-edit{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10060;display:none;align-items:center;justify-content:center;padding:16px}#pk-edit.open{display:flex}'+
+'#pk-edit .c{background:var(--bg,#fff);color:var(--fg,#111);border-radius:16px;max-width:400px;width:100%;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}'+
+'#pk-edit h3{margin:0 0 12px;color:var(--pau-navy)}#pk-edit label{display:block;font-size:.74rem;font-weight:600;color:var(--fg2);margin:10px 0 4px}'+
+'#pk-edit input{width:100%;box-sizing:border-box;padding:9px 10px;border:1.5px solid var(--bor);border-radius:9px;background:var(--bg2);color:var(--fg);font-size:.95rem}'+
+'#pk-edit .r{display:flex;gap:8px;margin-top:16px}#pk-edit .r button{flex:1;padding:10px;border-radius:9px;border:0;font-weight:700;cursor:pointer}'+
+'#pk-edit .s{background:#0072CE;color:#fff}#pk-edit .x{background:var(--bg2);color:var(--fg)}';
+document.head.appendChild(css);
+const m=document.createElement('div');m.id='pk-edit';document.body.appendChild(m);
+let ctx=null;
+function open(title,fields,save){
+  ctx={save};
+  m.innerHTML='<div class="c"><h3></h3>'+fields.map((f,i)=>'<label>'+f.l+'</label><input data-i="'+i+'">').join('')+'<div class="r"><button class="x">Vazgeç</button><button class="s">Kaydet</button></div></div>';
+  m.querySelector('h3').textContent=title;
+  m.querySelectorAll('input').forEach((el,i)=>{el.value=fields[i].v||''});
+  m.classList.add('open');m.querySelector('input').focus();
+}
+m.addEventListener('click',async e=>{
+  if(e.target===m||e.target.classList.contains('x')){m.classList.remove('open');return}
+  if(e.target.classList.contains('s')){
+    const v=[...m.querySelectorAll('input')].map(i=>i.value.trim());
+    try{await ctx.save(v);m.classList.remove('open')}catch(err){showToast('❌','Kaydedilemedi',String(err),'err',4000)}
+  }
+});
+addEventListener('keydown',e=>{if(m.classList.contains('open')){if(e.key==='Escape')m.classList.remove('open');if(e.key==='Enter')m.querySelector('.s').click()}});
+const put=async(p,b)=>{const r=await fetch(FB_CFG.databaseURL+p+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});if(!r.ok)throw new Error('HTTP '+r.status)};
+const del=async p=>{const r=await fetch(FB_CFG.databaseURL+p+'.json',{method:'DELETE'});if(!r.ok)throw new Error('HTTP '+r.status)};
+/* ders öğrenci listesi */
+document.addEventListener('click',e=>{
+  const li=e.target.closest&&e.target.closest('#cd-list .lrow');
+  if(li&&!e.target.closest('button')&&typeof curCourse!=='undefined'&&curCourse&&courses[curCourse]){
+    const c=courses[curCourse],keys=Object.keys(c.students||{});
+    const idx=[...li.parentNode.children].indexOf(li);const no=keys[idx];if(!no)return;
+    const en=c.students[no];const obj=typeof en==='string'?{name:en}:{...en};
+    open('Öğrenciyi düzenle',[{l:'Öğrenci No',v:no},{l:'Ad Soyad',v:obj.name||''},{l:'Bölüm',v:obj.bolum||''},{l:'E-posta',v:obj.email||''}],async v=>{
+      const nn=v[0].replace(/\D/g,'');if(!nn)throw new Error('Öğrenci numarası boş olamaz');
+      if(!v[1])throw new Error('Ad soyad boş olamaz');
+      if(nn!==no&&c.students[nn])throw new Error('Bu numara listede zaten var');
+      const ne=typeof en==='string'&&!v[2]&&!v[3]?v[1]:{...obj,name:v[1],bolum:v[2],email:v[3]};
+      const base='/courses/'+curCourse+'/students/';
+      await put(base+nn,ne);if(nn!==no)await del(base+no);
+      if(nn!==no)delete c.students[no];c.students[nn]=ne;
+      renderCourseStudents(curCourse);try{buildStudentMap()}catch{}
+      showToast('✅','Güncellendi',v[1],'ok',2500);
+    });
+    return;
+  }
+  const tr=e.target.closest&&e.target.closest('#stlist-table tbody tr');
+  if(tr&&typeof cachedStudentList!=='undefined'&&cachedStudentList&&cachedStudentList.students){
+    const no=tr.children[1]&&tr.children[1].textContent.trim();
+    const key=Object.keys(cachedStudentList.students).find(k=>cachedStudentList.students[k].no===no)||no;
+    const s=cachedStudentList.students[key];if(!s)return;const tid=cachedStudentList.taskId;
+    open('Öğrenciyi düzenle',[{l:'Öğrenci No',v:s.no},{l:'Ad Soyad',v:s.name},{l:'Grup',v:s.group||''}],async v=>{
+      const nn=v[0].replace(/\D/g,'');if(!nn||!v[1])throw new Error('No ve ad soyad boş olamaz');
+      const ne={no:nn,name:v[1].toLocaleUpperCase('tr'),group:v[2]};
+      const base='/student-lists/'+tid+'/students/';
+      await put(base+nn,ne);if(nn!==key)await del(base+key);
+      delete cachedStudentList.students[key];cachedStudentList.students[nn]=ne;
+      renderStudentListTable();showToast('✅','Güncellendi',ne.name,'ok',2500);
+    });
+  }
 });
 })();
 
