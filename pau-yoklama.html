@@ -2711,6 +2711,75 @@ input:focus,select:focus,textarea:focus{
   font-size:.78rem!important;
   letter-spacing:.08em!important;
 }
+
+/* ── Son istekler: giriş CTA + alt sekme hover/aktif ── */
+#login-btn.login-cta{height:36px;padding:0 18px;font-size:.82rem;font-weight:800;letter-spacing:.02em;background:#fff;color:#003865;border-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.28)}
+#login-btn.login-cta:hover{background:#e8f2ff;color:#00264a;transform:translateY(-1px)}
+.bnav button:not(.on):hover{color:#0072ce!important;background:rgba(0,114,206,.16)!important;box-shadow:inset 0 0 0 1.5px rgba(0,114,206,.45);transform:translateY(-2px)}
+.bnav button:not(.on):hover .ni,.bnav button:not(.on):hover svg{color:#0072ce!important;stroke:#0072ce}
+.bnav button.on{background:linear-gradient(135deg,#0072ce,#003865)!important;color:#fff!important;box-shadow:0 4px 14px rgba(0,56,101,.40)}
+.bnav button.on .ni,.bnav button.on svg{color:#fff!important;stroke:#fff}
+.bnav button.on::after{background:#fff!important}
+
+/* ── E-posta durum paneli ── */
+.mail-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0}
+.mstat{border:1.5px solid var(--border);border-radius:var(--rad-sm);padding:12px 14px;background:var(--bg2)}
+.mstat .mv{font-size:1.7rem;font-weight:800;line-height:1.1}
+.mstat .ml{font-size:.72rem;font-weight:700;color:var(--fg3);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.mstat .ms{font-size:.72rem;color:var(--fg3);margin-top:3px}
+.mstat.good .mv{color:#15803d}.mstat.bad .mv{color:#b91c1c}.mstat.blue .mv{color:#0072ce}
+.mtbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.mtbl th{text-align:left;font-size:.68rem;text-transform:uppercase;color:var(--fg3);padding:6px 8px;border-bottom:1.5px solid var(--border)}
+.mtbl td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+.mchip{display:inline-block;border-radius:20px;padding:1px 9px;font-size:.7rem;font-weight:700}
+.mchip.ok{background:rgba(21,128,61,.12);color:#15803d}.mchip.fail{background:rgba(185,28,28,.12);color:#b91c1c}.mchip.unk{background:rgba(180,83,9,.12);color:#b45309}
+#proj-credit{position:absolute;left:50%;bottom:3px;transform:translateX(-50%);font-size:.58rem;color:rgba(255,255,255,.28);letter-spacing:.03em;pointer-events:none;z-index:2;white-space:nowrap}
+</style>
+<style>
+/* ═══ PAK: görünüm paketi ═══ */
+table td,table th,.stat-num,#proj-countdown-txt{font-variant-numeric:tabular-nums}
+table th{position:sticky;top:0;z-index:2}
+table tbody tr{transition:background .12s}
+table tbody tr:hover{background:rgba(0,114,206,.07)}
+button:not(:disabled):active,.btn:not(:disabled):active{transform:scale(.97);transition:transform .08s}
+:focus-visible{outline:2px solid var(--pau-285c,#0072CE);outline-offset:2px}
+@keyframes pkFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.view.active,.view.on,section.active{animation:pkFade .22s ease}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+html.pk-fs-lg{font-size:112%}html.pk-fs-xl{font-size:124%}
+#pk-greet{display:none;padding:8px 16px;font-size:.82rem;color:var(--fg2);background:linear-gradient(90deg,rgba(0,114,206,.08),transparent);border-bottom:1px solid var(--bor)}
+#pk-greet b{color:var(--pau-navy);font-weight:800}
+#pk-greet .pk-date{float:right;color:var(--fg3);font-size:.74rem}
+#pk-announce{display:none;padding:9px 14px;background:#fff7e0;color:#7a5200;border-bottom:1px solid #f0d58a;font-size:.84rem;font-weight:600;text-align:center}
+#pk-newver{display:none;padding:9px 14px;background:#0072CE;color:#fff;font-size:.84rem;text-align:center;cursor:pointer;font-weight:700}
+#pk-offline{display:none;padding:6px 14px;background:#ef4444;color:#fff;font-size:.78rem;font-weight:700;text-align:center}
+.pk-logos{display:flex;align-items:center;justify-content:center;gap:16px}
+.pk-logos img{height:64px;width:auto;object-fit:contain}
+#pk-help{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10050;display:none;align-items:center;justify-content:center;padding:16px}
+#pk-help.open{display:flex}
+#pk-help .pk-card{background:var(--bg,#fff);color:var(--fg,#111);border-radius:16px;max-width:460px;width:100%;max-height:86vh;overflow:auto;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+#pk-help h3{margin:0 0 10px;font-size:1.05rem;color:var(--pau-navy)}
+#pk-help kbd{background:var(--bg2,#eee);border:1px solid var(--bor,#ccc);border-radius:5px;padding:1px 7px;font-size:.78rem}
+#pk-help .pk-row{display:flex;justify-content:space-between;padding:5px 0;font-size:.86rem;border-bottom:1px dashed var(--bor)}
+#pk-help .pk-btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#pk-help .pk-btns button{flex:1 1 45%;padding:9px 10px;border-radius:9px;border:1.5px solid var(--bor);background:var(--bg2);color:var(--fg);font-weight:600;cursor:pointer;font-size:.8rem}
+#pk-help .pk-btns button:hover{border-color:var(--pau-285c);color:var(--pau-285c)}
+#pk-ok{position:fixed;inset:0;z-index:10040;display:none;align-items:center;justify-content:center;pointer-events:none}
+#pk-ok.open{display:flex}
+#pk-ok .pk-tick{width:110px;height:110px;border-radius:50%;background:#16a34a;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 40px rgba(22,163,74,.5);animation:pkPop .6s cubic-bezier(.2,1.4,.4,1) both}
+#pk-ok svg{width:60px;height:60px;stroke:#fff;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:pkDraw .5s .3s forwards}
+@keyframes pkPop{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pkDraw{to{stroke-dashoffset:0}}
+.pk-stamp{display:inline-block;margin-top:8px;padding:6px 14px;border-radius:20px;background:rgba(22,163,74,.12);color:#15803d;font-weight:800;font-size:.9rem}
+#pk-proj-logos{position:absolute;top:14px;left:18px;right:18px;display:flex;justify-content:space-between;pointer-events:none;z-index:5}
+#pk-proj-logos img{height:62px;opacity:.95}
+#pk-321{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(0,30,60,.82);color:#fff;font-size:22vw;font-weight:900}
+#pk-321.open{display:flex}
+#pk-321 span{animation:pkPop .9s ease both}
+.pk-pulse{animation:pkRed .5s ease-in-out infinite alternate!important;color:#ff4d4d!important}
+@keyframes pkRed{from{opacity:1}to{opacity:.45}}
+html.pk-kiosk,html.pk-kiosk *{cursor:none!important}
+@media print{.topbar,.bnav,#toast-container,#pk-greet,#pk-announce,#pk-newver,#pk-offline,button{display:none!important}body{background:#fff!important;color:#000!important}table th{position:static}}
 </style>
 </head>
 <body>
@@ -2741,7 +2810,7 @@ input:focus,select:focus,textarea:focus{
     <img src="https://bukalemun.pusula.pau.edu.tr/upload/BIYS/siteler/tip/editor/logo/pa%C3%BC.png"
          alt="PAÜ" id="qr-fs-logo1">
     <div id="qr-fs-header-title">
-      <div id="qr-fs-hdr-uni">PAMUKKALE ÜNİVERSİTESİ</div>
+      <div id="qr-fs-hdr-uni">T.C. PAMUKKALE ÜNİVERSİTESİ</div>
       <div id="qr-fs-hdr-sub">Tıp Fakültesi &nbsp;·&nbsp; Dijital Yoklama Sistemi</div>
     </div>
     <img src="https://bukalemun.pusula.pau.edu.tr/upload/BIYS/siteler/tip/editor/logo/t%C4%B1p%20logo.png"
@@ -2894,6 +2963,7 @@ input:focus,select:focus,textarea:focus{
 <!-- ═══ PROJEKSİYON FULLSCREEN ═══ -->
 <div id="proj-fullscreen">
   <button id="proj-close-btn" onclick="closeProjFullscreen()" title="Kapat">✕</button>
+  <div id="proj-credit">Tasarım ve geliştirme: Halil İbrahim CENGİZ &amp; Claude AI ile yapılmıştır</div>
   <!-- Yoklama süresi bittiğinde tam ekran soru -->
   <div id="proj-timeup">
     <div id="proj-timeup-box">
@@ -4292,8 +4362,19 @@ input:focus,select:focus,textarea:focus{
     <div id="prof-dup-panel" style="display:none;background:color-mix(in srgb,#8b5cf6 10%,var(--bg));border:1.5px solid color-mix(in srgb,#8b5cf6 35%,transparent);border-radius:var(--rad-sm);padding:14px;margin-bottom:12px;font-size:.82rem"></div>
     <!-- Arama -->
     <div id="prof-search-bar">
-      <input id="prof-search" type="search" placeholder="🔍 İsim, e-posta veya anabilim dalı ara…" oninput="renderProfs()">
+      <input id="prof-search" type="search" placeholder="🔍 Ad, soyad, e-posta, bölüm veya ünvan ara…" oninput="renderProfs()">
       <span id="prof-count"></span>
+    </div>
+    <div id="prof-filter-bar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <select id="prof-f-unvan" onchange="renderProfs()" style="flex:1;min-width:140px;font-size:.8rem;padding:6px 8px">
+        <option value="">Tüm ünvanlar</option>
+        <option value="PROFESÖR">Prof. Dr.</option><option value="DOÇENT">Doç. Dr.</option>
+        <option value="DOKTOR ÖĞRETİM ÜYESİ">Dr. Öğr. Üyesi</option><option value="UZM.DR.">Uzm. Dr.</option>
+        <option value="ÖĞRETİM GÖREVLİSİ">Öğr. Gör.</option><option value="ARŞ. GÖR. DR.">Arş. Gör. Dr.</option>
+        <option value="ARŞ. GÖR.">Arş. Gör.</option><option value="__yok">Ünvanı eksik</option>
+      </select>
+      <select id="prof-f-dept" onchange="renderProfs()" style="flex:2;min-width:180px;font-size:.8rem;padding:6px 8px"><option value="">Tüm bölümler</option></select>
+      <button class="btn bg bsm" onclick="document.getElementById('prof-search').value='';document.getElementById('prof-f-unvan').value='';document.getElementById('prof-f-dept').value='';renderProfs()" style="font-size:.75rem">Temizle</button>
     </div>
     <ul id="prof-list" style="list-style:none"></ul>
     <div class="dvd" style="margin-top:12px"></div>
@@ -4320,6 +4401,17 @@ input:focus,select:focus,textarea:focus{
   </div>
   <!-- ── E-POSTA PANELİ ── -->
   <div id="stpanel-eposta">
+  <div class="card" id="mail-dash-card">
+    <div class="card-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">📊 E-posta Durumu <button class="btn bg bsm" style="margin-left:auto;font-size:.72rem" onclick="renderMailDash()">↻ Yenile</button></div>
+    <div id="mail-dash-stats" class="mail-stats"></div>
+    <div id="mail-dash-note"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 8px">
+      <select id="mail-f-period" onchange="_mailDrawDash()" style="font-size:.78rem;padding:5px 8px;width:auto"><option value="1">Bugün</option><option value="7" selected>Son 7 gün</option></select>
+      <select id="mail-f-status" onchange="_mailDrawDash()" style="font-size:.78rem;padding:5px 8px;width:auto"><option value="">Tüm durumlar</option><option value="ok">✓ Gidenler</option><option value="fail">✗ Gitmeyenler</option><option value="unk">? Doğrulanmayanlar</option></select>
+      <button class="btn bg bsm" id="mail-retry-all" onclick="mailRetryAll()" style="font-size:.74rem;display:none">↺ Gitmeyenleri yeniden gönder</button>
+    </div>
+    <div id="mail-dash-list"></div>
+  </div>
   <div class="card">
     <div class="card-title">📧 E-posta Ayarları</div>
     <p class="hint" style="margin-bottom:14px">Google Apps Script ile ücretsiz, sınırsız mail gönderin. Kurulum için aşağıya tıklayın. Script URL'sini bir kez girin — sistem her oturum kapanışında otomatik mail atar.</p>
@@ -4343,59 +4435,10 @@ input:focus,select:focus,textarea:focus{
       <li><a href="https://script.google.com" target="_blank" style="color:var(--accent)">script.google.com</a> → Yeni Proje</li>
       <li>Aşağıdaki kodu yapıştırın ve kaydedin</li>
       <li>Dağıt → Web uygulaması olarak dağıt → Erişim: <strong>Herkes</strong></li>
-      <li>Oluşan URL'yi yukarıya yapıştırın</li>
+      <li>Oluşan URL'yi yukarıya yapıştırın. <strong>Betiği daha önce kurduysanız:</strong> eski kodu silip bunu yapıştırın, Dağıt → Dağıtımları yönet → Düzenle → Sürüm: <em>Yeni sürüm</em> → Dağıt (URL değişmez).</li>
     </ol>
-    <pre style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-size:.72rem;overflow-x:auto;margin-top:8px;line-height:1.6;white-space:pre-wrap">function doGet(e) {
-  // Kota sorgulama — uygulamadan "?quota=1" ile çağrılır
-  var quota = MailApp.getRemainingDailyQuota();
-  return ContentService
-    .createTextOutput(JSON.stringify({quota: quota}))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var recipients = data.recipients || [];
-    var subject = data.subject || 'Yoklama Raporu';
-    var body = data.body || '';
-    var htmlBody = data.htmlBody || '';
-    var rows = data.rows || [];
-    var sheetName = data.sheetName || 'Yoklama';
-
-    // Excel (CSV) eki oluştur
-    var attachments = [];
-    if (rows.length > 0) {
-      var csv = '﻿'; // UTF-8 BOM (Excel için)
-      csv += 'Sıra,Durum,Öğrenci No,Ad Soyad,Giriş Saati\n';
-      rows.forEach(function(r) {
-        csv += r.sira + ',' + (r.durum||'') + ',' + r.no + ',"' + r.ad + '",' + r.saat + '\n';
-      });
-      var blob = Utilities.newBlob(csv, 'text/csv; charset=utf-8', sheetName + '.csv');
-      attachments.push(blob);
-    }
-
-    var mailOpts = {
-      attachments: attachments,
-      name: 'PAÜ Tıp Fakültesi Yoklama Sistemi'
-    };
-    if (htmlBody) mailOpts.htmlBody = htmlBody;
-
-    recipients.forEach(function(email) {
-      try {
-        GmailApp.sendEmail(email, subject, body, mailOpts);
-      } catch(err) {}
-    });
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ok: true}))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ok: false, error: err.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}</pre>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px"><button class="btn bg bsm" onclick="copyMailScript()" style="font-size:.74rem">📋 Kodu kopyala</button><span id="mail-script-ver" style="font-size:.74rem;color:var(--fg3)">Sürüm 3: alıcı bazında sonuç, kota, kurumsal PDF + Excel ek, mail içi logo</span></div>
+    <pre id="mail-script-code" style="background:var(--bg);padding:12px;border-radius:var(--rad-sm);font-size:.72rem;overflow-x:auto;margin-top:8px;line-height:1.6;white-space:pre-wrap"></pre>
   </div>
   </div><!-- /stpanel-eposta -->
   <!-- ── TEMA PANELİ ── -->
@@ -4592,12 +4635,6 @@ function doPost(e) {
         <div class="card-title" style="margin:0">📋 Dönem Listeleri &amp; Gruplar</div>
         <p class="hint" style="margin-top:4px">Her dönem için grup oluşturun (A Grubu, A1, B2 gibi). Dönem 4–5'te grupları blok'lara atayın; rotasyon sırasında atamayı değiştirmeniz yeterli.</p>
       </div>
-    </div>
-    <!-- Tıp / Tıp Dışı modu -->
-    <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center">
-      <span style="font-size:.75rem;font-weight:700;color:var(--fg3);text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Fakülte türü:</span>
-      <button id="dl-mode-tip" class="btn bp bsm" onclick="setDlMode('tip')" style="min-width:80px">🏥 Tıp</button>
-      <button id="dl-mode-tipdisi" class="btn bg bsm" onclick="setDlMode('tipdisi')" style="min-width:80px">📚 Tıp Dışı</button>
     </div>
     <div id="dl-tab-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
     <div id="dl-tab-content"></div>
@@ -4929,7 +4966,7 @@ const FB_CFG={
 const PROFS_SEED={"aakinci@pau.edu.tr":{name:"AYKUT AKINCI",email:"aakinci@pau.edu.tr"},"aatigan@pau.edu.tr":{name:"AYHAN ATIGAN",email:"aatigan@pau.edu.tr"},"aaydemir@pau.edu.tr":{name:"AHMET NADİR AYDEMİR",email:"aaydemir@pau.edu.tr"},"aber@pau.edu.tr":{name:"AYŞEN BUKET ER URGANCI",email:"aber@pau.edu.tr"},"abuber@pau.edu.tr":{name:"AHMET BÜBER",email:"abuber@pau.edu.tr"},"acagdasy@pau.edu.tr":{name:"ALİ ÇAĞDAŞ YÖRÜKOĞLU",email:"acagdasy@pau.edu.tr"},"acaliskan@pau.edu.tr":{name:"AHMET ÇALIŞKAN",email:"acaliskan@pau.edu.tr"},"ademiray@pau.edu.tr":{name:"AYDIN DEMİRAY",email:"ademiray@pau.edu.tr"},"adiguzel@pau.edu.tr":{name:"ESAT ADIGÜZEL",email:"adiguzel@pau.edu.tr"},"aeraydin@pau.edu.tr":{name:"AYTEN ERAYDIN",email:"aeraydin@pau.edu.tr"},"aergin@pau.edu.tr":{name:"AHMET ERGİN",email:"aergin@pau.edu.tr"},"agakaslan@pau.edu.tr":{name:"ATİKE GÖKÇEN DEMİRAY",email:"agakaslan@pau.edu.tr"},"agultekin@pau.edu.tr":{name:"AZİZ GÜLTEKİN",email:"agultekin@pau.edu.tr"},"akaftan@pau.edu.tr":{name:"HAVANE ASUMAN KAFTAN TELLİOĞLU",email:"akaftan@pau.edu.tr"},"akenar@pau.edu.tr":{name:"AYŞE NUR İNCİ KENAR",email:"akenar@pau.edu.tr"},"akis@pau.edu.tr":{name:"ARGÜN KIŞ",email:"akis@pau.edu.tr"},"akoseler@pau.edu.tr":{name:"AYLİN KÖSELER",email:"akoseler@pau.edu.tr"},"akurtulus@pau.edu.tr":{name:"AYŞE KURTULUŞ DERELİ",email:"akurtulus@pau.edu.tr"},"akutluhan@pau.edu.tr":{name:"AHMET KUTLUHAN",email:"akutluhan@pau.edu.tr"},"alpakman@pau.edu.tr":{name:"ALP AKMAN",email:"alpakman@pau.edu.tr"},"amavunduk@pau.edu.tr":{name:"AVNİ MURAT AVUNDUK",email:"amavunduk@pau.edu.tr"},"amete@pau.edu.tr":{name:"ASLI METE YILDIZ",email:"amete@pau.edu.tr"},"ametin@pau.edu.tr":{name:"AHMET METİN",email:"ametin@pau.edu.tr"},"aoskay@pau.edu.tr":{name:"ALTEN OSKAY",email:"aoskay@pau.edu.tr"},"aozaydin@pau.edu.tr":{name:"ALEV ATIGAN",email:"aozaydin@pau.edu.tr"},"aozden@pau.edu.tr":{name:"AKIN ÖZDEN",email:"aozden@pau.edu.tr"},"atakany@pau.edu.tr":{name:"ATAKAN YILMAZ",email:"atakany@pau.edu.tr"},"auatilan@pau.edu.tr":{name:"AHMET UĞUR ATILAN",email:"auatilan@pau.edu.tr"},"ayaren@pau.edu.tr":{name:"ARZU YAREN",email:"ayaren@pau.edu.tr"},"ayilmaz@pau.edu.tr":{name:"AHMET YILMAZ",email:"ayilmaz@pau.edu.tr"},"aysegulcort@pau.edu.tr":{name:"AYŞEGÜL ÇÖRT",email:"aysegulcort@pau.edu.tr"},"baltalar@pau.edu.tr":{name:"AHMET BALTALARLI",email:"baltalar@pau.edu.tr"},"barisa@pau.edu.tr":{name:"BARIŞ ALBUZ",email:"barisa@pau.edu.tr"},"bayramo@pau.edu.tr":{name:"BAYRAM ÖZHAN",email:"bayramo@pau.edu.tr"},"bbasay@pau.edu.tr":{name:"BÜRGE KABUKÇU BAŞAY",email:"bbasay@pau.edu.tr"},"bdursun@pau.edu.tr":{name:"BELDA DURSUN",email:"bdursun@pau.edu.tr"},"berdur@pau.edu.tr":{name:"BÜLENT ERDUR",email:"berdur@pau.edu.tr"},"beyzasahin@pau.edu.tr":{name:"BEYZA ŞAHİN",email:"beyzasahin@pau.edu.tr"},"bkaleli@pau.edu.tr":{name:"MEHMET BABÜR KALELİ",email:"bkaleli@pau.edu.tr"},"bkoluman@pau.edu.tr":{name:"BAŞAK ÜNVER KOLUMAN",email:"bkoluman@pau.edu.tr"},"bozgurd@pau.edu.tr":{name:"BARIŞ ÖZGÜR DÖNMEZ",email:"bozgurd@pau.edu.tr"},"bsahinoglu@pau.edu.tr":{name:"BÜŞRA ŞAHİNOĞLU",email:"bsahinoglu@pau.edu.tr"},"btaskoylu@pau.edu.tr":{name:"BURCU YAPAR TAŞKÖYLÜ",email:"btaskoylu@pau.edu.tr"},"btopuz@pau.edu.tr":{name:"BÜLENT TOPUZ",email:"btopuz@pau.edu.tr"},"byagci@pau.edu.tr":{name:"AHMET BAKİ YAĞCI",email:"byagci@pau.edu.tr"},"byucens@pau.edu.tr":{name:"BENGÜ YÜCENS",email:"byucens@pau.edu.tr"},"byuzbasi@pau.edu.tr":{name:"BESTE KİPÇAK YÜZBAŞI",email:"byuzbasi@pau.edu.tr"},"cagri@pau.edu.tr":{name:"ÇAĞRI ERGİN",email:"cagri@pau.edu.tr"},"cerdem@pau.edu.tr":{name:"CEREN ERDEM",email:"cerdem@pau.edu.tr"},"certunc@pau.edu.tr":{name:"CANAN ERTUNÇ ARSLAN",email:"certunc@pau.edu.tr"},"cihank@pau.edu.tr":{name:"CİHAN KABUKÇU",email:"cihank@pau.edu.tr"},"cokara@pau.edu.tr":{name:"CÜNEYT ORHAN KARA",email:"cokara@pau.edu.tr"},"concel@pau.edu.tr":{name:"ÇAĞATAY HİLMİ ÖNCEL",email:"concel@pau.edu.tr"},"ctelciler@pau.edu.tr":{name:"COŞKUN TELCİLER",email:"ctelciler@pau.edu.tr"},"dakin@pau.edu.tr":{name:"DAVUT AKIN",email:"dakin@pau.edu.tr"},"ddkasim@pau.edu.tr":{name:"DEMET DÖNDÜ KASIM",email:"ddkasim@pau.edu.tr"},"ddursunoglu@pau.edu.tr":{name:"DURSUN DURSUNOĞLU",email:"ddursunoglu@pau.edu.tr"},"demirkan@pau.edu.tr":{name:"AHMET FAHİR DEMİRKAN",email:"demirkan@pau.edu.tr"},"deryakilic@pau.edu.tr":{name:"DERYA KILIÇ GÜLER",email:"deryakilic@pau.edu.tr"},"dherek@pau.edu.tr":{name:"DUYGU HEREK",email:"dherek@pau.edu.tr"},"dkaraer@pau.edu.tr":{name:"DERYA KARAER",email:"dkaraer@pau.edu.tr"},"dokur@pau.edu.tr":{name:"DİCLE ŞENER OKUR",email:"dokur@pau.edu.tr"},"dsayin@pau.edu.tr":{name:"DİLEK SAYIN",email:"dsayin@pau.edu.tr"},"ealatas@pau.edu.tr":{name:"SÜLEYMAN ERKAN ALATAŞ",email:"ealatas@pau.edu.tr"},"earpaci@pau.edu.tr":{name:"ENVER ARPACI",email:"earpaci@pau.edu.tr"},"eavci@pau.edu.tr":{name:"ESİN AVCI ÇİÇEK",email:"eavci@pau.edu.tr"},"ebrua@pau.edu.tr":{name:"EBRU ARIK YILMAZ",email:"ebrua@pau.edu.tr"},"ecomut@pau.edu.tr":{name:"ERDEM ÇOMUT",email:"ecomut@pau.edu.tr"},"edegirmenci@pau.edu.tr":{name:"EYLEM TEKE",email:"edegirmenci@pau.edu.tr"},"eegemen@pau.edu.tr":{name:"EMRAH EGEMEN",email:"eegemen@pau.edu.tr"},"eeturanli@pau.edu.tr":{name:"EŞE EDA TURANLI",email:"eeturanli@pau.edu.tr"},"egorkemg@pau.edu.tr":{name:"ERDAL GÖRKEM GAVCAR",email:"egorkemg@pau.edu.tr"},"ekaragur@pau.edu.tr":{name:"EGE RIZA KARAGÜR",email:"ekaragur@pau.edu.tr"},"ekilicarslan@pau.edu.tr":{name:"EMEL KILIÇARSLAN",email:"ekilicarslan@pau.edu.tr"},"ekoyuncu@pau.edu.tr":{name:"ECE KOYUNCU",email:"ekoyuncu@pau.edu.tr"},"ektoprak@pau.edu.tr":{name:"EMİNE KILIÇ TOPRAK",email:"ektoprak@pau.edu.tr"},"emreatmaca@pau.edu.tr":{name:"EMRE ATMACA",email:"emreatmaca@pau.edu.tr"},"eonder@pau.edu.tr":{name:"ELİF ÖNDER",email:"eonder@pau.edu.tr"},"erdemm@pau.edu.tr":{name:"ERDEM MENGİ",email:"erdemm@pau.edu.tr"},"ergunmete@pau.edu.tr":{name:"ERGUN METE",email:"ergunmete@pau.edu.tr"},"esagtas@pau.edu.tr":{name:"ERGİN SAĞTAŞ",email:"esagtas@pau.edu.tr"},"etomatir@pau.edu.tr":{name:"ERKAN TOMATIR",email:"etomatir@pau.edu.tr"},"eugurlu@pau.edu.tr":{name:"ERHAN UĞURLU",email:"eugurlu@pau.edu.tr"},"eyupa@pau.edu.tr":{name:"EYÜP ASLAN",email:"eyupa@pau.edu.tr"},"fardic@pau.edu.tr":{name:"FÜSUN ARDIÇ",email:"fardic@pau.edu.tr"},"fatih_yakar@pau.edu.tr":{name:"FATİH YAKAR",email:"fatih_yakar@pau.edu.tr"},"fbir@pau.edu.tr":{name:"FERDA BİR",email:"fbir@pau.edu.tr"},"fikris@pau.edu.tr":{name:"FİKRİ SELÇUK ŞİMŞEK",email:"fikris@pau.edu.tr"},"fkaya@pau.edu.tr":{name:"FATMA KAYA",email:"fkaya@pau.edu.tr"},"fnardic@pau.edu.tr":{name:"FAZIL NECDET ARDIÇ",email:"fnardic@pau.edu.tr"},"ftumkaya@pau.edu.tr":{name:"FUNDA TÜMKAYA",email:"ftumkaya@pau.edu.tr"},"fulutas@pau.edu.tr":{name:"FİRDEVS ULUTAŞ",email:"fulutas@pau.edu.tr"},"gabban@pau.edu.tr":{name:"GÜLÇİN METE",email:"gabban@pau.edu.tr"},"gacikgoz@pau.edu.tr":{name:"GİZEM SULTAN AÇIKGÖZ MERT",email:"gacikgoz@pau.edu.tr"},"gcagliyan@pau.edu.tr":{name:"GÜLSÜM AKGÜN ÇAĞLIYAN",email:"gcagliyan@pau.edu.tr"},"gcinar@pau.edu.tr":{name:"GÖKHAN ÇINAR",email:"gcinar@pau.edu.tr"},"gcontuk@pau.edu.tr":{name:"GAZİ CONTUK",email:"gcontuk@pau.edu.tr"},"ggokoz@pau.edu.tr":{name:"GAMZE GÖKÖZ DOĞU",email:"ggokoz@pau.edu.tr"},"ggundogdu@pau.edu.tr":{name:"GÜLŞAH GÜNDOĞDU",email:"ggundogdu@pau.edu.tr"},"ggungor@pau.edu.tr":{name:"GÜLAY GÜNGÖR",email:"ggungor@pau.edu.tr"},"gkiter@pau.edu.tr":{name:"GÖKSEL ALTINIŞIK ERGUR",email:"gkiter@pau.edu.tr"},"gonem@pau.edu.tr":{name:"GÖKHAN ÖNEM",email:"gonem@pau.edu.tr"},"gozturk@pau.edu.tr":{name:"GÖKHAN ÖZTÜRK",email:"gozturk@pau.edu.tr"},"gtopel@pau.edu.tr":{name:"GÖZDE TOPEL",email:"gtopel@pau.edu.tr"},"gulinf@pau.edu.tr":{name:"GÜLİN FINDIKOĞLU ERGİN",email:"gulinf@pau.edu.tr"},"gurbuzakcay@pau.edu.tr":{name:"GÜRBÜZ AKÇAY",email:"gurbuzakcay@pau.edu.tr"},"gvarma@pau.edu.tr":{name:"GÜLFİZAR SÖZERİ VARMA",email:"gvarma@pau.edu.tr"},"gyaylali@pau.edu.tr":{name:"GÜZİN FİDAN YAYLALI",email:"gyaylali@pau.edu.tr"},"hakca@pau.edu.tr":{name:"HAKAN AKÇA",email:"hakca@pau.edu.tr"},"halilyilmaz@pau.edu.tr":{name:"HALİL YILMAZ",email:"halilyilmaz@pau.edu.tr"},"halkan@pau.edu.tr":{name:"HAKAN ALKAN",email:"halkan@pau.edu.tr"},"hatalay@pau.edu.tr":{name:"HABİP ATALAY",email:"hatalay@pau.edu.tr"},"haybek@pau.edu.tr":{name:"HÜLYA AYBEK",email:"haybek@pau.edu.tr"},"hcinar@pau.edu.tr":{name:"HAMZA ÇINAR",email:"hcinar@pau.edu.tr"},"hcsorkun@pau.edu.tr":{name:"HÜLYA ÇETİN",email:"hcsorkun@pau.edu.tr"},"hicengiz@pau.edu.tr":{name:"Halil İbrahim CENGİZ",email:"hicengiz@pau.edu.tr"},"hkubraa@pau.edu.tr":{name:"HATİCE KÜBRA ATA ÖZTÜRK",email:"hkubraa@pau.edu.tr"},"hsaginc@pau.edu.tr":{name:"HALİL SAĞINÇ",email:"hsaginc@pau.edu.tr"},"hsaslan@pau.edu.tr":{name:"HALİL SERDAR ASLAN",email:"hsaslan@pau.edu.tr"},"hsenol@pau.edu.tr":{name:"HANDE ŞENOL",email:"hsenol@pau.edu.tr"},"hstekin@pau.edu.tr":{name:"HÜLYA SUNGURTEKİN",email:"hstekin@pau.edu.tr"},"htanriverdi@pau.edu.tr":{name:"HALİL TANRIVERDİ",email:"htanriverdi@pau.edu.tr"},"huseyinkaya@pau.edu.tr":{name:"HÜSEYİN KAYA",email:"huseyinkaya@pau.edu.tr"},"iacikbas@pau.edu.tr":{name:"İBRAHİM AÇIKBAŞ",email:"iacikbas@pau.edu.tr"},"iakbudak@pau.edu.tr":{name:"İSMAİL HAKKI AKBUDAK",email:"iakbudak@pau.edu.tr"},"ibaris@pau.edu.tr":{name:"CANSU BARIŞ MOĞUL",email:"ibaris@pau.edu.tr"},"icuneyit@pau.edu.tr":{name:"İBRAHİM CÜNEYİT",email:"icuneyit@pau.edu.tr"},"idogukilic@pau.edu.tr":{name:"İSMAİL DOĞU KILIÇ",email:"idogukilic@pau.edu.tr"},"idrisa@pau.edu.tr":{name:"İDRİS AYHAN",email:"idrisa@pau.edu.tr"},"igirisgen@pau.edu.tr":{name:"İLKNUR GİRİŞGEN",email:"igirisgen@pau.edu.tr"},"igokalan@pau.edu.tr":{name:"BAHRİYE İNCİ GÖKALAN KARA",email:"igokalan@pau.edu.tr"},"igoksin@pau.edu.tr":{name:"İBRAHİM GÖKŞİN",email:"igoksin@pau.edu.tr"},"ihaticea@pau.edu.tr":{name:"İLKNUR HATİCE AKBUDAK",email:"ihaticea@pau.edu.tr"},"ikaleli@pau.edu.tr":{name:"İLKNUR KALELİ",email:"ikaleli@pau.edu.tr"},"ikiraz@pau.edu.tr":{name:"İLKER KİRAZ",email:"ikiraz@pau.edu.tr"},"iozdel@pau.edu.tr":{name:"OSMAN İSMAİL ÖZDEL",email:"iozdel@pau.edu.tr"},"isemerci@pau.edu.tr":{name:"İPEK BÜBER",email:"isemerci@pau.edu.tr"},"itekin@pau.edu.tr":{name:"IŞIK TEKİN",email:"itekin@pau.edu.tr"},"itoprak@pau.edu.tr":{name:"İBRAHİM TOPRAK",email:"itoprak@pau.edu.tr"},"iturkcuer@pau.edu.tr":{name:"İBRAHİM TÜRKÇÜER",email:"iturkcuer@pau.edu.tr"},"ivfenkci@pau.edu.tr":{name:"İBRAHİM VEYSEL FENKCİ",email:"ivfenkci@pau.edu.tr"},"kacar@pau.edu.tr":{name:"KEMALETTİN ACAR",email:"kacar@pau.edu.tr"},"kalver@pau.edu.tr":{name:"KADİR HAN ALVER",email:"kalver@pau.edu.tr"},"kcoyan@pau.edu.tr":{name:"KENAN ÇOYAN",email:"kcoyan@pau.edu.tr"},"kkaraer@pau.edu.tr":{name:"KADRİ KARAER",email:"kkaraer@pau.edu.tr"},"kkaya@pau.edu.tr":{name:"KÜŞAT KAYA",email:"kkaya@pau.edu.tr"},"kkucuker@pau.edu.tr":{name:"KÜŞAT KÜÇÜKER",email:"kkucuker@pau.edu.tr"},"madali@pau.edu.tr":{name:"MEHMET KORAY ADALI",email:"madali@pau.edu.tr"},"mahaberal@pau.edu.tr":{name:"MİKTAT ARİF HABERAL",email:"mahaberal@pau.edu.tr"},"maktas@pau.edu.tr":{name:"MERVE AKTAŞ TERZİOĞLU",email:"maktas@pau.edu.tr"},"malpua@pau.edu.tr":{name:"MEHMET ALPUA",email:"malpua@pau.edu.tr"},"mbduran@pau.edu.tr":{name:"MESUT BERKAN DURAN",email:"mbduran@pau.edu.tr"},"mbor@pau.edu.tr":{name:"ZEKİYE MELEK KÜÇÜKATAY",email:"mbor@pau.edu.tr"},"mcayir@pau.edu.tr":{name:"MUSTAFA ÇAĞDAŞ ÇAYIR",email:"mcayir@pau.edu.tr"},"mceri@pau.edu.tr":{name:"MEVLÜT ÇERİ",email:"mceri@pau.edu.tr"},"mceyhanb@pau.edu.tr":{name:"MELİKE CEYHAN BALCI ŞENGÜL",email:"mceyhanb@pau.edu.tr"},"mdemir@pau.edu.tr":{name:"MELEK DEMİR",email:"mdemir@pau.edu.tr"},"mdkarakoc@pau.edu.tr":{name:"METİN DENİZ KARAKOÇ",email:"mdkarakoc@pau.edu.tr"},"mecoskun@pau.edu.tr":{name:"MEHMET ERDAL COŞKUN",email:"mecoskun@pau.edu.tr"},"mehmeto@pau.edu.tr":{name:"MEHMET BÜLENT ÖZDEMİR",email:"mehmeto@pau.edu.tr"},"mert@pau.edu.tr":{name:"MERT ÖZEN",email:"mert@pau.edu.tr"},"merves@pau.edu.tr":{name:"MERVE SARIKAYA",email:"merves@pau.edu.tr"},"mgakinci@pau.edu.tr":{name:"MELTEM GÜNEŞ AKINCI",email:"mgakinci@pau.edu.tr"},"mkilinc@pau.edu.tr":{name:"MEHMET KILINÇ",email:"mkilinc@pau.edu.tr"},"mkutlu@pau.edu.tr":{name:"MURAT KUTLU",email:"mkutlu@pau.edu.tr"},"moto@pau.edu.tr":{name:"MURAT OTO",email:"moto@pau.edu.tr"},"mozdemir@pau.edu.tr":{name:"ÖZMET MUHAMMET ALİ ÖZDEMİR",email:"mozdemir@pau.edu.tr"},"msengul@pau.edu.tr":{name:"MUSTAFA ŞENGÜL",email:"msengul@pau.edu.tr"},"mseyit@pau.edu.tr":{name:"MURAT SEYİT",email:"mseyit@pau.edu.tr"},"msunal@pau.edu.tr":{name:"MURAT SERKANT ÜNAL",email:"msunal@pau.edu.tr"},"muhammedd@pau.edu.tr":{name:"MUHAMMET FATİH DOĞAN",email:"muhammedd@pau.edu.tr"},"muhammetarslan@pau.edu.tr":{name:"MUHAMMET ARSLAN",email:"muhammetarslan@pau.edu.tr"},"muhammeto@pau.edu.tr":{name:"MUHAMMET BURAK ÖZKAN",email:"muhammeto@pau.edu.tr"},"munevvery@pau.edu.tr":{name:"MÜNEVVER YILMAZ",email:"munevvery@pau.edu.tr"},"mustafacelik@pau.edu.tr":{name:"MUSTAFA ÇELİK",email:"mustafacelik@pau.edu.tr"},"mustafayilmaz@pau.edu.tr":{name:"MUSTAFA YILMAZ",email:"mustafayilmaz@pau.edu.tr"},"myigit@pau.edu.tr":{name:"MURAT YİĞİT",email:"myigit@pau.edu.tr"},"myucens@pau.edu.tr":{name:"MEHMET YÜCENS",email:"myucens@pau.edu.tr"},"nakkaya@pau.edu.tr":{name:"NURAY AKKAYA",email:"nakkaya@pau.edu.tr"},"ncil@pau.edu.tr":{name:"NAZLI ÇİL",email:"ncil@pau.edu.tr"},"ncorduk@pau.edu.tr":{name:"NERGÜL ÇÖRDÜK",email:"ncorduk@pau.edu.tr"},"ndemirkan@pau.edu.tr":{name:"NEŞE DEMİRKAN",email:"ndemirkan@pau.edu.tr"},"ndursunoglu@pau.edu.tr":{name:"NEŞE DURSUNOĞLU",email:"ndursunoglu@pau.edu.tr"},"necmiyildiz@pau.edu.tr":{name:"NECMETTİN YILDIZ",email:"necmiyildiz@pau.edu.tr"},"nemre@pau.edu.tr":{name:"NİLÜFER EMRE",email:"nemre@pau.edu.tr"},"nergin@pau.edu.tr":{name:"NESRİN ERGİN",email:"nergin@pau.edu.tr"},"nevina@pau.edu.tr":{name:"NEVİN ALAYVAZ ASLAN",email:"nevina@pau.edu.tr"},"nguler@pau.edu.tr":{name:"NİL GÜLER",email:"nguler@pau.edu.tr"},"nilgune@pau.edu.tr":{name:"NİLGÜN OKTAR ERDOĞAN",email:"nilgune@pau.edu.tr"},"nkeskin@pau.edu.tr":{name:"NAZAN KESKİN",email:"nkeskin@pau.edu.tr"},"nmeydanacimis@pau.edu.tr":{name:"NURHAN MEYDAN",email:"nmeydanacimis@pau.edu.tr"},"nok@pau.edu.tr":{name:"NUSRET ÖK",email:"nok@pau.edu.tr"},"nsabir@pau.edu.tr":{name:"NURAN A. SABİR AKKOYUNLU",email:"nsabir@pau.edu.tr"},"nyalcin@pau.edu.tr":{name:"NAGİHAN YALÇIN",email:"nyalcin@pau.edu.tr"},"nyigit@pau.edu.tr":{name:"NİLÜFER YİĞİT",email:"nyigit@pau.edu.tr"},"obakay@pau.edu.tr":{name:"ÖZGE SEVİL KARSTARLI BAKAY",email:"obakay@pau.edu.tr"},"obasay@pau.edu.tr":{name:"ÖMER BAŞAY",email:"obasay@pau.edu.tr"},"obirsen@pau.edu.tr":{name:"ONUR BİRSEN",email:"obirsen@pau.edu.tr"},"ocetin@pau.edu.tr":{name:"GÖKHAN OZAN ÇETİN",email:"ocetin@pau.edu.tr"},"ociftci@pau.edu.tr":{name:"OSMAN ÇİFTÇİ",email:"ociftci@pau.edu.tr"},"oerkek@pau.edu.tr":{name:"ÖZGEN KILIÇ ERKEK",email:"oerkek@pau.edu.tr"},"oguler@pau.edu.tr":{name:"ÖMER TOLGA GÜLER",email:"oguler@pau.edu.tr"},"olcaygungor@pau.edu.tr":{name:"OLCAY GÜNGÖR",email:"olcaygungor@pau.edu.tr"},"oltuncay@pau.edu.tr":{name:"ÖMER LEVENT TUNCAY",email:"oltuncay@pau.edu.tr"},"ooztekin@pau.edu.tr":{name:"ÖZER ÖZTEKİN",email:"ooztekin@pau.edu.tr"},"oparca@pau.edu.tr":{name:"OSMAN PARÇA",email:"oparca@pau.edu.tr"},"osevinc@pau.edu.tr":{name:"ÖZGÜR SEVİNÇ",email:"osevinc@pau.edu.tr"},"otokgun@pau.edu.tr":{name:"ONUR TOKGÜN",email:"otokgun@pau.edu.tr"},"otopak@pau.edu.tr":{name:"OSMAN ZÜLKİF TOPAK",email:"otopak@pau.edu.tr"},"otopuz@pau.edu.tr":{name:"OYA TOPUZ",email:"otopuz@pau.edu.tr"},"ouzunlu@pau.edu.tr":{name:"OSMAN UZUNLU",email:"ouzunlu@pau.edu.tr"},"ozlemcan@pau.edu.tr":{name:"ÖZLEM KOŞAR CAN",email:"ozlemcan@pau.edu.tr"},"ozsahin@pau.edu.tr":{name:"AYSUN ÖZŞAHİN",email:"ozsahin@pau.edu.tr"},"pbbaltalarli@pau.edu.tr":{name:"PAPATYA BAHAR BALTALARLI",email:"pbbaltalarli@pau.edu.tr"},"pcakmak@pau.edu.tr":{name:"PINAR ÇAKMAK",email:"pcakmak@pau.edu.tr"},"rherbay@pau.edu.tr":{name:"RIZA HAKAN ERBAY",email:"rherbay@pau.edu.tr"},"rhozcan@pau.edu.tr":{name:"RAMAZAN HAKAN ÖZCAN",email:"rhozcan@pau.edu.tr"},"rkutlubay@pau.edu.tr":{name:"RECEP KUTLUBAY",email:"rkutlubay@pau.edu.tr"},"sahabettinc@pau.edu.tr":{name:"ŞAHABETTİN ÇETİN",email:"sahabettinc@pau.edu.tr"},"saltincik@pau.edu.tr":{name:"SELDA AYÇA ALTINCIK",email:"saltincik@pau.edu.tr"},"samety@pau.edu.tr":{name:"SAMET YILMAZ",email:"samety@pau.edu.tr"},"sbardak@pau.edu.tr":{name:"ŞEFİKA BARDAK",email:"sbardak@pau.edu.tr"},"sbir@pau.edu.tr":{name:"LEVENT SİNAN BİR",email:"sbir@pau.edu.tr"},"scivlan@pau.edu.tr":{name:"SERKAN CİVLAN",email:"scivlan@pau.edu.tr"},"seheri@pau.edu.tr":{name:"SEHER İLHAN",email:"seheri@pau.edu.tr"},"seldas@pau.edu.tr":{name:"SELDA ŞİMŞEK",email:"seldas@pau.edu.tr"},"selimt@pau.edu.tr":{name:"SELİM TÜMKAYA",email:"selimt@pau.edu.tr"},"seling@pau.edu.tr":{name:"SELİN YAKARIŞIK",email:"seling@pau.edu.tr"},"selmat@pau.edu.tr":{name:"SELMA TEKİN",email:"selmat@pau.edu.tr"},"sennilay@pau.edu.tr":{name:"NİLAY ŞEN",email:"sennilay@pau.edu.tr"},"sevday@pau.edu.tr":{name:"SEVDA YILMAZ",email:"sevday@pau.edu.tr"},"sevilz@pau.edu.tr":{name:"SEVİL ZENCİR",email:"sevilz@pau.edu.tr"},"sevinbaser@pau.edu.tr":{name:"SEVİN BAŞER ÖNCEL",email:"sevinbaser@pau.edu.tr"},"sfenkci@pau.edu.tr":{name:"SEMİN MELAHAT FENKCİ",email:"sfenkci@pau.edu.tr"},"sgok@pau.edu.tr":{name:"SONER GÖK",email:"sgok@pau.edu.tr"},"sgoksin@pau.edu.tr":{name:"ŞULE GÖKŞİN",email:"sgoksin@pau.edu.tr"},"shacioglu@pau.edu.tr":{name:"SİBEL HACIOĞLU",email:"shacioglu@pau.edu.tr"},"sibelyalcin@pau.edu.tr":{name:"SİBEL ÖNER YALÇIN",email:"sibelyalcin@pau.edu.tr"},"sinanc@pau.edu.tr":{name:"SİNAN ÇELEN",email:"sinanc@pau.edu.tr"},"soner@pau.edu.tr":{name:"SEDEF ZELİHA ÖNER",email:"soner@pau.edu.tr"},"sonur@pau.edu.tr":{name:"ŞULE ONUR",email:"sonur@pau.edu.tr"},"sozdamar@pau.edu.tr":{name:"SAİM ÖZDAMAR",email:"sozdamar@pau.edu.tr"},"spakyer@pau.edu.tr":{name:"ŞAHİKA PINAR AKYER",email:"spakyer@pau.edu.tr"},"ssecilo@pau.edu.tr":{name:"SUNA SEÇİL ÖZTÜRK DENİZ",email:"ssecilo@pau.edu.tr"},"sskutlu@pau.edu.tr":{name:"SELDA SAYIN KUTLU",email:"sskutlu@pau.edu.tr"},"stopsakal@pau.edu.tr":{name:"ŞENAY TOPSAKAL",email:"stopsakal@pau.edu.tr"},"sturkucar@pau.edu.tr":{name:"SERKAN TÜRKUÇAR",email:"sturkucar@pau.edu.tr"},"suleyman@pau.edu.tr":{name:"SÜLEYMAN DEMİR",email:"suleyman@pau.edu.tr"},"sun@pau.edu.tr":{name:"SITKI ÜN",email:"sun@pau.edu.tr"},"suzun@pau.edu.tr":{name:"SÜLEYMAN UTKU UZUN",email:"suzun@pau.edu.tr"},"takyol@pau.edu.tr":{name:"TUNAHAN AKYOL",email:"takyol@pau.edu.tr"},"tbecerir@pau.edu.tr":{name:"TÜLAY BECERİR",email:"tbecerir@pau.edu.tr"},"tdurak@pau.edu.tr":{name:"TANER DURAK",email:"tdurak@pau.edu.tr"},"tevran@pau.edu.tr":{name:"TURAN EVRAN",email:"tevran@pau.edu.tr"},"tkoca@pau.edu.tr":{name:"TUĞBA GÜRSOY KOCA",email:"tkoca@pau.edu.tr"},"tomatir@pau.edu.tr":{name:"AYŞE GAYE TOMATIR",email:"tomatir@pau.edu.tr"},"tsari@pau.edu.tr":{name:"TUĞBA SARI",email:"tsari@pau.edu.tr"},"tsengoz@pau.edu.tr":{name:"TARIK ŞENGÖZ",email:"tsengoz@pau.edu.tr"},"tturan@pau.edu.tr":{name:"TAHİR TURAN",email:"tturan@pau.edu.tr"},"ttuzun@pau.edu.tr":{name:"TÜRKAN TÜZÜN",email:"ttuzun@pau.edu.tr"},"tugurlu@pau.edu.tr":{name:"TUĞÇE TOKER UĞURLU",email:"tugurlu@pau.edu.tr"},"ualtug@pau.edu.tr":{name:"ÜMÜT ALTUĞ",email:"ualtug@pau.edu.tr"},"ucabus@pau.edu.tr":{name:"ÜMİT ÇABUŞ",email:"ucabus@pau.edu.tr"},"udere@pau.edu.tr":{name:"ÜMİT AKIN DERE",email:"udere@pau.edu.tr"},"uguryilmaz@pau.edu.tr":{name:"UĞUR YILMAZ",email:"uguryilmaz@pau.edu.tr"},"ukarasu@pau.edu.tr":{name:"UĞUR KARASU",email:"ukarasu@pau.edu.tr"},"ukutluana@pau.edu.tr":{name:"UFUK KUTLUANA",email:"ukutluana@pau.edu.tr"},"uozgen@pau.edu.tr":{name:"UTKU ÖZGEN",email:"uozgen@pau.edu.tr"},"usungurtekin@pau.edu.tr":{name:"UĞUR SUNGURTEKİN",email:"usungurtekin@pau.edu.tr"},"vcakmak@pau.edu.tr":{name:"VEFA ÇAKMAK",email:"vcakmak@pau.edu.tr"},"vcitisli@pau.edu.tr":{name:"VELİ ÇITIŞLI",email:"vcitisli@pau.edu.tr"},"vcobankara@pau.edu.tr":{name:"VELİ ÇOBANKARA",email:"vcobankara@pau.edu.tr"},"vkaydin@pau.edu.tr":{name:"VELİ KAAN AYDIN",email:"vkaydin@pau.edu.tr"},"vkucukatay@pau.edu.tr":{name:"VURAL KÜÇÜKATAY",email:"vkucukatay@pau.edu.tr"},"yadali@pau.edu.tr":{name:"YASEMİN ADALI",email:"yadali@pau.edu.tr"},"ydodurga@pau.edu.tr":{name:"YAVUZ DODURGA",email:"ydodurga@pau.edu.tr"},"yenli@pau.edu.tr":{name:"YAŞAR ENLİ",email:"yenli@pau.edu.tr"},"yetkiny@pau.edu.tr":{name:"YETKİN YILDIZ",email:"yetkiny@pau.edu.tr"},"ykarakaya@pau.edu.tr":{name:"YELİZ ARMAN KARAKAYA",email:"ykarakaya@pau.edu.tr"},"ykecelioglu@pau.edu.tr":{name:"YASİR KEÇELİOĞLU",email:"ykecelioglu@pau.edu.tr"},"yozlulerden@pau.edu.tr":{name:"YUSUF ÖZLÜLERDEN",email:"yozlulerden@pau.edu.tr"},"ytyaylali@pau.edu.tr":{name:"YALIN TOLGA YAYLALI",email:"ytyaylali@pau.edu.tr"},"zaybek@pau.edu.tr":{name:"ZAFER AYBEK",email:"zaybek@pau.edu.tr"},"zgdemircioglu@pau.edu.tr":{name:"ZEYNEP GÜL DEMİRCİOĞLU",email:"zgdemircioglu@pau.edu.tr"},"zmduman@pau.edu.tr":{name:"ZİHNİ MERT DUMAN",email:"zmduman@pau.edu.tr"}};
 
 /* ── GLOBALS ── */
-const APP_VERSION='v76';
+const APP_VERSION='v100';
 let db,curUser=null,isAdmin=false,isProfessor=false,isSorumlu=false;
 let curUserFaculty='tip'; // 'tip' | 'diger'
 let terms=[],curTerm=null,allSessions=[];
@@ -5687,7 +5724,7 @@ function applyPinLogin(email){
   listenProfTemplates();
   listenObjections();
   document.getElementById('top-sub').textContent=email;
-  document.getElementById('login-btn').textContent='Çıkış';
+  {const _lb=document.getElementById('login-btn');_lb.textContent='Çıkış';_lb.classList.remove('login-cta');}
   // Load dept + role + faculty from Firebase and update topbar
   fbGet('/professors').then(pd=>{
     const prof=Object.values(pd||{}).find(p=>p.email===email);
@@ -5767,7 +5804,7 @@ function signOut(){
   profListeners={};
   applyRole();
   document.getElementById('top-sub').textContent='';
-  document.getElementById('login-btn').textContent='Hoca Girişi';
+  {const _lb=document.getElementById('login-btn');_lb.textContent='🔑 Öğretim Üyesi Girişi';_lb.classList.add('login-cta');}
   nav('student');
 }
 
@@ -5796,6 +5833,7 @@ function switchStTab(tab){
     if(p)p.style.display=(t===tab)?'':'none';
     if(b)b.classList.toggle('active',t===tab);
   });
+  if(tab==='eposta'){try{renderMailDash();}catch{}}
   if(tab==='task'){renderTaskPanel();renderTaskMgmt();loadTaskSorumluCard();}
   if(tab==='program'){_populateMtSorumluSelect();}
   try{localStorage.setItem('pau_st_tab',tab);}catch{}
@@ -5842,10 +5880,37 @@ function applyRole(){
 }
 
 /* ── PROFESSORS ── */
-function listenProfessors(){
-  _poll('professors',30000,async()=>{
-    try{const d=await fbGet('/professors');professors=Object.assign({},PROFS_SEED,d||{});renderProfs();populateSorumluSelects();}catch{}
+/* Hoca kayıt anahtarı: Firebase anahtarlarında '.' olamaz (HTTP 400). Gömülü listedeki hocaların uid'si e-postadır. */
+function _profKey(uid){return /[.#$\/\[\]\s]/.test(uid||'')?_dk(String(uid).toLowerCase()):uid;}
+let _profTomb={};
+/* Gömülü (PROFS_SEED) listeyi Firebase ile birleştir: silinenler (mezar taşı) ve Firebase'de karşılığı olanlar geri gelmez */
+function _mergeProfs(d,tomb){
+  d=d||{};tomb=tomb||{};
+  const seedBy={};Object.entries(PROFS_SEED).forEach(([k,p])=>{seedBy[(p.email||k).toLowerCase().trim()]=p;});
+  const dbEm=new Set();
+  const out={};
+  Object.entries(d).forEach(([k,p])=>{
+    if(!p||typeof p!=='object')return;
+    const em=(p.email||'').toLowerCase().trim();
+    if(em)dbEm.add(em);
+    out[k]=(!p.name&&em&&seedBy[em])?Object.assign({name:seedBy[em].name,email:em},p):p;
   });
+  Object.entries(seedBy).forEach(([em,p])=>{
+    if(dbEm.has(em)||tomb[_dk(em)])return;
+    out[em]=p;
+  });
+  return out;
+}
+async function _refreshProfs(){
+  try{
+    const [d,t]=await Promise.all([fbGet('/professors'),fbGet('/professorsDeleted').catch(()=>null)]);
+    _profTomb=t||{};
+    professors=_mergeProfs(d,_profTomb);
+    renderProfs();populateSorumluSelects();
+  }catch{}
+}
+function listenProfessors(){
+  _poll('professors',30000,_refreshProfs);
 }
 
 
@@ -7161,12 +7226,7 @@ const _DL_TIP_DONEMS=['Dönem 1','Dönem 2','Dönem 3','Dönem 4','Dönem 5'];
 
 function setDlMode(mode){
   _dlMode=mode;
-  try{localStorage.setItem('pau_dl_mode',mode);}catch{}
-  // Buton görünümü
-  const bTip=document.getElementById('dl-mode-tip');
-  const bDisi=document.getElementById('dl-mode-tipdisi');
-  if(bTip){bTip.className=mode==='tip'?'btn bp bsm':'btn bg bsm';}
-  if(bDisi){bDisi.className=mode==='tipdisi'?'btn bp bsm':'btn bg bsm';}
+  mode='tip';_dlMode='tip';
   // Tıp modunda donemler sabittir
   if(mode==='tip'){
     window._dlDonems=[..._DL_TIP_DONEMS];
@@ -7193,12 +7253,7 @@ async function loadDonemListsCard(){
   if(!card)return;
   card.style.display='';
   // Kaydedilmiş modu yükle
-  try{const m=localStorage.getItem('pau_dl_mode');if(m==='tipdisi')_dlMode='tipdisi';else _dlMode='tip';}catch{}
-  // Toggle buton görünümünü güncelle
-  const bTip=document.getElementById('dl-mode-tip');
-  const bDisi=document.getElementById('dl-mode-tipdisi');
-  if(bTip){bTip.className=_dlMode==='tip'?'btn bp bsm':'btn bg bsm';}
-  if(bDisi){bDisi.className=_dlMode==='tipdisi'?'btn bp bsm':'btn bg bsm';}
+  _dlMode='tip'; // sistem yalnızca Tıp
 
   if(_dlMode==='tip'){
     // Tıp: sabit Dönem 1-5
@@ -7743,11 +7798,34 @@ function renderProfs(){
   const emailEntries=Object.values(byEmail);
   const usedNames=new Set(emailEntries.map(([,p])=>normName(p.name)));
   const nameOnlyEntries=Object.values(byNameKey).filter(([,p])=>!usedNames.has(normName(p.name)));
-  const q=(document.getElementById('prof-search')?.value||'').trim().toLowerCase();
+  const _nz=t=>(t||'').toLocaleLowerCase('tr').replace(/ı/g,'i').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+  const q=(document.getElementById('prof-search')?.value||'').trim();
   const all=[...emailEntries,...nameOnlyEntries].sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||'','tr'));
-  const entries=q?all.filter(([,p])=>(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q)||(p.dept||'').toLowerCase().includes(q)||(p.bolum||'').toLowerCase().includes(q)):all;
+  // Bölüm filtresi seçeneklerini doldur (seçimi koru)
+  const fDept=document.getElementById('prof-f-dept'),fUn=document.getElementById('prof-f-unvan');
+  const _deptOf=p=>(p.dept||p.bolum||'').trim();
+  if(fDept){
+    const cur=fDept.value;
+    const ds=[...new Set(all.map(([,p])=>_deptOf(p)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'tr'));
+    const sig=ds.join('|');
+    if(fDept.dataset.sig!==sig){
+      fDept.innerHTML='<option value="">Tüm bölümler</option>'+ds.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
+      fDept.dataset.sig=sig;fDept.value=ds.includes(cur)?cur:'';
+    }
+  }
+  const fu=fUn?fUn.value:'',fd=fDept?fDept.value:'';
+  const _UL={'PROFESÖR':'prof dr profesor','DOÇENT':'doc dr docent','DOKTOR ÖĞRETİM ÜYESİ':'dr ogr uyesi doktor','UZM.DR.':'uzm dr uzman','ÖĞRETİM GÖREVLİSİ':'ogr gor ogretim gorevlisi','ARŞ. GÖR. DR.':'ars gor dr arastirma','ARŞ. GÖR.':'ars gor arastirma'};
+  const toks=_nz(q).split(' ').filter(Boolean);
+  const filtered=!!(toks.length||fu||fd);
+  const entries=filtered?all.filter(([,p])=>{
+    if(fu){if(fu==='__yok'){if(p.unvan)return false;}else if(p.unvan!==fu)return false;}
+    if(fd&&_deptOf(p)!==fd)return false;
+    if(!toks.length)return true;
+    const hay=_nz([p.name,p.email,p.dept,p.bolum,p.unvan,_UL[p.unvan]||''].join(' '));
+    return toks.every(t=>hay.includes(t));
+  }):all;
   const countEl=document.getElementById('prof-count');
-  if(countEl)countEl.textContent=q?`${entries.length} / ${all.length} hoca`:`${all.length} hoca`;
+  if(countEl)countEl.textContent=filtered?`${entries.length} / ${all.length} hoca`:`${all.length} hoca`;
   // ── Update sorumlular panel ──
   const sorOpts=all.map(([uid,p])=>`<option value="${esc(uid)}">${esc(p.name||p.email)}</option>`).join('');
   ['dask','blok','modul'].forEach(role=>{
@@ -7758,7 +7836,7 @@ function renderProfs(){
     if(cur)sel.value=cur[0];else sel.value='';
   });
   if(!entries.length){
-    list.innerHTML=q?`<li style="list-style:none;padding:20px;text-align:center;color:var(--fg3)">"${esc(q)}" için hoca bulunamadı.</li>`:`<li style="list-style:none"><div class="empty-state"><span class="es-icon">👩‍🏫</span><div class="es-title">Hoca Bulunamadı</div><div class="es-desc">Sisteme henüz hoca eklenmemiş.</div></div></li>`;
+    list.innerHTML=filtered?`<li style="list-style:none;padding:20px;text-align:center;color:var(--fg3)">Bu arama/filtre için hoca bulunamadı.</li>`:`<li style="list-style:none"><div class="empty-state"><span class="es-icon">👩‍🏫</span><div class="es-title">Hoca Bulunamadı</div><div class="es-desc">Sisteme henüz hoca eklenmemiş.</div></div></li>`;
     return;
   }
   const UNVAN_CLASS={'PROFESÖR':'ubdg-prof','DOÇENT':'ubdg-doc','DOKTOR ÖĞRETİM ÜYESİ':'ubdg-doy','UZM.DR.':'ubdg-uzm','ÖĞRETİM GÖREVLİSİ':'ubdg-def'};
@@ -7838,7 +7916,7 @@ function renderProfs(){
     </li>`;
   };
   // ── Render: flat when searching, dept-grouped otherwise ──
-  if(q){
+  if(filtered){
     list.innerHTML=entries.map(profRowHtml).join('');
   } else {
     const groups={};
@@ -7875,7 +7953,10 @@ async function tumHocaVerileriniSil(){
   if(!onay2)return;
   showToast('⏳','Siliniyor…',sayi+' kayıt Firebase\'den kaldırılıyor','ok');
   try{
+    const _tb={};Object.entries(professors).forEach(([u,q])=>{_tb[_dk(((q&&q.email)||u).toLowerCase())]=true;});
     await fbDel('/professors');
+    await fbPatch('/professorsDeleted',_tb).catch(()=>{});
+    _profTomb=Object.assign(_profTomb,_tb);
     professors={};
     renderProfs();
     showToast('✅','Silindi',sayi+' hoca kaydı temizlendi. Merkezi Sistemden yeniden yükleyebilirsiniz.','ok',5000);
@@ -7895,7 +7976,8 @@ window.silYanlisKayit=async function(hedefIsimler){
   if(!silinecek.length){console.log('Kayıt bulunamadı');return;}
   console.log('Silinecekler:',silinecek.map(([u,p])=>u+' → '+p.name+' / '+p.email));
   for(const [uid,p] of silinecek){
-    await fbDel('/professors/'+uid);
+    await fbDel('/professors/'+_profKey(uid));
+    await fbPut('/professorsDeleted/'+_dk((p.email||uid).toLowerCase()),true).catch(()=>{});
     delete professors[uid];
     console.log('Silindi:',uid,p.name);
   }
@@ -8002,9 +8084,9 @@ async function mergeAllDuplicates(){
       if(!merged.sorumluRole&&dp.sorumluRole)merged.sorumluRole=dp.sorumluRole;
     });
     try{
-      await fbPatch('/professors/'+keepUid,merged);
+      await fbPatch('/professors/'+_profKey(keepUid),merged);
       for(const duid of dupeUids){
-        await fbDel('/professors/'+duid);
+        await fbDel('/professors/'+_profKey(duid));
         delete professors[duid];
       }
       professors[keepUid]=merged;
@@ -8040,10 +8122,10 @@ async function mergeDuplicatePair(jobIdx){
   });
   try{
     // Ana kaydı güncelle (birleştirilmiş veriyle)
-    await fbPatch('/professors/'+keepUid,merged);
+    await fbPatch('/professors/'+_profKey(keepUid),merged);
     // Tekrarlı kayıtları sil
     for(const duid of dupeUids){
-      await fbDel('/professors/'+duid);
+      await fbDel('/professors/'+_profKey(duid));
       delete professors[duid];
     }
     // Lokal state güncelle
@@ -8129,11 +8211,12 @@ async function saveEditProf(uid){
     if(unvan)updated.unvan=unvan; else delete updated.unvan;
     if(pw)updated.password=pw; // don't clear existing password if field left blank
     if(role)updated.sorumluRole=role; else delete updated.sorumluRole;
-    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
+    const dbUrl=FB_CFG.databaseURL+'/professors/'+_profKey(uid)+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(updated)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     professors[uid]=updated;
+    if(_profKey(uid)!==uid)_refreshProfs();
     if(pw){
       const subject=encodeURIComponent('PAÜ Tıp Yoklama — Yeni Şifreniz');
       const body=encodeURIComponent(`Merhaba ${name},\n\nYoklama sisteminize giriş bilgileriniz aşağıda yer almaktadır:\n\nE-posta: ${email}\nŞifre: ${pw}\n\nGiriş: https://pau-tip-yoklama.web.app\n\nİyi çalışmalar.`);
@@ -8157,7 +8240,7 @@ async function clearProfPassword(uid){
     try{
       const existing=professors[uid]||{};
       delete existing.password;
-      await fetch(FB_CFG.databaseURL+'/professors/'+uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(existing)});
+      await fetch(FB_CFG.databaseURL+'/professors/'+_profKey(uid)+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(existing)});
       professors[uid]=existing;
       renderProfs();
       showToast('✅','Şifre silindi',p?.name||uid,'ok');
@@ -8219,7 +8302,7 @@ async function addProf(){
     if(dept)data.dept=dept;
     if(pw)data.password=pw;
     if(role)data.sorumluRole=role;
-    const dbUrl=FB_CFG.databaseURL+'/professors/'+uid+'.json';
+    const dbUrl=FB_CFG.databaseURL+'/professors/'+_profKey(uid)+'.json';
     const resp=await fetch(dbUrl,{method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(data)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -8241,8 +8324,18 @@ async function delProf(uid){
   const p=professors[uid];
   showConfirm('🗑️','Hocayı Sil',`${p?.name||uid} silinecek. Bu işlem geri alınamaz.`,'Sil',async()=>{
     try{
-      await fetch(FB_CFG.databaseURL+'/professors/'+uid+'.json',{method:'DELETE'});
-      delete professors[uid];
+      const em=((p&&p.email)||uid).toLowerCase().trim();
+      // Aynı e-postaya ait tüm kayıtları (kopyalar dahil) Firebase'den sil
+      const uids=Object.entries(professors).filter(([u,q])=>u===uid||((q&&q.email)||u).toLowerCase().trim()===em).map(([u])=>u);
+      for(const u of uids){
+        const k=_profKey(u);
+        const r=await fetch(FB_CFG.databaseURL+'/professors/'+k+'.json',{method:'DELETE'});
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        delete professors[u];
+      }
+      // Mezar taşı: gömülü listeden geri gelmesin
+      await fbPut('/professorsDeleted/'+_dk(em),true);
+      _profTomb[_dk(em)]=true;
       renderProfs();
       _fillSorumluSelects();
       showToast('✅','Hoca silindi',p?.name||uid,'ok');
@@ -10502,6 +10595,7 @@ async function saveEmailSettings(){
   }catch(e){setMsg('email-settings-msg','alerr','Hata: '+e.message);}
 }
 function loadEmailSettingsToForm(){
+  try{_mailSetScriptCode();}catch{}
   if(emailCfg.scriptUrl)document.getElementById('script-url').value=emailCfg.scriptUrl;
   if(emailCfg.adminEmail)document.getElementById('admin-email').value=emailCfg.adminEmail;
 }
@@ -10513,18 +10607,269 @@ async function loadEmailSettings(){
   }catch{}
 }
 
-async function callScriptEmail(payload){
+/* ══ E-POSTA GÜNLÜĞÜ · RAPOR EKLERİ · DURUM PANELİ ══ */
+const MAIL_SCRIPT_VERSION=3;
+const CREDIT_TXT='Tasarım ve geliştirme: Halil İbrahim CENGİZ & Claude AI ile yapılmıştır';
+const TIP_LOGO={b64:'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',w:160,h:156};
+const PAU_LOGO_PNG_B64='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';
+const MAIL_SCRIPT_CODE="// PAÜ Tıp Yoklama — E-posta betiği (sürüm 3)\nvar VERSION = 3;\n\nfunction limitFor_() {\n  var m = '';\n  try { m = Session.getEffectiveUser().getEmail() || ''; } catch (e) {}\n  return /@(gmail|googlemail)\\.com$/i.test(m) ? 100 : 1500;\n}\nfunction json_(o) {\n  return ContentService.createTextOutput(JSON.stringify(o))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n// Kota sorgulama (uygulama \"?quota=1\" ile çağırır)\nfunction doGet(e) {\n  return json_({quota: MailApp.getRemainingDailyQuota(), limit: limitFor_(), v: VERSION});\n}\nfunction doPost(e) {\n  try {\n    var data = JSON.parse(e.postData.contents);\n    var recipients = data.recipients || [];\n    if (!recipients.length) return json_({ok: false, error: 'Alıcı yok', v: VERSION});\n    var subject = data.subject || 'Yoklama Raporu';\n    var attachments = [], warnings = [];\n\n    // Excel vb. ekler (uygulamadan base64 gelir)\n    (data.files || []).forEach(function(f) {\n      try {\n        attachments.push(Utilities.newBlob(Utilities.base64Decode(f.b64), f.mime, f.name));\n      } catch (err) { warnings.push('Ek (' + f.name + '): ' + err); }\n    });\n    // Kurumsal PDF rapor (HTML -> PDF)\n    if (data.pdfHtml) {\n      try {\n        attachments.push(Utilities.newBlob(data.pdfHtml, 'text/html', 'rapor.html')\n          .getAs('application/pdf').setName(data.pdfName || 'Yoklama_Raporu.pdf'));\n      } catch (err) { warnings.push('PDF: ' + err); }\n    }\n    // Eski uygulama sürümü: CSV ek\n    var rows = data.rows || [];\n    if (!attachments.length && rows.length) {\n      var csv = '﻿Sıra,Durum,Öğrenci No,Ad Soyad,Giriş Saati\\n';\n      rows.forEach(function(r) {\n        csv += r.sira + ',' + (r.durum || '') + ',' + r.no + ',\"' + r.ad + '\",' + r.saat + '\\n';\n      });\n      attachments.push(Utilities.newBlob(csv, 'text/csv; charset=utf-8', (data.sheetName || 'Yoklama') + '.csv'));\n    }\n\n    var opts = {attachments: attachments, name: 'PAÜ Tıp Fakültesi Yoklama Sistemi'};\n    if (data.htmlBody) opts.htmlBody = data.htmlBody;\n    // Mail içi logo (cid ile; Gmail data: resimleri göstermez)\n    if (data.inlineImages && data.inlineImages.length) {\n      var imgs = {};\n      data.inlineImages.forEach(function(im) {\n        try { imgs[im.cid] = Utilities.newBlob(Utilities.base64Decode(im.b64), im.mime, im.cid + '.png'); }\n        catch (err) { warnings.push('Logo: ' + err); }\n      });\n      opts.inlineImages = imgs;\n    }\n\n    // Her alıcı için sonuç kaydedilir (hata artık sessizce yutulmaz)\n    var results = [];\n    recipients.forEach(function(email) {\n      try {\n        GmailApp.sendEmail(email, subject, data.body || '', opts);\n        results.push({to: email, ok: true});\n      } catch (err) {\n        results.push({to: email, ok: false, error: String(err)});\n      }\n    });\n    var anyOk = results.some(function(r) { return r.ok; });\n    var out = {ok: anyOk, results: results, warnings: warnings,\n               quota: MailApp.getRemainingDailyQuota(), limit: limitFor_(), v: VERSION};\n    if (!anyOk) out.error = results[0].error;\n    return json_(out);\n  } catch (err) {\n    return json_({ok: false, error: String(err), v: VERSION});\n  }\n}";
+let _mailMeta={ver:null,quota:null,limit:null};
+let _mailRows=[];
+function _mailDay(ts){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+async function _mailLogWrite(list){
+  if(!list||!list.length)return;
+  const ts=Date.now(),patch={};
+  list.forEach((e,i)=>{patch[ts+'_'+i+'_'+Math.random().toString(36).slice(2,6)]=e;});
+  try{await fbPatch('/mailLog/'+_mailDay(ts),patch);}catch(err){console.warn('mailLog yazılamadı',err);}
+}
+async function callScriptEmail(payload,meta){
   if(!emailCfg.scriptUrl)return;
-  const r=await fetch(emailCfg.scriptUrl,{
-    method:'POST',
-    body:JSON.stringify(payload),
-    headers:{'Content-Type':'text/plain'} // Apps Script CORS needs text/plain
+  meta=meta||{};
+  const rec=(payload.recipients||[]).filter(Boolean);
+  const base=ts=>({ts,subject:payload.subject||'',kind:meta.kind||'diger',sess:meta.sess||null,
+    body:meta.kind==='yoklama'?null:String(payload.body||'').slice(0,1500),by:(curUser&&curUser.email)||''});
+  let r,j=null;
+  try{
+    r=await fetch(emailCfg.scriptUrl,{
+      method:'POST',
+      body:JSON.stringify(payload),
+      headers:{'Content-Type':'text/plain'} // Apps Script CORS needs text/plain
+    });
+    // Betik açıkça hata bildirdiyse sessizce geçme
+    if(r&&r.ok===false&&r.status)throw new Error('E-posta betiği HTTP '+r.status+' döndürdü');
+    try{j=await r.clone().json();}catch{} // yanıt JSON değilse (ya da okunamıyorsa) sorun sayma
+  }catch(e){
+    await _mailLogWrite(rec.map(to=>Object.assign(base(Date.now()),{to,ok:false,error:String(e.message||e)})));
+    throw e;
+  }
+  if(j&&j.v)_mailMeta.ver=j.v;
+  if(j&&j.quota!=null){_mailMeta.quota=j.quota;_mailMeta.limit=j.limit||null;}
+  const res=j&&Array.isArray(j.results)?j.results:null;
+  const failed=!!(j&&(j.ok===false||j.success===false||j.error));
+  const now=Date.now();
+  const entries=res
+    ?res.map(x=>Object.assign(base(now),{to:x.to,ok:!!x.ok,error:x.ok?null:String(x.error||'Gönderilemedi')}))
+    :rec.map(to=>Object.assign(base(now),{to,ok:failed?false:null,error:failed?String(j.error||j.message||'Betik hata bildirdi'):null}));
+  await _mailLogWrite(entries);
+  if(failed)throw new Error(String(j.error||j.message||'E-posta betiği hata bildirdi'));
+  if(res){
+    const bad=res.filter(x=>!x.ok);
+    if(bad.length)showToast('⚠️','Bazı e-postalar gitmedi',bad.map(x=>x.to).join(', '),'warn',7000);
+  }
+  if(j&&j.warnings&&j.warnings.length){console.warn('E-posta uyarıları',j.warnings);showToast('⚠️','Ek oluşturulamadı',j.warnings.join(' | ').slice(0,160),'warn',6000);}
+  return j;
+}
+
+/* Tıp Fakültesi logosu: uygulamaya gömülü */
+async function _getTipLogo(){return TIP_LOGO;}
+/* ── Kurumsal rapor: Excel (ExcelJS) + PDF (HTML → Apps Script) ── */
+function _loadExcelJS(){
+  if(window.ExcelJS)return Promise.resolve(true);
+  return new Promise(res=>{
+    const sc=document.createElement('script');
+    sc.src='https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+    sc.onload=()=>res(!!window.ExcelJS);sc.onerror=()=>res(false);
+    document.head.appendChild(sc);
+    setTimeout(()=>res(!!window.ExcelJS),9000);
   });
-  // Betik açıkça hata bildirdiyse sessizce geçme
-  if(r&&r.ok===false&&r.status)throw new Error('E-posta betiği HTTP '+r.status+' döndürdü');
-  let j=null;
-  try{j=await r.clone().json();}catch{} // yanıt JSON değilse (ya da okunamıyorsa) sorun sayma
-  if(j&&(j.ok===false||j.success===false||j.error))throw new Error(String(j.error||j.message||'E-posta betiği hata bildirdi'));
+}
+async function _buildReportXlsx(rep,tip){
+  tip=tip||TIP_LOGO;
+  if(!(await _loadExcelJS()))return null;
+  const NAVY='FF003865',BLUE='FF0072CE',LINE='FFD0D7E2',ZEBRA='FFF3F6FA',WHITE='FFFFFFFF';
+  const wb=new ExcelJS.Workbook();wb.creator='PAÜ Tıp Fakültesi Yoklama Sistemi';wb.created=new Date();
+  const ws=wb.addWorksheet('Yoklama Raporu',{views:[{showGridLines:false}],
+    pageSetup:{paperSize:9,orientation:'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:.5,right:.5,top:.6,bottom:.6,header:.3,footer:.3}}});
+  ws.columns=[{width:7},{width:16},{width:38},{width:14},{width:18}];
+  const fill=c=>({type:'pattern',pattern:'solid',fgColor:{argb:c}});
+  const border={top:{style:'thin',color:{argb:LINE}},left:{style:'thin',color:{argb:LINE}},bottom:{style:'thin',color:{argb:LINE}},right:{style:'thin',color:{argb:LINE}}};
+  const band=(r,text,size,h,bg,fg,bold)=>{ws.mergeCells(r,1,r,5);const c=ws.getCell(r,1);c.value=text;c.fill=fill(bg);c.font={name:'Calibri',size,bold:!!bold,color:{argb:fg}};c.alignment={vertical:'middle',horizontal:'center'};ws.getRow(r).height=h;};
+  band(1,'T.C. PAMUKKALE ÜNİVERSİTESİ',12,28,NAVY,'FFBFD9F5',true);
+  band(2,'TIP FAKÜLTESİ',24,42,NAVY,WHITE,true);
+  band(3,'YOKLAMA RAPORU',13,26,BLUE,WHITE,true);
+  band(4,'',4,6,NAVY,WHITE,false);
+  // Logolar: twoCellAnchor (Excel'in kesin tanıdığı yerleşim) — piksel konumları sütun/satır ölçülerinden hesaplanır
+  const _colPx=[7,16,38,14,18].map(w=>Math.round(w*7+5)),_rowPx=[28,42,26,6].map(h=>Math.round(h*96/72));
+  const _at=(px,sz)=>{let i=0,acc=0;while(i<sz.length-1&&acc+sz[i]<=px){acc+=sz[i];i++;}return {i,off:Math.round((px-acc)*9525)};};
+  const _anc=(xPx,yPx)=>{const c=_at(xPx,_colPx),r=_at(yPx,_rowPx);return {nativeCol:c.i,nativeColOff:c.off,nativeRow:r.i,nativeRowOff:r.off};};
+  const _place=(b64,wPx,hPx,leftPx,topPx)=>{
+    const id=wb.addImage({base64:'data:image/png;base64,'+b64,extension:'png'});
+    ws.addImage(id,{tl:_anc(leftPx,topPx),br:_anc(leftPx+wPx,topPx+hPx),editAs:'oneCell'});
+  };
+  const _tot=_colPx.reduce((x,y)=>x+y,0);
+  try{_place(PAU_LOGO_PNG_B64,84,84,10,5);}catch(e){console.warn('Excel logo',e);}
+  if(tip&&tip.b64){try{const _th=84,_tw=Math.round(_th*tip.w/tip.h);_place(tip.b64,_tw,_th,_tot-_tw-10,5);}catch(e){console.warn('Excel Tıp logo',e);}}
+  let r=6;
+  rep.info.filter(([,v])=>v&&v!=='—').forEach(([k,v])=>{
+    ws.mergeCells(r,1,r,2);ws.mergeCells(r,3,r,5);
+    const a=ws.getCell(r,1),b=ws.getCell(r,3);
+    a.value=k;a.font={name:'Calibri',size:10.5,color:{argb:'FF6B7280'}};a.alignment={vertical:'middle'};
+    b.value=v;b.font={name:'Calibri',size:11,bold:true,color:{argb:'FF111827'}};b.alignment={vertical:'middle',wrapText:true};
+    ws.getRow(r).height=19;r++;
+  });
+  r++;
+  // Özet kutuları
+  const c=rep.counts,pct=c.total?Math.round(c.att/c.total*100):0;
+  const boxes=[[1,2,'KATILAN',c.att,'FF15803D'],[3,3,'KATILMAYAN',c.absent,'FFB91C1C'],[4,4,'GEÇ KALAN',c.late,'FFB45309'],[5,5,'KATILIM ORANI','%'+pct,'FF0072CE']];
+  boxes.forEach(([c1,c2,lab,val,col])=>{
+    if(c1!==c2){ws.mergeCells(r,c1,r,c2);ws.mergeCells(r+1,c1,r+1,c2);}
+    const l=ws.getCell(r,c1),v=ws.getCell(r+1,c1);
+    l.value=lab;l.font={name:'Calibri',size:9,bold:true,color:{argb:'FF64748B'}};l.alignment={horizontal:'center',vertical:'middle'};l.fill=fill('FFF8FAFC');
+    v.value=val;v.font={name:'Calibri',size:20,bold:true,color:{argb:col}};v.alignment={horizontal:'center',vertical:'middle'};v.fill=fill('FFF8FAFC');
+    for(let cc=c1;cc<=c2;cc++){ws.getCell(r,cc).border=border;ws.getCell(r+1,cc).border=border;ws.getCell(r,cc).fill=fill('FFF8FAFC');ws.getCell(r+1,cc).fill=fill('FFF8FAFC');}
+  });
+  ws.getRow(r).height=18;ws.getRow(r+1).height=34;r+=3;
+  // Tablo
+  const hdr=['Sıra','Öğrenci No','Ad Soyad','Giriş Saati','Durum'];
+  hdr.forEach((h,i)=>{const x=ws.getCell(r,i+1);x.value=h;x.fill=fill(BLUE);x.font={name:'Calibri',size:10.5,bold:true,color:{argb:WHITE}};x.alignment={horizontal:i===2?'left':'center',vertical:'middle'};x.border=border;});
+  ws.getRow(r).height=22;const headRow=r;r++;
+  const TONE={ok:'FF15803D',late:'FFB45309',absent:'FFB91C1C'};
+  rep.table.forEach((t,i)=>{
+    const vals=[t.sira,t.no,t.ad,t.saat,t.durum];
+    vals.forEach((v,ci)=>{const x=ws.getCell(r,ci+1);x.value=(ci===1?String(v):v);x.border=border;x.font={name:'Calibri',size:10.5,bold:ci===4,color:{argb:ci===4?TONE[t.tone]:'FF111827'}};x.alignment={horizontal:ci===2?'left':'center',vertical:'middle'};if(i%2)x.fill=fill(ZEBRA);});
+    ws.getRow(r).height=18;r++;
+  });
+  r++;
+  // İmza alanı
+  ws.mergeCells(r,1,r,2);ws.mergeCells(r,4,r,5);
+  const s1=ws.getCell(r,1),s2=ws.getCell(r,4);
+  s1.value='Öğretim Üyesi Onayı';s2.value='Tarih / İmza';
+  [s1,s2].forEach(x=>{x.font={name:'Calibri',size:10,bold:true,color:{argb:'FF475569'}};x.alignment={horizontal:'center'};});
+  ws.getRow(r).height=18;r++;
+  ws.mergeCells(r,1,r,2);ws.mergeCells(r,4,r,5);
+  [1,2,4,5].forEach(cc=>{ws.getCell(r,cc).border={bottom:{style:'thin',color:{argb:'FF94A3B8'}}};});
+  ws.getRow(r).height=38;r+=2;
+  ws.mergeCells(r,1,r,5);
+  const nt=ws.getCell(r,1);nt.value='Bu rapor PAÜ Tıp Fakültesi Yoklama Sistemi tarafından '+new Date().toLocaleString('tr-TR')+' tarihinde otomatik oluşturulmuştur.';
+  nt.font={name:'Calibri',size:9,italic:true,color:{argb:'FF94A3B8'}};nt.alignment={horizontal:'center'};
+  r++;ws.mergeCells(r,1,r,5);
+  const cr=ws.getCell(r,1);cr.value=CREDIT_TXT;cr.font={name:'Calibri',size:9,bold:true,color:{argb:'FF64748B'}};cr.alignment={horizontal:'center'};
+  ws.pageSetup.printTitlesRow=headRow+':'+headRow;
+  const buf=await wb.xlsx.writeBuffer();
+  const u8=new Uint8Array(buf);let bin='';
+  for(let i=0;i<u8.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));
+  return btoa(bin);
+}
+function _repPdfHtml(rep,tip){
+  tip=tip||TIP_LOGO;
+  const E=x=>esc(String(x==null?'':x));
+  const c=rep.counts,pct=c.total?Math.round(c.att/c.total*100):0;
+  const TONE={ok:'#15803d',late:'#b45309',absent:'#b91c1c'};
+  const info=rep.info.filter(([,v])=>v&&v!=='—').map(([k,v])=>'<tr><td style="width:26%;color:#6b7280;padding:3px 0;font-size:11px">'+E(k)+'</td><td style="font-weight:bold;padding:3px 0;font-size:11px;color:#111827">'+E(v)+'</td></tr>').join('');
+  const stat=(n,l,col)=>'<td align="center" style="border:1px solid #d0d7e2;background:#f8fafc;padding:8px 4px"><div style="font-size:22px;font-weight:bold;color:'+col+'">'+n+'</div><div style="font-size:9px;color:#64748b;font-weight:bold">'+l+'</div></td>';
+  const rows=rep.table.map((t,i)=>'<tr style="background:'+(i%2?'#f3f6fa':'#ffffff')+'"><td align="center" style="border:1px solid #d0d7e2;padding:4px;font-size:10px">'+t.sira+'</td><td align="center" style="border:1px solid #d0d7e2;padding:4px;font-size:10px">'+E(t.no)+'</td><td style="border:1px solid #d0d7e2;padding:4px 8px;font-size:10px">'+E(t.ad)+'</td><td align="center" style="border:1px solid #d0d7e2;padding:4px;font-size:10px">'+E(t.saat)+'</td><td align="center" style="border:1px solid #d0d7e2;padding:4px;font-size:10px;font-weight:bold;color:'+TONE[t.tone]+'">'+E(t.durum)+'</td></tr>').join('');
+  return '<html><head><meta charset="utf-8"></head><body style="font-family:Arial,Helvetica,sans-serif;color:#111827;margin:0">'
+   +'<table width="100%" cellpadding="0" cellspacing="0"><tr>'
+   +'<td width="96" align="left" valign="middle" style="padding:0 0 8px"><img src="data:image/png;base64,'+PAU_LOGO_PNG_B64+'" width="86" height="86"></td>'
+   +'<td align="center" valign="middle" style="padding:0 0 8px"><div style="font-size:15px;letter-spacing:2px;color:#003865;font-weight:bold;margin-top:0">T.C. PAMUKKALE ÜNİVERSİTESİ</div><div style="font-size:24px;letter-spacing:3px;color:#0072ce;font-weight:bold;margin-top:2px">TIP FAKÜLTESİ</div></td>'
+   +'<td width="96" align="right" valign="middle" style="padding:0 0 8px"><img src="data:image/png;base64,'+tip.b64+'" width="86" height="84"></td>'
+   +'</tr></table>'
+   +'<table width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:3px solid #003865;font-size:1px;height:1px">&nbsp;</td></tr><tr><td style="border-top:1px solid #0072ce;font-size:1px;height:4px">&nbsp;</td></tr></table>'
+   +'<table align="center" cellpadding="0" cellspacing="0" style="margin:14px auto 4px;border:2px solid #003865"><tr><td style="padding:7px 34px;font-size:17px;font-weight:bold;letter-spacing:5px;color:#003865">YOKLAMA RAPORU</td></tr></table>'
+   +'<table width="100%" cellpadding="0" cellspacing="0" style="margin:12px 0 10px;border-left:4px solid #0072ce;background:#f8fafc"><tr><td style="padding:8px 14px"><table width="100%" cellpadding="0" cellspacing="0">'+info+'</table></td></tr></table>'
+   +'<table width="100%" cellpadding="0" cellspacing="6" style="margin-bottom:12px"><tr>'+stat(c.att,'KATILAN','#15803d')+stat(c.absent,'KATILMAYAN','#b91c1c')+stat(c.late,'GEÇ KALAN','#b45309')+stat('%'+pct,'KATILIM ORANI','#0072ce')+'</tr></table>'
+   +'<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr bgcolor="#dbeafe"><th style="background:#dbeafe;color:#003865;padding:6px;font-size:10px;border:1px solid #d0d7e2;width:7%">Sıra</th><th style="background:#dbeafe;color:#003865;padding:6px;font-size:10px;border:1px solid #d0d7e2;width:17%">Öğrenci No</th><th style="background:#dbeafe;color:#003865;padding:6px;font-size:10px;border:1px solid #d0d7e2;text-align:left">Ad Soyad</th><th style="background:#dbeafe;color:#003865;padding:6px;font-size:10px;border:1px solid #d0d7e2;width:14%">Giriş Saati</th><th style="background:#dbeafe;color:#003865;padding:6px;font-size:10px;border:1px solid #d0d7e2;width:17%">Durum</th></tr>'+rows+'</table>'
+   +'<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:36px"><tr><td align="center" style="width:50%;font-size:10px;font-weight:bold;color:#475569;padding-bottom:34px">Öğretim Üyesi Onayı</td><td align="center" style="font-size:10px;font-weight:bold;color:#475569;padding-bottom:34px">Tarih / İmza</td></tr><tr><td align="center"><div style="border-top:1px solid #94a3b8;width:70%">&nbsp;</div></td><td align="center"><div style="border-top:1px solid #94a3b8;width:70%">&nbsp;</div></td></tr></table>'
+   +'<div style="text-align:center;color:#94a3b8;font-size:8px;font-style:italic;margin-top:18px">Bu rapor PAÜ Tıp Fakültesi Yoklama Sistemi tarafından '+E(new Date().toLocaleString('tr-TR'))+' tarihinde otomatik oluşturulmuştur.</div>'
+   +'<div style="text-align:center;color:#64748b;font-size:8px;font-weight:bold;margin-top:4px">'+E(CREDIT_TXT)+'</div>'
+   +'</body></html>';
+}
+
+/* ── Admin: e-posta durum paneli ── */
+function _mailSetScriptCode(){const el=document.getElementById('mail-script-code');if(el&&!el.textContent)el.textContent=MAIL_SCRIPT_CODE;}
+function copyMailScript(){
+  try{navigator.clipboard.writeText(MAIL_SCRIPT_CODE).then(()=>showToast('✅','Kopyalandı','Betik kodu panoda','ok',2000)).catch(()=>{});}catch{}
+}
+async function _mailLoadLogs(days){
+  const now=Date.now(),ds=[];
+  for(let i=0;i<days;i++)ds.push(_mailDay(now-i*86400000));
+  const res=await Promise.all(ds.map(d=>fbGet('/mailLog/'+d).catch(()=>null)));
+  const out=[];
+  res.forEach((o,i)=>{if(o&&typeof o==='object')Object.entries(o).forEach(([k,e])=>{if(e&&typeof e==='object')out.push(Object.assign({_day:ds[i],_key:k},e));});});
+  return out.sort((a,b)=>(b.ts||0)-(a.ts||0));
+}
+async function renderMailDash(){
+  const stEl=document.getElementById('mail-dash-stats');
+  if(!stEl)return;
+  _mailSetScriptCode();
+  stEl.innerHTML='<span class="spin"></span>';
+  const qp=emailCfg&&emailCfg.scriptUrl?fetch(emailCfg.scriptUrl+'?quota=1').then(r=>r.json()).catch(()=>null):Promise.resolve(null);
+  const [rows,q]=await Promise.all([_mailLoadLogs(7),qp]);
+  if(q&&q.quota!=null){_mailMeta.quota=q.quota;_mailMeta.limit=q.limit||null;_mailMeta.ver=q.v||null;}
+  _mailRows=rows;
+  _mailDrawDash();
+}
+function _mailDrawDash(){
+  const stEl=document.getElementById('mail-dash-stats'),listEl=document.getElementById('mail-dash-list'),noteEl=document.getElementById('mail-dash-note');
+  if(!stEl||!listEl)return;
+  const today=_mailDay(Date.now());
+  const tr=_mailRows.filter(r=>r._day===today);
+  const sent=tr.filter(r=>r.ok!==false).length;
+  const failed=tr.filter(r=>r.ok===false&&!r.retried).length;
+  const weekFailed=_mailRows.filter(r=>r.ok===false&&!r.retried).length;
+  const q=_mailMeta.quota,lim=_mailMeta.limit;
+  const acct=lim===100?'Ücretsiz Gmail hesabı':lim===1500?'Google Workspace hesabı':'';
+  const qCard=q!=null
+    ?`<div class="mstat blue"><div class="mv">${q}</div><div class="ml">Kalan günlük hak</div><div class="ms">${lim?`${lim} üzerinden · bugün ${lim-q} kullanıldı`:'Google günlük sınırı'}${acct?' · '+acct:''}</div></div>`
+    :`<div class="mstat"><div class="mv">—</div><div class="ml">Kalan günlük hak</div><div class="ms">${emailCfg&&emailCfg.scriptUrl?'Betikten okunamadı':'Betik URL\'si girilmemiş'}</div></div>`;
+  stEl.innerHTML=
+    `<div class="mstat good"><div class="mv">${sent}</div><div class="ml">Bugün giden</div><div class="ms">alıcı sayısı · son 7 gün: ${_mailRows.filter(r=>r.ok!==false).length}</div></div>`
+   +`<div class="mstat ${failed?'bad':''}"><div class="mv">${failed}</div><div class="ml">Bugün gitmeyen</div><div class="ms">son 7 gün: ${weekFailed}</div></div>`
+   +qCard;
+  let note='';
+  if(emailCfg&&emailCfg.scriptUrl&&(_mailMeta.ver||0)<MAIL_SCRIPT_VERSION)
+    note='<div class="al alwrn" style="margin:6px 0">E-posta betiğiniz eski sürüm: gitmeyen mailler tespit edilemiyor, kurumsal PDF/Excel ek ve kesin kota bilgisi çalışmaz. Aşağıdaki "Google Apps Script Kurulumu" bölümündeki yeni kodu betiğe yapıştırıp yeni sürüm olarak dağıtın.</div>';
+  if(noteEl)noteEl.innerHTML=note;
+  const days=parseInt(document.getElementById('mail-f-period')?.value||'7',10);
+  const st=document.getElementById('mail-f-status')?.value||'';
+  let list=_mailRows.filter(r=>days===1?r._day===today:true);
+  if(st==='ok')list=list.filter(r=>r.ok===true);
+  else if(st==='fail')list=list.filter(r=>r.ok===false);
+  else if(st==='unk')list=list.filter(r=>r.ok===null||r.ok===undefined);
+  const KIND={yoklama:'Yoklama raporu',task:'Task ataması',ders:'Ders görevlendirmesi',test:'Test'};
+  const retryAll=document.getElementById('mail-retry-all');
+  const nFail=list.filter(r=>r.ok===false&&!r.retried).length;
+  if(retryAll){retryAll.style.display=nFail?'':'none';retryAll.textContent=`↺ Gitmeyenleri yeniden gönder (${nFail})`;}
+  if(!list.length){listEl.innerHTML='<div style="color:var(--fg3);font-size:.82rem;padding:10px 0">Bu filtre için kayıt yok. Yeni gönderilen e-postalar burada listelenir.</div>';return;}
+  listEl.innerHTML='<div style="overflow-x:auto"><table class="mtbl"><thead><tr><th>Zaman</th><th>Alıcı</th><th>Konu</th><th>Durum</th><th></th></tr></thead><tbody>'
+   +list.slice(0,300).map(r=>{
+     const d=new Date(r.ts||0);
+     const tm=(r._day===today?'':d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit'})+' ')+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+     const chip=r.ok===true?'<span class="mchip ok">✓ Gitti</span>':r.ok===false?(r.retried?'<span class="mchip unk">Yeniden gönderildi</span>':'<span class="mchip fail">✗ Gitmedi</span>'):'<span class="mchip unk" title="Eski betik: gönderim doğrulanamadı">? Doğrulanmadı</span>';
+     const btn=(r.ok===false&&!r.retried)?`<button class="btn bg bsm" style="font-size:.68rem;padding:2px 8px" onclick="mailRetry('${r._day}','${r._key}')">↺ Yeniden</button>`:'';
+     return `<tr><td style="white-space:nowrap;color:var(--fg3)">${esc(tm)}</td><td>${esc(r.to||'')}</td><td>${esc(r.subject||'')}<div style="font-size:.68rem;color:var(--fg3)">${esc(KIND[r.kind]||r.kind||'')}</div></td><td>${chip}${r.error?`<div style="font-size:.68rem;color:#b91c1c;max-width:260px">${esc(String(r.error).slice(0,140))}</div>`:''}</td><td>${btn}</td></tr>`;
+   }).join('')+'</tbody></table></div>';
+}
+async function mailRetry(day,key,quiet){
+  const row=_mailRows.find(r=>r._day===day&&r._key===key);
+  if(!row)return false;
+  try{
+    if(row.kind==='yoklama'&&row.sess){
+      const sd=await fbGet('/sessions/'+row.sess);
+      if(!sd)throw new Error('Oturum bulunamadı');
+      const ok=await sendSessionEmail(Object.assign({},sd,{code:sd.code||row.sess,attendance:sd.attendance||{}}),{only:[row.to]});
+      if(ok===false)throw new Error('Gönderilemedi');
+    }else{
+      await callScriptEmail({recipients:[row.to],subject:row.subject||'',body:row.body||''},{kind:row.kind||'diger'});
+    }
+    await fbPatch('/mailLog/'+day+'/'+key,{retried:Date.now()}).catch(()=>{});
+    row.retried=Date.now();
+    if(!quiet){showToast('✅','Yeniden gönderildi',row.to,'ok',2500);_mailDrawDash();}
+    return true;
+  }catch(e){
+    if(!quiet)showToast('❌','Yine gönderilemedi',String(e.message||e),'err',5000);
+    return false;
+  }
+}
+async function mailRetryAll(){
+  const days=parseInt(document.getElementById('mail-f-period')?.value||'7',10),today=_mailDay(Date.now());
+  const list=_mailRows.filter(r=>(days===1?r._day===today:true)&&r.ok===false&&!r.retried);
+  if(!list.length)return;
+  if(!confirm(list.length+' alıcıya yeniden e-posta gönderilsin mi?'))return;
+  let okN=0;
+  for(const r of list){if(await mailRetry(r._day,r._key,true))okN++;}
+  showToast(okN===list.length?'✅':'⚠️','Yeniden gönderim',okN+' / '+list.length+' başarılı',okN===list.length?'ok':'warn',5000);
+  renderMailDash();
 }
 
 // Oturumun e-postası derse giren hocaya ve task sorumlusuna ulaşacak mı? Ulaşmayacaksa nedenlerini döndürür.
@@ -10545,8 +10890,9 @@ async function _mailProblems(sess){
   return out;
 }
 
-async function sendSessionEmail(sess){
+async function sendSessionEmail(sess,opts){
   if(!emailCfg.scriptUrl)return;
+  const _tipLogo=await _getTipLogo();
   const att=sess.attendance||attendees||{};
   // groupStart:true olanlar yoklamayı henüz yapmamış — email sayısına dahil etme
   const rows=Object.values(att).filter(a=>!a.absent&&!a.groupStart).sort((a,b)=>(a.time||0)-(b.time||0));
@@ -10601,6 +10947,7 @@ async function sendSessionEmail(sess){
     rows.map((a,i)=>`  ${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n')||'  —','',
     `► Katılmayan Öğrenciler (${absentRows.length}):`,
     absentRows.length?absentRows.map((a,i)=>`  ${i+1}. ${_sname(a)} (${a.studentNo||''})`).join('\n'):'  —',
+    '',_sep,CREDIT_TXT,
   ].filter(l=>l!==null);
   const body=_bodyLines.join('\n');
 
@@ -10617,14 +10964,15 @@ async function sendSessionEmail(sess){
   <!-- HEADER -->
   <tr><td style="background:linear-gradient(135deg,#003865 0%,#0072CE 100%);border-radius:12px 12px 0 0;padding:0">
     <table width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="padding:16px 16px 16px 20px;width:72px;vertical-align:middle">
-        <img src="data:image/svg+xml;base64,${PAU_LOGO_B64}" width="60" height="60" alt="PAÜ" style="display:block;border-radius:50%;background:#fff;padding:4px;border:2px solid rgba(255,255,255,0.25)">
+      <td style="padding:16px 16px 16px 20px;width:96px;vertical-align:middle">
+        <img src="cid:paulogo" width="84" height="84" alt="PAÜ" style="display:block;border-radius:50%;background:#fff;padding:4px;border:2px solid rgba(255,255,255,0.25)">
       </td>
       <td style="padding:16px 20px 16px 4px;vertical-align:middle">
-        <div style="color:#93c5fd;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Pamukkale Üniversitesi &middot; Tıp Fakültesi</div>
+        <div style="color:#93c5fd;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">T.C. Pamukkale Üniversitesi &middot; Tıp Fakültesi</div>
         <div style="color:#fff;font-size:20px;font-weight:700;margin-bottom:4px"><span style="display:inline-block;background:rgba(255,255,255,0.18);border-radius:4px;padding:1px 8px;font-size:11px;font-weight:800;letter-spacing:.1em;vertical-align:middle;margin-right:8px">YOKLAMA</span>Raporu</div>
         <div style="color:#bfdbfe;font-size:12px">${subject}</div>
       </td>
+      ${_tipLogo?'<td style="padding:16px 20px 16px 4px;width:90px;vertical-align:middle;text-align:right"><img src="cid:tiplogo" height="80" alt="Tıp" style="display:block;background:#fff;border-radius:50%;padding:4px;border:2px solid rgba(255,255,255,0.25)"></td>':''}
     </tr></table>
   </td></tr>
   <!-- DERS BİLGİLERİ -->
@@ -10691,6 +11039,7 @@ async function sendSessionEmail(sess){
   <!-- FOOTER -->
   <tr><td style="background:#1e3a5f;border-radius:0 0 12px 12px;padding:16px 32px;text-align:center">
     <div style="color:#93c5fd;font-size:11px">PAÜ Tıp Fakültesi Yoklama Sistemi · Otomatik oluşturulmuştur</div>
+    <div style="color:#7fa6d6;font-size:10px;margin-top:6px">${CREDIT_TXT}</div>
   </td></tr>
 </table>
 </td></tr></table></body></html>`;
@@ -10713,8 +11062,9 @@ async function sendSessionEmail(sess){
   }
   // Hiç TO yoksa CC'den biri'ni TO'ya al
   if(toSet.size===0&&ccSet.size>0){const _first=[...ccSet][0];ccSet.delete(_first);toSet.add(_first);}
-  const toArr=[...toSet];
-  const ccArr=[...ccSet];
+  const _only=opts&&opts.only?new Set(opts.only):null;
+  const toArr=[...toSet].filter(e=>!_only||_only.has(e));
+  const ccArr=[...ccSet].filter(e=>!_only||_only.has(e));
   const allRecipients=[...toArr,...ccArr];
 
   /* ── Alıcı listesini HTML içine göm ── */
@@ -10733,17 +11083,38 @@ async function sendSessionEmail(sess){
     ...rows.map((a,i)=>({sira:i+1,durum:a.late?'Katılan (Geç)':'Katılan',no:a.studentNo||'',ad:_sname(a),saat:a.time?new Date(a.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'-'})),
     ...absentRows.map((a,i)=>({sira:i+1,durum:'Katılmayan',no:a.studentNo||'',ad:_sname(a),saat:'—'})),
   ];
+  /* Kurumsal rapor ekleri: Excel (biçimli) + PDF */
+  const _fnBase='Yoklama_'+String(courseName).replace(/[^\wğüşıöçĞÜŞİÖÇ-]+/g,'_').replace(/^_+|_+$/g,'')+'_'+String(fmtDate(sess.date)).replace(/[^\d]+/g,'-');
+  const _repTable=[
+    ...rows.map((a,i)=>({sira:i+1,no:a.studentNo||'',ad:_sname(a),saat:a.time?new Date(a.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'—',durum:a.late?('Geç'+(a.lateMin?' (+'+a.lateMin+' dk)':'')):'Zamanında',tone:a.late?'late':'ok'})),
+    ...absentRows.map((a,i)=>({sira:rows.length+i+1,no:a.studentNo||'',ad:_sname(a),saat:'—',durum:'Katılmayan',tone:'absent'})),
+  ];
+  const rep={
+    info:[['Öğretim Üyesi',openingProfFull],['TASK Sorumlusu',sorumluFullNames.join(', ')],['Ders',courseName],['Dönem',task?.donem||''],['Blok',task?.blokName||''],['TASK',task?.name||''],['Tarih',gunFull+', '+fmtDate(sess.date)],['Saat',sess.time||''],['Sınıf / Amfi',classroomName||'']],
+    counts:{att:rows.length,late:rows.filter(a=>a.late).length,absent:absentRows.length,total:rows.length+absentRows.length},
+    table:_repTable
+  };
+  let _xb=null;
+  try{_xb=await _buildReportXlsx(rep,_tipLogo);}catch(e){console.warn('Excel raporu oluşturulamadı',e);}
   try{
-    await callScriptEmail({
+    const j=await callScriptEmail({
       to:toArr,cc:ccArr,
       recipients:allRecipients,// geriye dönük uyumluluk
       subject,body,
       htmlBody:finalHtmlBody,
-      rows:excelRows,
+      rows:excelRows,// eski betik sürümü için CSV
+      files:_xb?[{name:_fnBase+'.xlsx',mime:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',b64:_xb}]:[],
+      pdfHtml:_repPdfHtml(rep,_tipLogo),pdfName:_fnBase+'.pdf',
+      inlineImages:[{cid:'paulogo',mime:'image/png',b64:PAU_LOGO_PNG_B64}].concat(_tipLogo?[{cid:'tiplogo',mime:'image/png',b64:_tipLogo.b64}]:[]),
       sheetName:`Yoklama_${(sess.courseName||sess.name||'').replace(/\s+/g,'_')}_${fmtDate(sess.date)}`
-    });
+    },{kind:'yoklama',sess:sess.code||''});
     await fbPatch('/sessions/'+sess.code,{emailSent:true});
-  }catch(e){console.warn('Email error',e);}
+    return true;
+  }catch(e){
+    console.warn('Email error',e);
+    showToast('❌','E-posta gönderilemedi',String(e.message||e).slice(0,140),'err',7000);
+    return false;
+  }
 }
 
 async function checkMailQuota(){
@@ -10772,7 +11143,7 @@ async function testEmail(){
       recipients:[curUser?.email||emailCfg.adminEmail||'hicengiz@pau.edu.tr'],
       subject:'Test — PAÜ Yoklama Sistemi',
       body:'Bu bir test e-postasıdır. PAÜ Yoklama sistemi doğru şekilde yapılandırılmış.'
-    });
+    },{kind:'test'});
     setMsg('email-settings-msg','alok','Test e-postası gönderildi! Gelen kutunuzu kontrol edin.');
   }catch(e){setMsg('email-settings-msg','alerr','Hata: '+esc(e.message));}
 }
@@ -14203,8 +14574,9 @@ async function _saveTsSorumluUids(dk,bi,ti,uids){
 async function quickSetUnvan(uid,unvan,dk){
   if(!uid||!unvan)return;
   try{
-    await fbPatch('/professors/'+uid,{unvan});
+    await fbPatch('/professors/'+_profKey(uid),Object.assign({},_profKey(uid)!==uid?{name:professors[uid]?.name,email:professors[uid]?.email||uid}:{},{unvan}));
     if(professors[uid])professors[uid].unvan=unvan;
+    _refreshProfs();
     // Tüm chip'leri güncelle (ünvan değişti)
     const bloks=DONEM_DATA[dk]||[];
     bloks.forEach((blok,bi)=>blok.tasks.forEach((_,ti)=>_renderTsChips(dk,bi,ti)));
@@ -14261,6 +14633,7 @@ async function importHocalarJSON(input){
       } else {
         // Yeni hoca — ekle
         const newUid=_dk(mail);
+        if(_profTomb[newUid]){fbDel('/professorsDeleted/'+newUid).catch(()=>{});delete _profTomb[newUid];}
         patch[newUid+'/name']=h.ad;
         patch[newUid+'/email']=mail;
         if(h.unvan)patch[newUid+'/unvan']=h.unvan;
@@ -14294,9 +14667,9 @@ async function importHocalarJSON(input){
 async function quickSetUnvanHoca(uid,unvan){
   if(!uid||!unvan)return;
   try{
-    await fbPatch('/professors/'+uid,{unvan});
+    await fbPatch('/professors/'+_profKey(uid),Object.assign({},_profKey(uid)!==uid?{name:professors[uid]?.name,email:professors[uid]?.email||uid}:{},{unvan}));
     if(professors[uid])professors[uid].unvan=unvan;
-    renderProfs();
+    _refreshProfs();
     showToast('✅','Ünvan Kaydedildi',professors[uid]?.name||uid,'ok',2000);
   }catch(e){showToast('❌','Hata',String(e),'err',4000);}
 }
@@ -16600,7 +16973,7 @@ async function generatePdf(){
     // Header
     doc.setFillColor(0,56,101);doc.rect(0,0,pw,28,'F');
     doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);
-    doc.text('PAMUKKALE ÜNİVERSİTESİ',14,11);
+    doc.text('T.C. PAMUKKALE ÜNİVERSİTESİ',14,11);
     doc.setFontSize(9);doc.setFont('helvetica','normal');
     doc.text('Tıp Fakültesi — Yoklama Raporu',14,18);
     doc.text(dateStr+' · '+timeStr,14,24);
@@ -16992,8 +17365,8 @@ async function addManualTask(){
         try{await callScriptEmail({
           recipients:data.sorumluEmails,
           subject:`PAÜ Tıp — Yeni Task Ataması: ${data.name||''}`,
-          body:`PAÜ Tıp Fakültesi — Task Atama Bildirimi\n\nMerhaba,\n\nAşağıdaki task için Sorumlu Hoca olarak atandınız:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi`
-        });}catch(mailErr){console.warn('Task sorumlu mail err',mailErr);}
+          body:`PAÜ Tıp Fakültesi — Task Atama Bildirimi\n\nMerhaba,\n\nAşağıdaki task için Sorumlu Hoca olarak atandınız:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi\n\n${CREDIT_TXT}`
+        },{kind:'task'});}catch(mailErr){console.warn('Task sorumlu mail err',mailErr);}
       }
       // 2) Ders Anlatacak Öğretim Üyesi'ne mail (+ "Bana da gönder" seçiliyse)
       const dersHocaEmails=selectedMtSorumluEmails.filter(Boolean);
@@ -17002,8 +17375,8 @@ async function addManualTask(){
         try{await callScriptEmail({
           recipients:dersHocaEmails,
           subject:`PAÜ Tıp — Ders Görevlendirmesi: ${data.name||''}`,
-          body:`PAÜ Tıp Fakültesi — Ders Görevlendirme Bildirimi\n\nMerhaba,\n\nAşağıdaki task kapsamında Ders Anlatacak Öğretim Üyesi olarak görevlendirildiniz:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi`
-        });}catch(mailErr){console.warn('Ders hoca mail err',mailErr);}
+          body:`PAÜ Tıp Fakültesi — Ders Görevlendirme Bildirimi\n\nMerhaba,\n\nAşağıdaki task kapsamında Ders Anlatacak Öğretim Üyesi olarak görevlendirildiniz:\n\nTask  : ${taskLabel}\nEkip  : ${data.ekipAdi||'—'}\n\nBilgilerinize sunarız.\nPAÜ Tıp Fakültesi Yoklama Sistemi\n\n${CREDIT_TXT}`
+        },{kind:'ders'});}catch(mailErr){console.warn('Ders hoca mail err',mailErr);}
       }
     }
     _mtReset();
@@ -17020,6 +17393,186 @@ window.addEventListener('beforeunload',function(e){
     return e.returnValue='Aktif oturum var. Yoklama raporu alınmadan çıkmak istediğinizden emin misiniz?';
   }
 });
+/* ═══ PAK: görünüm / kullanım paketi (savunmacı, her bölüm bağımsız) ═══ */
+(function(){
+const $=id=>document.getElementById(id);
+const safe=(n,f)=>{try{f()}catch(e){console.warn('pak:'+n,e)}};
+const LS={g(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch{return d}},s(k,v){try{localStorage.setItem(k,v)}catch{}}};
+const PK_VER='v100';
+/* 1) giriş ekranı: boş daire yerine iki logo */
+safe('login-logos',()=>{
+  const p=$('sess-login-prompt');if(!p)return;
+  const c=p.querySelector('div[style*="72px"]');if(!c)return;
+  const w=document.createElement('div');w.className='pk-logos';
+  w.innerHTML='<img alt="PAÜ" src="data:image/png;base64,'+PAU_LOGO_PNG_B64+'"><img alt="Tıp Fakültesi" src="data:image/png;base64,'+TIP_LOGO.b64+'">';
+  c.replaceWith(w);
+});
+/* 8,50) selamlama + tarih; 77 göreli tarih yardımcıları */
+const greetWord=()=>{const h=new Date().getHours();return h<6?'İyi geceler':h<12?'Günaydın':h<18?'İyi günler':'İyi akşamlar'};
+safe('greet',()=>{
+  const tb=document.querySelector('.topbar');if(!tb)return;
+  const g=document.createElement('div');g.id='pk-greet';tb.after(g);
+  const upd=()=>{
+    if(typeof curUser==='undefined'||!curUser){g.style.display='none';return}
+    const nm=curUser.displayName||curUser.email||'';
+    g.style.display='block';
+    g.innerHTML='<span class="pk-date">'+new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})+'</span>'+greetWord()+', <b></b>';
+    g.querySelector('b').textContent=nm;
+  };
+  setInterval(upd,15000);upd();
+});
+/* 26) hata mesajlarını insancıllaştır */
+const humanize=s=>{
+  s=String(s==null?'':s);
+  if(/Failed to fetch|NetworkError|HTTP 0|network/i.test(s))return 'İnternet bağlantısı kurulamadı. Bağlantınızı kontrol edip tekrar deneyin.';
+  if(/HTTP 40[13]|permission/i.test(s))return 'Bu işlem için yetkiniz yok veya oturum süresi doldu.';
+  if(/HTTP 400/i.test(s))return 'Gönderilen bilgi geçersiz görünüyor. Alanları kontrol edin.';
+  if(/HTTP 5\d\d/i.test(s))return 'Sunucu şu an yanıt vermiyor. Biraz sonra tekrar deneyin.';
+  if(/timeout|zaman aşımı/i.test(s))return 'İşlem çok uzun sürdü. Tekrar deneyin.';
+  return s;
+};
+safe('toast',()=>{
+  const o=window.showToast;if(typeof o!=='function')return;
+  window.showToast=function(icon,title,sub,type,dur,undo){
+    if(sub&&(type==='err'||type==='error'||type==='warn'||/❌|⚠/.test(icon||'')))sub=humanize(sub);
+    return o.call(this,icon,title,sub,type,dur,undo);
+  };
+});
+/* 27) çevrimdışı şeridi */
+safe('offline',()=>{
+  const b=document.createElement('div');b.id='pk-offline';b.textContent='Çevrimdışısınız — işlemleriniz bağlantı gelince otomatik gönderilecek.';
+  document.body.prepend(b);
+  const u=()=>{b.style.display=navigator.onLine?'none':'block'};
+  addEventListener('online',u);addEventListener('offline',u);u();
+});
+/* 75) duyuru bandı + 107) yeni sürüm bandı */
+safe('banners',()=>{
+  const a=document.createElement('div');a.id='pk-announce';
+  const n=document.createElement('div');n.id='pk-newver';n.textContent='Yeni sürüm var — yenilemek için dokunun';n.onclick=()=>location.reload();
+  document.body.prepend(n);document.body.prepend(a);
+  const chk=async()=>{
+    try{const d=await fbGet('/settings/announce');
+      if(d&&d.text&&(!d.until||Date.now()<d.until)){a.textContent='📢 '+d.text;a.style.display='block'}else a.style.display='none'}catch{}
+    try{const r=await fetch(location.href.split('#')[0],{cache:'no-store'});const t=await r.text();
+      const m=t.match(/const PK_VER='(v\d+)'/);if(m&&m[1]!==PK_VER)n.style.display='block'}catch{}
+  };
+  setTimeout(chk,4000);setInterval(chk,300000);
+  window.pkSetAnnounce=async(text,hours)=>{await fbPut('/settings/announce',text?{text,until:Date.now()+(hours||24)*3600000}:null)};
+});
+/* 90,7,59) tema: akşam otomatik koyu + yazı boyutu */
+safe('theme',()=>{
+  const fs=LS.g('pk_fs','');if(fs)document.documentElement.classList.add('pk-fs-'+fs);
+  if(LS.g('pk_autotheme','0')==='1'&&!LS.g('pau_theme','')){const h=new Date().getHours();if(h>=19||h<6)setTheme('dark')}
+});
+/* 71) canlı sekme başlığı */
+safe('title',()=>{
+  const base=document.title;
+  setInterval(()=>{
+    try{const n=(activeSessions||[]).filter(s=>s&&!s.confirmed).length;
+      const c=Object.keys(attendees||{}).length;
+      document.title=(typeof curActiveCode!=='undefined'&&curActiveCode)?('● '+c+' katılımcı · '+base):(n?'('+n+') '+base:base)}catch{}
+  },3000);
+});
+/* 48,100) öğrenci başarı: titreşim, ses, tik, damga */
+safe('student-ok',()=>{
+  const ok=$('st-ok');if(!ok)return;
+  const t=document.createElement('div');t.id='pk-ok';t.innerHTML='<div class="pk-tick"><svg viewBox="0 0 60 60"><path d="M14 31l12 12 21-24"/></svg></div>';
+  document.body.appendChild(t);
+  let last=ok.style.display;
+  new MutationObserver(()=>{
+    const d=ok.style.display;if(d===last)return;last=d;
+    if(d==='none'||d==='')return;
+    t.classList.add('open');setTimeout(()=>t.classList.remove('open'),1600);
+    if(LS.g('pk_fx','1')==='1'){
+      try{navigator.vibrate&&navigator.vibrate([60,40,90])}catch{}
+      try{const A=new(window.AudioContext||window.webkitAudioContext)();const o=A.createOscillator(),g=A.createGain();o.connect(g);g.connect(A.destination);o.frequency.value=880;g.gain.value=.08;o.start();o.frequency.setValueAtTime(1175,A.currentTime+.12);o.stop(A.currentTime+.28)}catch{}
+    }
+    try{const hd=$('st-ok-headline');if(hd&&!ok.querySelector('.pk-stamp')){const s=document.createElement('div');s.className='pk-stamp';
+      s.textContent='Yoklamanız alındı · '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});hd.after(s)}}catch{}
+    try{fireConfetti()}catch{}
+  }).observe(ok,{attributes:true,attributeFilter:['style']});
+});
+/* projeksiyon: köşe logoları, kiosk, wake lock, 3-2-1, son 10 sn nabız */
+safe('proj',()=>{
+  const p=$('proj-fullscreen');if(!p)return;
+  const lg=document.createElement('div');lg.id='pk-proj-logos';
+  lg.innerHTML='<img alt="" src="data:image/png;base64,'+PAU_LOGO_PNG_B64+'"><img alt="" src="data:image/png;base64,'+TIP_LOGO.b64+'">';
+  p.appendChild(lg);
+  const c3=document.createElement('div');c3.id='pk-321';document.body.appendChild(c3);
+  let wl=null,was=false,idle=null;
+  const kiosk=()=>{document.documentElement.classList.add('pk-kiosk')};
+  const unk=()=>{document.documentElement.classList.remove('pk-kiosk');clearTimeout(idle);idle=setTimeout(kiosk,5000)};
+  const onMove=()=>{if(p.classList.contains('open'))unk()};
+  new MutationObserver(async()=>{
+    const open=p.classList.contains('open');if(open===was)return;was=open;
+    if(open){
+      let i=3;c3.classList.add('open');
+      const step=()=>{if(i<1){c3.classList.remove('open');return}c3.innerHTML='<span>'+i+'</span>';i--;setTimeout(step,700)};step();
+      addEventListener('mousemove',onMove);unk();
+      try{wl=await navigator.wakeLock.request('screen')}catch{}
+    }else{
+      removeEventListener('mousemove',onMove);document.documentElement.classList.remove('pk-kiosk');
+      try{wl&&wl.release()}catch{}wl=null;
+    }
+  }).observe(p,{attributes:true,attributeFilter:['class']});
+  const cd=$('proj-countdown-txt');
+  if(cd)new MutationObserver(()=>{
+    const m=cd.textContent.match(/(\d+):(\d+)/);
+    const sec=m?(+m[1]*60+ +m[2]):999;
+    cd.classList.toggle('pk-pulse',sec<=10&&sec>0);
+  }).observe(cd,{childList:true,characterData:true,subtree:true});
+});
+/* 21,30,58,69,85,76) Ctrl+K, ? yardım kartı, araçlar */
+safe('help',()=>{
+  const h=document.createElement('div');h.id='pk-help';
+  h.innerHTML='<div class="pk-card"><h3>Kısayollar ve Araçlar</h3>'+
+  '<div class="pk-row"><span>Genel arama</span><kbd>Ctrl</kbd></div>'.replace('<kbd>Ctrl</kbd>','<span><kbd>Ctrl</kbd> + <kbd>K</kbd></span>')+
+  '<div class="pk-row"><span>Bu pencere</span><kbd>?</kbd></div>'+
+  '<div class="pk-row"><span>Kapat</span><kbd>Esc</kbd></div>'+
+  '<div class="pk-btns">'+
+  '<button data-a="theme">Akşam otomatik koyu tema</button>'+
+  '<button data-a="fs">Yazı boyutu</button>'+
+  '<button data-a="fx">Ses/titreşim</button>'+
+  '<button data-a="print">Yedek kâğıt liste</button>'+
+  '<button data-a="backup">Yedek indir (yönetici)</button>'+
+  '<button data-a="bug">Sorun bildir</button></div>'+
+  '<div style="font-size:.74rem;color:var(--fg3)">Sürüm '+PK_VER+' · Neler yeni: giriş ekranı logoları, selamlama, kısayollar, ses/titreşim, kiosk projeksiyon, 3-2-1 geri sayım, yedek indirme, duyuru bandı.</div>'+
+  '<div style="font-size:.72rem;color:var(--fg3);margin-top:8px">Tasarım ve geliştirme: Halil İbrahim CENGİZ &amp; Claude AI ile yapılmıştır</div></div>';
+  document.body.appendChild(h);
+  h.addEventListener('click',async e=>{
+    if(e.target===h){h.classList.remove('open');return}
+    const a=e.target.dataset&&e.target.dataset.a;if(!a)return;
+    if(a==='theme'){const v=LS.g('pk_autotheme','0')==='1'?'0':'1';LS.s('pk_autotheme',v);showToast('🌙','Akşam otomatik koyu tema',v==='1'?'Açıldı':'Kapatıldı','ok')}
+    if(a==='fs'){const o=['','lg','xl'];const cur=LS.g('pk_fs','');const nx=o[(o.indexOf(cur)+1)%3];LS.s('pk_fs',nx);document.documentElement.classList.remove('pk-fs-lg','pk-fs-xl');if(nx)document.documentElement.classList.add('pk-fs-'+nx);showToast('🔠','Yazı boyutu',nx?'Büyütüldü':'Normal','ok')}
+    if(a==='fx'){const v=LS.g('pk_fx','1')==='1'?'0':'1';LS.s('pk_fx',v);showToast('🔔','Ses ve titreşim',v==='1'?'Açık':'Kapalı','ok')}
+    if(a==='print'){h.classList.remove('open');window.print()}
+    if(a==='backup'){
+      if(typeof isAdmin==='undefined'||!isAdmin){showToast('⛔','Yetki yok','Yedek yalnızca yönetici içindir','warn');return}
+      try{const d={};for(const k of ['courses','professors','professorsDeleted','settings','terms']){try{d[k]=await fbGet('/'+k)}catch{}}
+        const b=new Blob([JSON.stringify(d,null,1)],{type:'application/json'});const u=URL.createObjectURL(b);
+        const l=document.createElement('a');l.href=u;l.download='yoklama-yedek-'+new Date().toISOString().slice(0,10)+'.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),3000)
+      }catch(err){showToast('❌','Yedek alınamadı',String(err),'err')}
+    }
+    if(a==='bug'){
+      const m=prompt('Sorunu kısaca yazın:');if(!m)return;
+      try{await fbPut('/reports/'+Date.now(),{msg:m,by:(curUser&&curUser.email)||'',ua:navigator.userAgent,ver:PK_VER,t:Date.now()});showToast('✅','Teşekkürler','Bildiriminiz alındı','ok')}catch{showToast('❌','Gönderilemedi','Bağlantıyı kontrol edin','err')}
+    }
+  });
+  addEventListener('keydown',e=>{
+    const tag=(e.target.tagName||'').toLowerCase();const typing=/input|textarea|select/.test(tag)||e.target.isContentEditable;
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();try{openGSearch()}catch{}return}
+    if(e.key==='Escape'&&h.classList.contains('open')){h.classList.remove('open');return}
+    if(e.key==='?'&&!typing){h.classList.toggle('open')}
+  });
+});
+/* 58) altbilgi sürüm */
+safe('footer',()=>{
+  const f=document.createElement('div');f.style.cssText='text-align:center;font-size:.68rem;color:var(--fg3);padding:10px 0 80px';
+  f.textContent='Sürüm '+PK_VER+' · '+new Date().toLocaleDateString('tr-TR')+' · Kısayollar için ? tuşu';
+  document.body.appendChild(f);
+});
+})();
+
 </script>
 
 <!-- ═══ TASK MODAL ═══ -->
