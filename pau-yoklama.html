@@ -5511,7 +5511,7 @@ async function downloadQr(){
 /* ── NAV ── */
 function nav(v){
   curView=v;
-  ['student','session','active','report','courses','profs','settings','calendar','stats','audit','dl'].forEach(x=>{
+  ['student','session','active','report','courses','profs','settings','calendar','stats','myatt','audit','dl'].forEach(x=>{
     const el=document.getElementById('view-'+x);
     if(el){el.classList.toggle('on',x===v);el.style.display='';}
     const nb=document.getElementById('nav-'+x);
@@ -10252,6 +10252,12 @@ function openReviewModal(sess, att){
     const tParts=(sess.taskName||'').split('·').map(s=>s.trim()).filter(Boolean);
     const taskLabel=tParts.length>1?tParts.slice(1).join(' · '):tParts[0]||'';
     profEl.textContent=[pName,taskLabel].filter(Boolean).join(' · ');
+    if(sess.code&&!sess.confirmed){
+      let sp=document.getElementById('rv-prof-pick');
+      if(!sp){sp=document.createElement('div');sp.id='rv-prof-pick';sp.style.cssText='margin-top:6px;font-size:.78rem;color:#fff';profEl.after(sp);}
+      const list=Object.entries(professors||{}).filter(([,p])=>p&&p.email).sort((x,y)=>(profFullName(x[1])||'').localeCompare(profFullName(y[1])||'','tr'));
+      sp.innerHTML='👨‍🏫 Öğretim üyesi: <select id="rv-prof-sel" style="max-width:260px;padding:3px 6px;border-radius:6px;border:1px solid #fff5;background:#fff;color:#111;font-size:.78rem" onchange="rvChangeProf(this.value)"><option value="">— değiştir —</option>'+list.map(([k,p])=>'<option value="'+esc(k)+'">'+esc(profFullName(p)||p.email)+'</option>').join('')+'</select>';
+    }
   }
   _renderReviewList();
   // Harita tabını sıfırla → Liste sekmesini aktif yap
@@ -10262,7 +10268,23 @@ function openReviewModal(sess, att){
   document.body.style.overflow='hidden';
 }
 
+async function rvChangeProf(k){
+  if(!k||!_rvSess||!_rvSess.code)return;
+  const p=professors[k];if(!p)return;
+  const upd={profUid:k,profEmail:p.email||'',profName:profFullName(p)||p.email};
+  const meUid=curUser&&curUser.uid;
+  try{
+    const patch={...upd};
+    if(meUid&&meUid!==k)patch['cohosts/'+meUid]=true;
+    await fbPatch('/sessions/'+_rvSess.code,patch);
+    Object.assign(_rvSess,upd);
+    const i=allSessions.findIndex(s=>s.code===_rvSess.code);if(i>=0)Object.assign(allSessions[i],upd);
+    const el=document.getElementById('rv-prof-line');if(el)el.textContent=upd.profName;
+    showToast('✅','Öğretim üyesi değişti',upd.profName,'ok',3000);
+  }catch(e){showToast('❌','Değiştirilemedi',String(e),'err',4000);}
+}
 function closeReviewModal(){
+  if(window._rvPrevCS){courseStudents=window._rvPrevCS;window._rvPrevCS=null;}
   document.getElementById('review-modal').style.display='none';
   document.body.style.overflow='';
   _rvSess=null; _rvAtt={};
@@ -13706,6 +13728,20 @@ async function myAttReview(code){
     if(full)sess={...(sess||{}),...full,code};
   }catch(e){}
   if(!sess){showToast('❌','Hata','Oturum bulunamadı.','err');return;}
+  // Sınıf listesi (katılmayanları göstermek için): grup listesi + yoklama kayıtlarındaki grup/yok kayıtları; yoksa ders listesi
+  const ros={};
+  const nm=v=>(typeof v==='string'?v:(v&&(v.name||v.studentName||v.ad))||'');
+  Object.entries(sess.groupRoster||{}).forEach(([no,v])=>{ros[no]=nm(v)||no});
+  Object.entries(sess.attendance||{}).forEach(([no,r])=>{if(r&&(r.groupStart||r.absent||ros[no]!==undefined))ros[no]=nm(r.studentName)||ros[no]||no});
+  if(Object.keys(ros).length)Object.entries(sess.attendance||{}).forEach(([no,r])=>{if(ros[no]===undefined)ros[no]=nm(r&&r.studentName)||no});
+  if(!Object.keys(ros).length&&sess.courseId&&courses[sess.courseId]&&courses[sess.courseId].students){
+    Object.entries(courses[sess.courseId].students).forEach(([no,v])=>{ros[no]=nm(v)||no});
+  }
+  if(!Object.keys(ros).length&&sess.taskId){
+    try{const tl=await fbGet('/student-lists/'+sess.taskId+'/students');Object.entries(tl||{}).forEach(([k,v])=>{ros[(v&&v.no)||k]=nm(v)})}catch(e){}
+  }
+  window._rvPrevCS=courseStudents;
+  courseStudents=ros;
   openReviewModal(sess,JSON.parse(JSON.stringify(sess.attendance||{})));
 }
 async function myAttDownload(code){
